@@ -183,6 +183,7 @@ config.window.set_fullscreen(False)
 test = tactical.tactical_map()
 test.generate(100,100,6,6,6,1,1,1,1)
 test.draw_background()
+test.draw_contours()
 test.add_to_scene(0)
 
 pyglet.clock.schedule_interval(update, 1/60.0)
