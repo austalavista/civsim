@@ -1,14 +1,15 @@
 import config
 
 class scene_object:
-    def __init__(self, groupnum = 0):
-        self.groupnum = groupnum
-        self.checkbox = checkbox(groupnum)
+    def __init__(self, group_num = 0):
+        self.group_num = group_num
+        self.checkbox = checkbox(group_num)
         self.render_objects = [] #should be a 2d array
         self.scene_index = None
         self.handlers = [False,False,False,False,False,False,False]
 
         self.add_to_scene_entry = update_entry(self.add_to_scene_1, ["index"])
+        self.remove_from_scene_entry = update_entry(self.remove_from_scene_1, None)
 
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
@@ -26,10 +27,15 @@ class scene_object:
                 self.render_objects[i][j].add()
 
     def remove_from_scene(self):
-        pass
+        self.remove_from_scene_entry.add()
 
-    def remove_from_scene_1(self):
-        pass
+    def remove_from_scene_1(self,args):
+        for i in range(0,len(self.render_objects)):
+            for j in range(0,len(self.render_objects[i])):
+                self.render_objects[i][j].remove()
+
+        config.scene_objects[self.scene_index] = None
+        self.scene_index = None
 
     def scene_translate_1(self, args):
         dx = args[0]

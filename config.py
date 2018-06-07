@@ -54,6 +54,7 @@ global front_group_index
 
 batch = pyglet.graphics.Batch()
 
+global_transformation_group = None
 scene_ordered_group = None
 scene_transformation_group = None
 menu_ordered_group = None

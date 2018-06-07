@@ -2,7 +2,7 @@ import pyglet
 import math
 import random
 import numpy
-import config, cvsmr, cvsmgmt
+import config, cvsmr, cvsmgmt, cvsmm
 import tactical
 import time
 
@@ -11,7 +11,7 @@ config.window.set_caption("CVSM")
 #---INITIALIZATION-----------------------------------------------------------------------------------------------------
 
 #---RESOURCE INITIALIZATION---
-pyglet.resource.path = ['resources','resources/menu_icons', 'resources/unit_icons']
+pyglet.resource.path = ['resources','resources/UI', 'resources/unit_icons']
 pyglet.resource.reindex()
 
 
@@ -23,6 +23,10 @@ cvsmr.line_groups_init()
 cvsmr.sprite_texture_init()
 
 #EVENTS----------------------------------------------------------------------------------------------------------------
+@config.window.event
+def on_mouse_motion(x,y, dx, dy):
+    pass
+
 @config.window.event
 def on_mouse_press(x, y, button,modifiers):
     event = None
@@ -43,7 +47,10 @@ def on_mouse_scroll(x,y,scroll_x,scroll_y):
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
 
-    config.click_selected = None
+    if(config.click_selected != None):
+        if(config.click_selected.handlers[4]):
+            config.click_selected.handler_release(x,y)
+        config.click_selected = None
 
 @config.window.event
 def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
@@ -56,6 +63,11 @@ def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
         elif(buttons & pyglet.window.mouse.RIGHT):
             if (config.click_selected.handlers[6]):
                 config.click_selected.handler_rightdrag(x,y,dx,dy)
+
+@config.window.event
+def on_key_press(symbol,modifiers):
+    pass
+config.window.on_key_press = on_key_press
 
 @config.window.event
 def on_draw():
@@ -82,7 +94,7 @@ def coordinate_box_check_1(args):
 
         if(config.scene_objects[i] != None and config.scene_objects[i].handlers[args[2]] and index < 10):
 
-            if(config.scene_objects[i].groupnum >= config.num_scene_groups):
+            if(config.scene_objects[i].group_num >= config.num_scene_groups):
                 x = menu_x
                 y = menu_y
             else:
@@ -99,14 +111,14 @@ def coordinate_box_check_1(args):
 
     #narrow checks
     for i in range(0, index):
-        if(broadcheck_hits[i].groupnum > peakgroup):
+        if(broadcheck_hits[i].group_num > peakgroup):
             if(not broadcheck_hits[i].checkbox.narrow_check):
                 object = broadcheck_hits[i]
-                peakgroup = object.groupnum
+                peakgroup = object.group_num
 
             elif(broadcheck_hits[i].checkbox.triangles):
 
-                if (config.scene_objects[i].groupnum >= config.num_scene_groups):
+                if (config.scene_objects[i].group_num >= config.num_scene_groups):
                     x = menu_x
                     y = menu_y
                 else:
@@ -132,7 +144,7 @@ def coordinate_box_check_1(args):
                             temp = (x * (ba[1] - ca[1]) + y * (ca[0] - ba[0]) + ba[0] * ca[1] - ba[1] * ca[0]) / d
                             if(temp > 0 and temp < 1):
                                 object = broadcheck_hits[i]
-                                peakgroup = object.groupnum
+                                peakgroup = object.group_num
                                 break
 
     #call handlers
@@ -180,11 +192,8 @@ def update(dt):
 #RUN-------------------------------------------------------------------------------------------------------------------
 config.window.set_fullscreen(False)
 
-test = tactical.tactical_map()
-test.generate(100,100,6,6,6,1,1,1,1)
-test.draw_background()
-test.draw_contours()
-test.add_to_scene(0)
+main_menu = cvsmm.main_menu()
+main_menu.add_to_scene()
 
 pyglet.clock.schedule_interval(update, 1/60.0)
 pyglet.app.run()

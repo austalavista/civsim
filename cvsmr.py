@@ -6,7 +6,7 @@ import tripy
 
 #---BASE RENDER OBJECTS/CLASSES---
 class sprite_object:
-    render_object_type = "sprite"
+    render_type = "sprite"
 
     def __init__(self, image_name, anchor, group_num):
         self.sprite = pyglet.sprite.Sprite(config.sprite_textures[image_name],
@@ -24,6 +24,9 @@ class sprite_object:
         self.width = self.sprite.width
 
         #use sprite.position(), sprite.update()
+
+    def switch_image(self, sprite_name):
+        self.sprite.image = config.sprite_textures[sprite_name]
 
     def coords(self, x, y):
         self.sprite.position(x,y)
@@ -49,7 +52,7 @@ class sprite_object:
         self.sprite.batch=None
 
 class polygon_object:
-    render_object_type = "polygon"
+    render_type = "polygon"
 
     def __init__(self, group_num, texture_group=None, ):
         self.vertex_list = None
@@ -290,7 +293,7 @@ class line_group(pyglet.graphics.Group):
         pyglet.gl.glLineWidth(self.thickness)
 
 class transformation_group(pyglet.graphics.Group):
-    def __init__(self,parent):
+    def __init__(self,parent = None):
         super(transformation_group, self).__init__(parent=parent)
 
         self.x = 0.0
@@ -334,8 +337,10 @@ class transformation_group(pyglet.graphics.Group):
 
 #---INITIALIZATION---
 def ordered_transformation_groups_init():
-    config.scene_ordered_group = pyglet.graphics.OrderedGroup(0)
-    config.menu_ordered_group = pyglet.graphics.OrderedGroup(1)
+    config.global_transformation_group = transformation_group()
+
+    config.scene_ordered_group = pyglet.graphics.OrderedGroup(0, parent = config.global_transformation_group)
+    config.menu_ordered_group = pyglet.graphics.OrderedGroup(1, parent = config.global_transformation_group)
 
     config.scene_transformation_group = transformation_group(parent = config.scene_ordered_group)
 
@@ -356,7 +361,8 @@ def texture_groups_init():
     pass
 
 def sprite_texture_init():
-    # config.sprite_textures["test"] = pyglet.resource.image("test.png")
-    pass
+    config.sprite_textures["main_menu"] = pyglet.resource.image("main_menu.png")
+    config.sprite_textures["main_menu_play"] = pyglet.resource.image("main_menu_play.png")
+    config.sprite_textures["main_menu_play_c"] = pyglet.resource.image("main_menu_play_c.png")
 
 #---CUSTOM---
