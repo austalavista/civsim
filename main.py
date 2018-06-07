@@ -2,25 +2,9 @@ import pyglet
 import math
 import random
 import numpy
-import config, cvsmr, cvsmgmt, cvsmm
+import config, cvsmr, cvsmgmt, cvsmm, cvsms
 import tactical
 import time
-
-config.window.set_caption("CVSM")
-
-#---INITIALIZATION-----------------------------------------------------------------------------------------------------
-
-#---RESOURCE INITIALIZATION---
-pyglet.resource.path = ['resources','resources/UI', 'resources/unit_icons']
-pyglet.resource.reindex()
-
-
-#---GROUP INITIALIZATION---
-
-cvsmr.ordered_transformation_groups_init()
-cvsmr.texture_groups_init()
-cvsmr.line_groups_init()
-cvsmr.sprite_texture_init()
 
 #EVENTS----------------------------------------------------------------------------------------------------------------
 @config.window.event
@@ -187,13 +171,9 @@ def update(dt):
         if (config.update_queue[i] != None):
 
             config.update_queue[i].run()
-            config.update_queue[i].remove()
 
 #RUN-------------------------------------------------------------------------------------------------------------------
-config.window.set_fullscreen(False)
-
-main_menu = cvsmm.main_menu()
-main_menu.add_to_scene()
+cvsms.initialize()
 
 pyglet.clock.schedule_interval(update, 1/60.0)
 pyglet.app.run()

@@ -1,3 +1,5 @@
+#infrastructure for supporting game engine stuff
+
 import config
 
 class scene_object:
@@ -29,7 +31,7 @@ class scene_object:
     def remove_from_scene(self):
         self.remove_from_scene_entry.add()
 
-    def remove_from_scene_1(self,args):
+    def remove_from_scene_1(self):
         for i in range(0,len(self.render_objects)):
             for j in range(0,len(self.render_objects[i])):
                 self.render_objects[i][j].remove()
@@ -94,26 +96,37 @@ class checkbox:
 class update_entry:
     #animation and event entries are executed only on update()
 
-    def __init__(self, function, args):
+    def __init__(self, function, args = None):
         self.function = function
         self.args = args
 
         self.queued = False
         self.index = None
 
+        self.timer = 0
+
     def run(self):
-        self.function(self.args)
+        #print(self.timer)
+        if(self.timer == 0):
+            if(self.args != None):
+                self.function(self.args)
+            else:
+                self.function()
+            self.remove()
+        else:
+            self.timer -= 1
 
     def remove(self):
         self.queued = False
         config.update_queue[self.index] = None
         self.index = None
 
-    def add(self):
+    def add(self, countdown = 0):
         if(self.queued == False):
             for i in range(0,config.update_queue_size):
                 if(config.update_queue[i] == None):
                     self.queued = True
+                    self.timer = countdown
                     self.index = i
 
                     config.update_queue[i] = self

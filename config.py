@@ -12,6 +12,12 @@ global click_selected #cleared on mouse release
 selected = None
 click_selected = None
 
+#---SWITCHING GAME STATE---
+
+global gs_entries
+
+gs_entries = [None] * 20
+
 #---COLLISIONBOXES, EVENT HANDLING---
 global scene_objects
 global scene_objects_size

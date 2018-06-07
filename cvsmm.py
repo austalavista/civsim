@@ -1,3 +1,5 @@
+#Menu baseclasses and their custom derivatives
+
 import pyglet
 import config
 import cvsmr, cvsmgmt
@@ -17,13 +19,13 @@ class base_window():
         self.elements = None
         self.elements_index = None
 
-        self.add_to_scene_entry = cvsmgmt.update_entry(self.add_to_scene_1, None)
-        self.remove_from_scene_entry = cvsmgmt.update_entry(self.remove_from_scene_1, None)
+        self.add_to_scene_entry = cvsmgmt.update_entry(self.add_to_scene_1)
+        self.remove_from_scene_entry = cvsmgmt.update_entry(self.remove_from_scene_1)
 
     def add_to_scene(self):
         self.add_to_scene_entry.add()
 
-    def add_to_scene_1(self,args):
+    def add_to_scene_1(self):
         if(self.sprite != None):
             self.sprite.add()
 
@@ -33,7 +35,7 @@ class base_window():
     def remove_from_scene(self):
         self.remove_from_scene_entry.add()
 
-    def remove_from_scene_1(self,args):
+    def remove_from_scene_1(self):
         if(self.sprite != None):
             self.sprite.remove()
 

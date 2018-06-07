@@ -350,19 +350,25 @@ def ordered_transformation_groups_init():
     for i in range(config.num_scene_groups,config.num_scene_groups + config.num_menu_groups):
         config.groups.append(pyglet.graphics.OrderedGroup(i,parent=config.menu_ordered_group))
 
+    print("ordered_transformation_groups_init")
+
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
     config.line_groups["2/3"] = line_group(2, 3)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
 
+    print("line_groups_init")
+
 def texture_groups_init():
     #config.texture_groups[name] = pyglet.graphics.TextureGroup(pyglet.image.load(file).get_texture(),parent=config.groups[group_num])
-    pass
+    print("texture_init")
 
 def sprite_texture_init():
     config.sprite_textures["main_menu"] = pyglet.resource.image("main_menu.png")
     config.sprite_textures["main_menu_play"] = pyglet.resource.image("main_menu_play.png")
     config.sprite_textures["main_menu_play_c"] = pyglet.resource.image("main_menu_play_c.png")
+
+    print("sprite_texture_init")
 
 #---CUSTOM---
