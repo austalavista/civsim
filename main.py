@@ -25,19 +25,19 @@ def on_mouse_press(x, y, button,modifiers):
     elif (button == pyglet.window.mouse.RIGHT):
         event = 2
 
-    coordinate_box_check(x,y,event)
+    coordinate_box_check(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,event)
 
 @config.window.event
 def on_mouse_scroll(x,y,scroll_x,scroll_y):
 
-    coordinate_box_check(x,y,3,scroll_x,scroll_y)
+    coordinate_box_check(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,3,scroll_x,scroll_y)
 
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
 
     if(config.click_selected != None):
         if(config.click_selected.handlers[4]):
-            config.click_selected.handler_release(x,y)
+            config.click_selected.handler_release(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y)
         config.click_selected = None
 
 @config.window.event
@@ -46,11 +46,15 @@ def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
     if(config.click_selected != None):
         if(buttons & pyglet.window.mouse.LEFT):
             if(config.click_selected.handlers[5]):
-                config.click_selected.handler_leftdrag(x,y,dx,dy)
+                config.click_selected.handler_leftdrag(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,
+                                                       dx/config.global_transformation_group.scale_x ,
+                                                       dy/config.global_transformation_group.scale_y)
 
         elif(buttons & pyglet.window.mouse.RIGHT):
             if (config.click_selected.handlers[6]):
-                config.click_selected.handler_rightdrag(x,y,dx,dy)
+                config.click_selected.handler_rightdrag(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,
+                                                        dx / config.global_transformation_group.scale_x,
+                                                        dy / config.global_transformation_group.scale_y)
 
 @config.window.event
 def on_key_press(symbol,modifiers):

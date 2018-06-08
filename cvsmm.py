@@ -65,6 +65,106 @@ class base_button(cvsmgmt.scene_object):
             self.render_objects[0][0].switch_image(self.click_sprite_name)
             self.click_state = True
 
+class scroll_slider(cvsmgmt.scene_object):
+    def __init__(self, scroll_menu, group_num, sprite_name, anchor, height):
+        cvsmgmt.scene_object.__init__(self,group_num)
+
+        self.anchor = anchor
+
+        self.height = height
+
+        self.scroll_menu = scroll_menu
+        self.handlers[0] = True
+        self.handlers[5] = True
+
+        self.render_objects.append([cvsmr.sprite_object(sprite_name, anchor, group_num)])
+        self.checkbox.set_source(self.render_objects[0][0])
+
+        self.drag_slider_entry = cvsmgmt.update_entry(self.drag_slider, ["dy"])
+
+    def update_self(self):
+        #update sprite position and checkbox
+        self.anchor[1] = (self.scroll_menu.max_position - self.scroll_menu.position) /self.scroll_menu.max_position * self.height
+        self.render_objects[0][0].coords(self.anchor[0],self.anchor[1])
+        self.checkbox.update_source()
+
+    def dpos(self, d):
+        self.scroll_menu.dpos(d)
+
+    def handler_leftclick(self,x,y):
+        config.click_selected = self
+
+    def handler_leftdrag(self, x,y,dx,dy):
+        self.drag_slider_entry.args[0] = (dy)/self.height * self.scroll_menu.max_position
+        self.drag_slider_entry.add()
+
+    def drag_slider(self,args):
+        self.dpos(args[0])
+
+class scroll_slider_box(cvsmgmt.scene_object):
+    def __init__(self, scroll_menu, group_num, anchor, height, width):
+        cvsmgmt.scene_object.__init__(self,group_num)
+        self.checkbox.broad_checkbox = [anchor[0],anchor[1],
+                                        anchor[0] + width,
+                                        anchor[1] + height]
+
+        self.handlers[0] = True
+        self.scroll_menu = scroll_menu
+
+    def handler_leftclick(self, x,y):
+        self.scroll_menu.pos((self.height - (y-self.anchor[1]))/self.height * self.scroll_menu.max_position)
+
+class scroll_menu_box(cvsmgmt.scene_object):
+    #set as same group as scroll elements
+
+    def __init__(self, scroll_menu, group_num, anchor, height, width):
+        cvsmgmt.scene_object.__init__(self,group_num)
+        self.checkbox.broad_checkbox = [anchor[0],anchor[1],
+                                        anchor[0] + width,
+                                        anchor[1] + height]
+
+        self.handlers[3] = True
+        self.scroll_menu = scroll_menu
+
+    def handler_scroll(self, x,y):
+        pass
+
+class scroll_menu(base_window):
+    def __init__(self, scene_index, anchor, num_elements, element_height, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1):
+        base_window.__init__(self=self, anchor=anchor, group_num = group_num)
+
+        self.num_elements = num_elements
+        self.element_height = element_height
+        self.pix_height = element_height * num_elements
+
+        self.posiiton = 0
+        self.max_position = 0
+
+        self.elements = [scroll_slider(scroll_menu = self, group_num = group_num + 1, slider_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height),
+                         scroll_slider_box(),
+                         scroll_menu_box()]
+
+        self.elements_index = [scene_index, scene_index+1, scene_index+2]
+
+    def populate(self, list_of_elements):
+        self.list = list_of_elements
+        self.max_position = len(self.list) - 1 - self.num_elements
+        self.position = 0
+
+    def pos(self, p):
+        self.position = max(0,min(p,self.max_position))
+        self.update_self()
+
+    def dpos(self,d):
+        self.position += d
+        self.position = max(0, min(self.position, self.max_position))
+
+        self.update_self()
+
+    def update_self(self):
+        self.elements[0].update_self()
+        pass
+
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):
@@ -110,6 +210,8 @@ class main_menu(base_window):
 
         self.elements = [main_menu_play(),main_menu_settings(),main_menu_exitgame()]
         self.elements_index = [1,2,3]
+
+#-----------------------------------------
 
 class settings_menu_back(base_button):
     def __init__(self):

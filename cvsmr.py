@@ -361,17 +361,17 @@ def texture_groups_init():
     pass
 
 def sprite_texture_init():
-    config.sprite_textures["main_menu"] = pyglet.resource.image("main_menu.png")
-    config.sprite_textures["main_menu_play"] = pyglet.resource.image("main_menu_play.png")
-    config.sprite_textures["main_menu_play_c"] = pyglet.resource.image("main_menu_play_c.png")
-    config.sprite_textures["main_menu_settings_c"] = pyglet.resource.image("main_menu_settings_c.png")
-    config.sprite_textures["main_menu_settings"] = pyglet.resource.image("main_menu_settings.png")
-    config.sprite_textures["main_menu_exitgame_c"] = pyglet.resource.image("main_menu_exitgame_c.png")
-    config.sprite_textures["main_menu_exitgame"] = pyglet.resource.image("main_menu_exitgame.png")
-    config.sprite_textures["mainscreen"] = pyglet.resource.image("mainscreen.png")
+    image_init("main_menu")
+    image_init("main_menu_play", "b")
+    image_init("main_menu_settings", "b")
+    image_init("main_menu_exitgame", "b")
+    image_init("mainscreen")
 
-    config.sprite_textures["settings_menu"] = pyglet.resource.image("settings_menu.png")
-    config.sprite_textures["settings_menu_back"] = pyglet.resource.image("settings_menu_back.png")
-    config.sprite_textures["settings_menu_back_c"] = pyglet.resource.image("settings_menu_back_c.png")
+    image_init("settings_menu")
+    image_init("settings_menu_back", "b")
 
+def image_init(name, tag = None):
+    config.sprite_textures[name] = pyglet.rescource.image(name + ".png")
+    if(tag == "b"):
+        config.sprite_textures[name + "_c"] = pyglet.rescource.image(name + "_c.png")
 #---CUSTOM---

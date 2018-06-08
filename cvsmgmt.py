@@ -65,7 +65,6 @@ class checkbox:
             self.broad_checkbox = [self.source.anchor[0],self.source.anchor[1],
                                    self.source.anchor[0] + self.source.width, self.source.anchor[1] + self.source.height]
 
-
         elif(source.render_type == "polygon"):
             self.narrow_check = True
             self.triangles = True
@@ -92,6 +91,39 @@ class checkbox:
                                    self.max_x, self.min_y]
 
             self.narrow_checkbox = source.vertices #dont double dcoords this!
+
+    def update_source(self):
+        if (source.render_type == "sprite"):
+            self.broad_checkbox = [self.source.anchor[0], self.source.anchor[1],
+                                   self.source.anchor[0] + self.source.width,
+                                   self.source.anchor[1] + self.source.height]
+
+        elif (source.render_type == "polygon"):
+            self.narrow_check = True
+            self.triangles = True
+
+            self.max_x = source.vertices[0]
+            self.min_x = source.vertices[0]
+            self.max_y = source.vertices[1]
+            self.min_y = source.vertices[2]
+
+            for i in range(2, len(source.vertices)):
+
+                if (i % 2 == 0):
+                    if (source.vertices[i] < self.min_x):
+                        self.min_x = source.vertices[i]
+                    elif (source.vertices > self.max_x):
+                        self.max_x = source.vertices[i]
+                else:
+                    if (source.vertices[i] < self.min_y):
+                        self.min_y = source.vertices[i]
+                    elif (source.vertices > self.max_y):
+                        self.max_y = source.vertices[i]
+
+            self.broad_checkbox = [self.min_x, self.min_y,
+                                   self.max_x, self.min_y]
+
+            self.narrow_checkbox = source.vertices  # dont double dcoords this!
 
 class update_entry:
     #animation and event entries are executed only on update()

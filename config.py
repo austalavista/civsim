@@ -2,10 +2,10 @@ import pyglet
 
 #---SETTINGS---
 global fullscreen
-fullscreen = None
+fullscreen = 1
 
 global resolution
-resolution = None
+resolution = 0
 
 
 #---COMMON-------------------------------------------------------------------------------------------------------------
