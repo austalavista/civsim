@@ -13,9 +13,14 @@ resolution = None
 #---UI---
 global selected
 global click_selected #cleared on mouse release
+global prev_menu
+global menus
 
 selected = None
 click_selected = None
+
+prev_menu = None
+menus = {}
 
 #---SWITCHING GAME STATE---
 

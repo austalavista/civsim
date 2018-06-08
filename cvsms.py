@@ -63,11 +63,11 @@ def initialize():
     config.gs_entries[5].function = open_main_menu
     config.gs_entries[5].add(5)
 
-
 def open_main_menu():
-    global main_menu
-    main_menu = cvsmm.main_menu()
-    main_menu.add_to_scene()
+    config.menus["main_menu"] = cvsmm.main_menu()
+    config.menus["main_menu"].add_to_scene()
+
+    config.menus["settings_menu"] = cvsmm.settings_menu()
 
     global mainscreen
     mainscreen = cvsmr.sprite_object("mainscreen", [0,0],0)

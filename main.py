@@ -169,6 +169,7 @@ def coordinate_box_check(x, y, event_type, scroll_x = 0, scroll_y = 0):
     coordinate_box_check_entry.args[2] = event_type
 
     coordinate_box_check_entry.add()
+
 def update(dt):
     for i in range(0, config.update_queue_size):
         if (config.update_queue[i] != None):

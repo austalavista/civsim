@@ -86,7 +86,11 @@ class main_menu_settings(base_button):
         self.toggle_sprite()
 
     def handler_release(self,x,y):
+
         self.toggle_sprite()
+
+        config.menus["main_menu"].remove_from_scene()
+        config.menus["settings_menu"].add_to_scene()
 
 class main_menu_exitgame(base_button):
     def __init__(self):
@@ -106,3 +110,24 @@ class main_menu(base_window):
 
         self.elements = [main_menu_play(),main_menu_settings(),main_menu_exitgame()]
         self.elements_index = [1,2,3]
+
+class settings_menu_back(base_button):
+    def __init__(self):
+        base_button.__init__(self,[5,420], "settings_menu_back", "settings_menu_back_c")
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.toggle_sprite()
+
+        config.menus["settings_menu"].remove_from_scene()
+        config.menus["main_menu"].add_to_scene()
+
+class settings_menu(base_window):
+    def __init__(self):
+        base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
+
+        self.elements = [settings_menu_back()]
+        self.elements_index = [4]

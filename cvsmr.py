@@ -48,8 +48,8 @@ class sprite_object:
         self.sprite.batch = config.batch
 
     def remove(self):
-        self.sprite.delete()
-        self.sprite.batch=None
+        #self.sprite.delete()
+        self.sprite.batch = None
 
 class polygon_object:
     render_type = "polygon"
@@ -369,5 +369,9 @@ def sprite_texture_init():
     config.sprite_textures["main_menu_exitgame_c"] = pyglet.resource.image("main_menu_exitgame_c.png")
     config.sprite_textures["main_menu_exitgame"] = pyglet.resource.image("main_menu_exitgame.png")
     config.sprite_textures["mainscreen"] = pyglet.resource.image("mainscreen.png")
+
+    config.sprite_textures["settings_menu"] = pyglet.resource.image("settings_menu.png")
+    config.sprite_textures["settings_menu_back"] = pyglet.resource.image("settings_menu_back.png")
+    config.sprite_textures["settings_menu_back_c"] = pyglet.resource.image("settings_menu_back_c.png")
 
 #---CUSTOM---
