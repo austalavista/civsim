@@ -68,7 +68,7 @@ class base_button(cvsmgmt.scene_object):
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):
-        base_button.__init__(self,[0,100], "main_menu_play", "main_menu_play_c")
+        base_button.__init__(self,[5,420], "main_menu_play", "main_menu_play_c")
 
     def handler_leftclick(self, x,y):
         config.click_selected = self
@@ -77,9 +77,32 @@ class main_menu_play(base_button):
     def handler_release(self,x,y):
         self.toggle_sprite()
 
+class main_menu_settings(base_button):
+    def __init__(self):
+        base_button.__init__(self, [5, 300], "main_menu_settings", "main_menu_settings_c")
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.toggle_sprite()
+
+class main_menu_exitgame(base_button):
+    def __init__(self):
+        base_button.__init__(self, [5, 100], "main_menu_exitgame", "main_menu_exitgame_c")
+
+    def handler_leftclick(self, x, y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self, x, y):
+        self.toggle_sprite()
+        pyglet.app.exit()
+
 class main_menu(base_window):
     def __init__(self):
         base_window.__init__(self = self, anchor = [0,0], sprite_name = "main_menu")
 
-        self.elements = [main_menu_play()]
-        self.elements_index = [1, 2]
+        self.elements = [main_menu_play(),main_menu_settings(),main_menu_exitgame()]
+        self.elements_index = [1,2,3]

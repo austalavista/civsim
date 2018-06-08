@@ -6,6 +6,10 @@ import config, cvsmr, cvsmgmt, cvsmm, cvsms
 import tactical
 import time
 
+#Create window
+config.aa = pyglet.gl.Config(sample_buffers=1, samples=3)  # ANTIALIASING
+config.window = pyglet.window.Window(config=config.aa, resizable=False)
+
 #EVENTS----------------------------------------------------------------------------------------------------------------
 @config.window.event
 def on_mouse_motion(x,y, dx, dy):
@@ -63,8 +67,8 @@ def coordinate_box_check_1(args):
     object = None
     relevance = False
 
-    menu_x = args[0]
-    menu_y = args[1]
+    menu_x = args[0] / config.global_transformation_group.scale_x
+    menu_y = args[1] / config.global_transformation_group.scale_y
 
     trans_x = (args[0] - config.scene_transformation_group.x) / config.scene_transformation_group.scale_x
     trans_y = (args[1] - config.scene_transformation_group.y) / config.scene_transformation_group.scale_y
@@ -165,7 +169,6 @@ def coordinate_box_check(x, y, event_type, scroll_x = 0, scroll_y = 0):
     coordinate_box_check_entry.args[2] = event_type
 
     coordinate_box_check_entry.add()
-
 def update(dt):
     for i in range(0, config.update_queue_size):
         if (config.update_queue[i] != None):
@@ -177,3 +180,6 @@ cvsms.initialize()
 
 pyglet.clock.schedule_interval(update, 1/60.0)
 pyglet.app.run()
+
+
+

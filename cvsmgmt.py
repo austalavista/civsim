@@ -11,7 +11,7 @@ class scene_object:
         self.handlers = [False,False,False,False,False,False,False]
 
         self.add_to_scene_entry = update_entry(self.add_to_scene_1, ["index"])
-        self.remove_from_scene_entry = update_entry(self.remove_from_scene_1, None)
+        self.remove_from_scene_entry = update_entry(self.remove_from_scene_1)
 
     def default_checkbox(self,source):
         self.checkbox.set_source(source)

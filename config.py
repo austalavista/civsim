@@ -1,6 +1,11 @@
 import pyglet
 
-#---CUSTOM-------------------------------------------------------------------------------------------------------------
+#---SETTINGS---
+global fullscreen
+fullscreen = None
+
+global resolution
+resolution = None
 
 
 #---COMMON-------------------------------------------------------------------------------------------------------------
@@ -38,20 +43,10 @@ sprite_textures = {}
 
 # ---WINDOWING---
 global window
-global window_size
-global scale_factor_y
-global scale_factor_x
-global zoom_factor_y
-global zoom_factor_x
+global aa
 
-aa = pyglet.gl.Config(sample_buffers=1,samples=3) #ANTIALIASING
-window = pyglet.window.Window(config = aa, resizable=True)
-window_size = [window.height, window.width] #needs to be updated in program
-
-scale_factor_y = window_size[0]/1080
-scale_factor_x = window_size[1]/1920
-zoom_factor_y = 1
-zoom_factor_x = 1
+aa = None
+window = None
 
 #---BATCHES AND GROUPS---
 global batch
