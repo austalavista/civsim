@@ -39,6 +39,16 @@ class scene_object:
         config.scene_objects[self.scene_index] = None
         self.scene_index = None
 
+    def coords_1(self, args):
+        self.x = args[0]
+        self.y = args[1]
+
+        for i in range(0, len(self.render_objects)):
+            for j in range(0, len(self.render_objects[i])):
+                self.render_objects[i][j].coords(self.x,self.y)
+
+        self.checkbox.update_source()
+
     def scene_translate_1(self, args):
         dx = args[0]
         dy =  args[1]

@@ -171,6 +171,8 @@ def coordinate_box_check(x, y, event_type, scroll_x = 0, scroll_y = 0):
     coordinate_box_check_entry.args[0] = x
     coordinate_box_check_entry.args[1] = y
     coordinate_box_check_entry.args[2] = event_type
+    coordinate_box_check_entry.args[3] = scroll_x
+    coordinate_box_check_entry.args[3] = scroll_y
 
     coordinate_box_check_entry.add()
 

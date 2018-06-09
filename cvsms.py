@@ -18,7 +18,18 @@ def apply_settings():
     #resolution
     if(config.fullscreen == 0):
         if(config.resolution == 0):
-            config.window.set_size(1920,1080)
+            config.window.set_fullscreen(fullscreen=False, width=1920, height=1080)
+
+        temp = config.window.get_size()
+        config.global_transformation_group.scale(temp[0] / 1920, temp[1] / 1080)
+
+def write_settings():
+    settings = open('settings', 'w+')
+
+    settings.write("fullscreen=" + str(config.fullscreen) + "\n")
+    settings.write("resolution=" + str(config.resolution) + "\n")
+
+    settings.close()
 
 def initialize():
     cvsmr.ordered_transformation_groups_init()
@@ -27,6 +38,7 @@ def initialize():
     for i in range(0, len(config.gs_entries)):
         config.gs_entries[i] = cvsmgmt.update_entry(None)
 
+    #settings
     try:
         settings = open('settings', 'r')
         settings_list = settings.read().split("\n")

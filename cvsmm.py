@@ -2,7 +2,7 @@
 
 import pyglet
 import config
-import cvsmr, cvsmgmt
+import cvsmr, cvsmgmt, cvsms
 
 #---BASE MENU OBJECTS/CLASSES------------------------------------------------------------------------------------------
 class base_window():
@@ -126,12 +126,14 @@ class scroll_menu_box(cvsmgmt.scene_object):
         self.handlers[3] = True
         self.scroll_menu = scroll_menu
 
-    def handler_scroll(self, x,y):
-        pass
+    def handler_scroll(self, x,y,scroll_x,scroll_y):
+        self.scroll_menu.dpos(-1 * scroll_y)
 
 class scroll_menu(base_window):
-    def __init__(self, scene_index, anchor, num_elements, element_height, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1):
+    def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None):
         base_window.__init__(self=self, anchor=anchor, group_num = group_num)
+
+        self.list = self.list_of_elements
 
         self.num_elements = num_elements
         self.element_height = element_height
@@ -140,14 +142,16 @@ class scroll_menu(base_window):
         self.posiiton = 0
         self.max_position = 0
 
-        self.elements = [scroll_slider(scroll_menu = self, group_num = group_num + 1, slider_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height),
-                         scroll_slider_box(),
-                         scroll_menu_box()]
+        self.scroll_slider = scroll_slider(scroll_menu = self, group_num = group_num, slider_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height)
+        self.elements = [self.scroll_slider,
+                         scroll_slider_box(self, group_num-1, [anchor[0] + slider_x_offset, anchor[1]], self.pix_height, self.scroll_slider.render_objects[0][0].width),
+                         scroll_menu_box(self, group_num, anchor, self.pix_height, width)]
 
         self.elements_index = [scene_index, scene_index+1, scene_index+2]
 
-    def populate(self, list_of_elements):
-        self.list = list_of_elements
+    def populate(self, list_of_elements = None):
+        if(list_of_elements != None):
+            self.list = list_of_elements
         self.max_position = len(self.list) - 1 - self.num_elements
         self.position = 0
 
@@ -163,7 +167,14 @@ class scroll_menu(base_window):
 
     def update_self(self):
         self.elements[0].update_self()
-        pass
+
+        for i in range(0, self.max_position):
+            if(self.list.scene_index != None):
+                self.list.remove_from_scene_1()
+
+        for i in range(0, self.num_elements):
+            self.list[i + self.position].coords_1(self.anchor[0],
+                                                  self.anchor[1] + self.element_height * (self.num_elements - i))
 
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
@@ -227,9 +238,26 @@ class settings_menu_back(base_button):
         config.menus["settings_menu"].remove_from_scene()
         config.menus["main_menu"].add_to_scene()
 
+class settings_menu_fullscreen(base_button):
+    def __init__(self):
+        base_button.__init__(self,[200,420], "settings_menu_fullscreen", "settings_menu_fullscreen_c")
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        if(config.fullscreen == 0):
+            config.fullscreen = 1
+        else:
+            config.fullscreen = 0
+
+        cvsms.apply_settings()
+        cvsms.write_settings()
+
 class settings_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
-        self.elements = [settings_menu_back()]
-        self.elements_index = [4]
+        self.elements = [settings_menu_back(),settings_menu_fullscreen()]
+        self.elements_index = [4,5]
