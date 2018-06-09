@@ -371,7 +371,7 @@ def sprite_texture_init():
     image_init("settings_menu_back", "b")
 
 def image_init(name, tag = None):
-    config.sprite_textures[name] = pyglet.rescource.image(name + ".png")
+    config.sprite_textures[name] = pyglet.resource.image(name + ".png")
     if(tag == "b"):
-        config.sprite_textures[name + "_c"] = pyglet.rescource.image(name + "_c.png")
+        config.sprite_textures[name + "_c"] = pyglet.resource.image(name + "_c.png")
 #---CUSTOM---

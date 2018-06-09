@@ -71,8 +71,8 @@ def coordinate_box_check_1(args):
     object = None
     relevance = False
 
-    menu_x = args[0] / config.global_transformation_group.scale_x
-    menu_y = args[1] / config.global_transformation_group.scale_y
+    menu_x = args[0]
+    menu_y = args[1]
 
     trans_x = (args[0] - config.scene_transformation_group.x) / config.scene_transformation_group.scale_x
     trans_y = (args[1] - config.scene_transformation_group.y) / config.scene_transformation_group.scale_y
