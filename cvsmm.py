@@ -65,6 +65,8 @@ class base_button(cvsmgmt.scene_object):
             self.render_objects[0][0].switch_image(self.click_sprite_name)
             self.click_state = True
 
+#-------------------------------------------
+
 class scroll_slider(cvsmgmt.scene_object):
     def __init__(self, scroll_menu, group_num, sprite_name, anchor, height):
         cvsmgmt.scene_object.__init__(self,group_num)
@@ -129,6 +131,16 @@ class scroll_menu_box(cvsmgmt.scene_object):
     def handler_scroll(self, x,y,scroll_x,scroll_y):
         self.scroll_menu.dpos(-1 * scroll_y)
 
+class scroll_menu_element(base_button):
+    def __init__(self,sprite_name, clicked_sprite_name, group_num):
+        base_button.__init__([0,0], sprite_name, clicked_sprite_name, group_num)
+
+    def toggle(self,state):
+        if(state):
+            self.render_objects[0][0].switch_image(self.click_sprite_name)
+        else:
+            self.render_objects[0][0].switch_image(self.prite_name)
+
 class scroll_menu(base_window):
     def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None):
         base_window.__init__(self=self, anchor=anchor, group_num = group_num)
@@ -173,8 +185,28 @@ class scroll_menu(base_window):
                 self.list.remove_from_scene_1()
 
         for i in range(0, self.num_elements):
-            self.list[i + self.position].coords_1(self.anchor[0],
-                                                  self.anchor[1] + self.element_height * (self.num_elements - i))
+            self.list[i + self.position].coords_1([self.anchor[0],
+                                                  self.anchor[1] + self.element_height * (self.num_elements - i)])
+
+    def add_to_scene(self, index):
+        if (self.sprite != None):
+            self.sprite.add()
+
+        for i in range(0, len(self.elements)):
+            self.elements[i].add_to_scene(self.elements_index[i])
+
+    def add_to_scene_1(self):
+        if (self.sprite != None):
+            self.sprite.add()
+
+        for i in range(0, len(self.elements)):
+            self.elements[i].add_to_scene(self.elements_index[i])
+
+        self.populate()
+
+    def toggle(self):
+        for i in range(0, len(self.list)):
+                self.list[i].toggle(False)
 
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
@@ -255,9 +287,33 @@ class settings_menu_fullscreen(base_button):
         cvsms.apply_settings()
         cvsms.write_settings()
 
+class settings_menu_resolution_element(scroll_menu_element):
+    def __init__(self, scroll_menu, resolution_value, text, group_num):
+        scroll_menu_element.__init__("settings_menu_resolution_element","settings_menu_element_c",group_num)
+
+        self.scroll_menu = scroll_menu
+
+        self.render_objects[0].append(cvsmr.label_object(text, [0,0], group_num+1, anchor_offset = [5,5]))
+
+        self.resolution_value = resolution_value
+
+    def handler_leftclick(self, x, y):
+        config.resolution - self.resoluction_value
+
+        cvsms.apply_settings()
+        cvsms.write_settings()
+
+        self.scroll_menu.toggle()
+        self.toggle(True)
+
+
+class settings_menu_resolution(scroll_menu):
+    def __init__(self):
+        pass
+
 class settings_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
-        self.elements = [settings_menu_back(),settings_menu_fullscreen()]
-        self.elements_index = [4,5]
+        self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
+        self.elements_index = [4,5, None]

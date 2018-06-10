@@ -8,13 +8,14 @@ import tripy
 class sprite_object:
     render_type = "sprite"
 
-    def __init__(self, image_name, anchor, group_num):
+    def __init__(self, image_name, anchor, group_num, anchor_offset = [0,0]):
         self.sprite = pyglet.sprite.Sprite(config.sprite_textures[image_name],
                                            x=anchor[0],
                                            y=anchor[1],
                                            group=config.groups[group_num])
 
         self.anchor = anchor
+        self.anchor_offset = anchor_offset
         self.group_num = group_num
 
         self.scale_x = 1
@@ -29,14 +30,14 @@ class sprite_object:
         self.sprite.image = config.sprite_textures[sprite_name]
 
     def coords(self, x, y):
-        self.sprite.position(x,y)
+        self.sprite.position(x + self.anchor_offset[0],y + self.anchor_offset[1])
         self.anchor[0] = x
         self.anchor[1] = y
 
     def dcoords(self, dx, dy):
         self.anchor[0] += dx
         self.anchor[1] += dy
-        self.sprite.position(self.anchor[0],self.anchor)
+        self.sprite.position(self.anchor[0] + self.anchor_offset[0],self.anchor[1] + self.anchor_offset[1])
 
     def scale(self,scale_x,scale_y):
         #scaling is always wrt original size
@@ -249,20 +250,19 @@ class line_object:
 class label_object:
     render_object_type = "label"
 
-    def __init__(self, text, anchor, group_num):
+    def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
                                        x = anchor[0],
                                        y = anchor[1],
                                        group = config.groups[group_num])
         self.anchor = anchor
+        self.anchor_offset = anchor_offset
         self.group_num = group_num
         self.scene_object_index = None
 
-        self.handlers = [False, False, False, False, False, False, False]
-
     def coords(self, x, y):
-        self.Label.x = x
-        self.Label.y = y
+        self.Label.x = x + self.anchor_offset[0]
+        self.Label.y = y + self.anchor_offset[1]
         self.anchor[0] = x
         self.anchor[1] = y
 
