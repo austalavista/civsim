@@ -6,15 +6,16 @@ import tripy
 
 #---BASE RENDER OBJECTS/CLASSES---
 class sprite_object:
-    render_object_type = "sprite"
+    render_type = "sprite"
 
-    def __init__(self, image_name, anchor, group_num):
+    def __init__(self, image_name, anchor, group_num, anchor_offset = [0,0]):
         self.sprite = pyglet.sprite.Sprite(config.sprite_textures[image_name],
                                            x=anchor[0],
                                            y=anchor[1],
                                            group=config.groups[group_num])
 
         self.anchor = anchor
+        self.anchor_offset = anchor_offset
         self.group_num = group_num
 
         self.scale_x = 1
@@ -25,15 +26,18 @@ class sprite_object:
 
         #use sprite.position(), sprite.update()
 
+    def switch_image(self, sprite_name):
+        self.sprite.image = config.sprite_textures[sprite_name]
+
     def coords(self, x, y):
-        self.sprite.position(x,y)
+        self.sprite.update(x = x + self.anchor_offset[0], y = y + self.anchor_offset[1])
         self.anchor[0] = x
         self.anchor[1] = y
 
     def dcoords(self, dx, dy):
         self.anchor[0] += dx
         self.anchor[1] += dy
-        self.sprite.position(self.anchor[0],self.anchor)
+        self.sprite.position(self.anchor[0] + self.anchor_offset[0],self.anchor[1] + self.anchor_offset[1])
 
     def scale(self,scale_x,scale_y):
         #scaling is always wrt original size
@@ -45,11 +49,11 @@ class sprite_object:
         self.sprite.batch = config.batch
 
     def remove(self):
-        self.sprite.delete()
-        self.sprite.batch=None
+        #self.sprite.delete()
+        self.sprite.batch = None
 
 class polygon_object:
-    render_object_type = "polygon"
+    render_type = "polygon"
 
     def __init__(self, group_num, texture_group=None, ):
         self.vertex_list = None
@@ -246,20 +250,19 @@ class line_object:
 class label_object:
     render_object_type = "label"
 
-    def __init__(self, text, anchor, group_num):
+    def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
                                        x = anchor[0],
                                        y = anchor[1],
                                        group = config.groups[group_num])
         self.anchor = anchor
+        self.anchor_offset = anchor_offset
         self.group_num = group_num
         self.scene_object_index = None
 
-        self.handlers = [False, False, False, False, False, False, False]
-
     def coords(self, x, y):
-        self.Label.x = x
-        self.Label.y = y
+        self.label.x = x + self.anchor_offset[0]
+        self.label.y = y + self.anchor_offset[1]
         self.anchor[0] = x
         self.anchor[1] = y
 
@@ -278,7 +281,7 @@ class label_object:
         self.label.batch = config.batch
 
     def remove(self):
-        self.Label.batch = None
+        self.label.batch = None
 
 #---GROUPS---
 class line_group(pyglet.graphics.Group):
@@ -290,7 +293,7 @@ class line_group(pyglet.graphics.Group):
         pyglet.gl.glLineWidth(self.thickness)
 
 class transformation_group(pyglet.graphics.Group):
-    def __init__(self,parent):
+    def __init__(self,parent = None):
         super(transformation_group, self).__init__(parent=parent)
 
         self.x = 0.0
@@ -334,8 +337,10 @@ class transformation_group(pyglet.graphics.Group):
 
 #---INITIALIZATION---
 def ordered_transformation_groups_init():
-    config.scene_ordered_group = pyglet.graphics.OrderedGroup(0)
-    config.menu_ordered_group = pyglet.graphics.OrderedGroup(1)
+    config.global_transformation_group = transformation_group()
+
+    config.scene_ordered_group = pyglet.graphics.OrderedGroup(0, parent = config.global_transformation_group)
+    config.menu_ordered_group = pyglet.graphics.OrderedGroup(1, parent = config.global_transformation_group)
 
     config.scene_transformation_group = transformation_group(parent = config.scene_ordered_group)
 
@@ -356,7 +361,22 @@ def texture_groups_init():
     pass
 
 def sprite_texture_init():
-    # config.sprite_textures["test"] = pyglet.resource.image("test.png")
-    pass
+    image_init("scroll_slider")
 
+    image_init("main_menu")
+    image_init("main_menu_play", "b")
+    image_init("main_menu_settings", "b")
+    image_init("main_menu_exitgame", "b")
+    image_init("mainscreen")
+
+    image_init("settings_menu")
+    image_init("settings_menu_back", "b")
+    image_init("settings_menu_fullscreen", "b")
+    image_init("settings_menu_resolution_element", "b")
+
+
+def image_init(name, tag = None):
+    config.sprite_textures[name] = pyglet.resource.image(name + ".png")
+    if(tag == "b"):
+        config.sprite_textures[name + "_c"] = pyglet.resource.image(name + "_c.png")
 #---CUSTOM---
