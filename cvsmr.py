@@ -30,7 +30,7 @@ class sprite_object:
         self.sprite.image = config.sprite_textures[sprite_name]
 
     def coords(self, x, y):
-        self.sprite.position(x + self.anchor_offset[0],y + self.anchor_offset[1])
+        self.sprite.update(x = x + self.anchor_offset[0], y = y + self.anchor_offset[1])
         self.anchor[0] = x
         self.anchor[1] = y
 
@@ -261,8 +261,8 @@ class label_object:
         self.scene_object_index = None
 
     def coords(self, x, y):
-        self.Label.x = x + self.anchor_offset[0]
-        self.Label.y = y + self.anchor_offset[1]
+        self.label.x = x + self.anchor_offset[0]
+        self.label.y = y + self.anchor_offset[1]
         self.anchor[0] = x
         self.anchor[1] = y
 
@@ -281,7 +281,7 @@ class label_object:
         self.label.batch = config.batch
 
     def remove(self):
-        self.Label.batch = None
+        self.label.batch = None
 
 #---GROUPS---
 class line_group(pyglet.graphics.Group):
@@ -361,6 +361,8 @@ def texture_groups_init():
     pass
 
 def sprite_texture_init():
+    image_init("scroll_slider")
+
     image_init("main_menu")
     image_init("main_menu_play", "b")
     image_init("main_menu_settings", "b")
@@ -370,6 +372,8 @@ def sprite_texture_init():
     image_init("settings_menu")
     image_init("settings_menu_back", "b")
     image_init("settings_menu_fullscreen", "b")
+    image_init("settings_menu_resolution_element", "b")
+
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")

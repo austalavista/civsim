@@ -36,8 +36,9 @@ class scene_object:
             for j in range(0,len(self.render_objects[i])):
                 self.render_objects[i][j].remove()
 
-        config.scene_objects[self.scene_index] = None
-        self.scene_index = None
+        if(self.scene_index != None):
+            config.scene_objects[self.scene_index] = None
+            self.scene_index = None
 
     def coords_1(self, args):
         self.x = args[0]
@@ -103,12 +104,12 @@ class checkbox:
             self.narrow_checkbox = source.vertices #dont double dcoords this!
 
     def update_source(self):
-        if (source.render_type == "sprite"):
+        if (self.source.render_type == "sprite"):
             self.broad_checkbox = [self.source.anchor[0], self.source.anchor[1],
                                    self.source.anchor[0] + self.source.width,
                                    self.source.anchor[1] + self.source.height]
 
-        elif (source.render_type == "polygon"):
+        elif (self.source.render_type == "polygon"):
             self.narrow_check = True
             self.triangles = True
 

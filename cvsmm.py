@@ -72,6 +72,7 @@ class scroll_slider(cvsmgmt.scene_object):
         cvsmgmt.scene_object.__init__(self,group_num)
 
         self.anchor = anchor
+        self.anchor_original = anchor[1]
 
         self.height = height
 
@@ -86,22 +87,23 @@ class scroll_slider(cvsmgmt.scene_object):
 
     def update_self(self):
         #update sprite position and checkbox
-        self.anchor[1] = (self.scroll_menu.max_position - self.scroll_menu.position) /self.scroll_menu.max_position * self.height
-        self.render_objects[0][0].coords(self.anchor[0],self.anchor[1])
-        self.checkbox.update_source()
+        if(self.scroll_menu.max_position > 0):
+            self.anchor[1] = (self.scroll_menu.max_position - self.scroll_menu.position) /self.scroll_menu.max_position * self.height + self.anchor_original
+            self.render_objects[0][0].coords(self.anchor[0],self.anchor[1])
+            self.checkbox.update_source()
 
-    def dpos(self, d):
-        self.scroll_menu.dpos(d)
+    def pos(self, p):
+        self.scroll_menu.pos(p)
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
 
     def handler_leftdrag(self, x,y,dx,dy):
-        self.drag_slider_entry.args[0] = (dy)/self.height * self.scroll_menu.max_position
+        self.drag_slider_entry.args[0] = (self.anchor_original - y + self.height)/self.height * self.scroll_menu.max_position
         self.drag_slider_entry.add()
 
     def drag_slider(self,args):
-        self.dpos(args[0])
+        self.pos(args[0])
 
 class scroll_slider_box(cvsmgmt.scene_object):
     def __init__(self, scroll_menu, group_num, anchor, height, width):
@@ -112,6 +114,8 @@ class scroll_slider_box(cvsmgmt.scene_object):
 
         self.handlers[0] = True
         self.scroll_menu = scroll_menu
+        self.height = height
+        self.anchor = anchor
 
     def handler_leftclick(self, x,y):
         self.scroll_menu.pos((self.height - (y-self.anchor[1]))/self.height * self.scroll_menu.max_position)
@@ -133,28 +137,30 @@ class scroll_menu_box(cvsmgmt.scene_object):
 
 class scroll_menu_element(base_button):
     def __init__(self,sprite_name, clicked_sprite_name, group_num):
-        base_button.__init__([0,0], sprite_name, clicked_sprite_name, group_num)
+        base_button.__init__(self,[0,0], sprite_name, clicked_sprite_name, group_num)
+
+        self.checkbox.set_source(self.render_objects[0][0])
 
     def toggle(self,state):
         if(state):
             self.render_objects[0][0].switch_image(self.click_sprite_name)
         else:
-            self.render_objects[0][0].switch_image(self.prite_name)
+            self.render_objects[0][0].switch_image(self.sprite_name)
 
 class scroll_menu(base_window):
     def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None):
-        base_window.__init__(self=self, anchor=anchor, group_num = group_num)
+        base_window.__init__(self=self, anchor=anchor, group_num = group_num, sprite_name = None)
 
-        self.list = self.list_of_elements
+        self.list = list_of_elements
 
         self.num_elements = num_elements
         self.element_height = element_height
         self.pix_height = element_height * num_elements
 
-        self.posiiton = 0
+        self.position = 0
         self.max_position = 0
 
-        self.scroll_slider = scroll_slider(scroll_menu = self, group_num = group_num, slider_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height)
+        self.scroll_slider = scroll_slider(scroll_menu = self, group_num = group_num, sprite_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height)
         self.elements = [self.scroll_slider,
                          scroll_slider_box(self, group_num-1, [anchor[0] + slider_x_offset, anchor[1]], self.pix_height, self.scroll_slider.render_objects[0][0].width),
                          scroll_menu_box(self, group_num, anchor, self.pix_height, width)]
@@ -164,36 +170,34 @@ class scroll_menu(base_window):
     def populate(self, list_of_elements = None):
         if(list_of_elements != None):
             self.list = list_of_elements
-        self.max_position = len(self.list) - 1 - self.num_elements
+        self.max_position = len(self.list) - self.num_elements
         self.position = 0
 
     def pos(self, p):
-        self.position = max(0,min(p,self.max_position))
-        self.update_self()
+        if(self.max_position > 0):
+            self.position = max(0,min(p,self.max_position))
+            self.update_self()
 
     def dpos(self,d):
-        self.position += d
-        self.position = max(0, min(self.position, self.max_position))
+        if(self.max_position > 0):
+            self.position += d
+            self.position = max(0, min(self.position, self.max_position))
 
-        self.update_self()
+            self.update_self()
 
     def update_self(self):
         self.elements[0].update_self()
 
-        for i in range(0, self.max_position):
-            if(self.list.scene_index != None):
-                self.list.remove_from_scene_1()
+        for i in range(0, len(self.list)):
+            if(self.list[i].scene_index != None):
+                self.list[i].remove_from_scene_1()
 
         for i in range(0, self.num_elements):
-            self.list[i + self.position].coords_1([self.anchor[0],
-                                                  self.anchor[1] + self.element_height * (self.num_elements - i)])
+            self.list[i + int(self.position)].coords_1([self.anchor[0],self.anchor[1] + self.element_height * (self.num_elements - i)])
+            self.list[i + int(self.position)].add_to_scene(i+6)
 
-    def add_to_scene(self, index):
-        if (self.sprite != None):
-            self.sprite.add()
-
-        for i in range(0, len(self.elements)):
-            self.elements[i].add_to_scene(self.elements_index[i])
+    def add_to_scene(self, fake_index):
+        self.add_to_scene_entry.add()
 
     def add_to_scene_1(self):
         if (self.sprite != None):
@@ -203,6 +207,17 @@ class scroll_menu(base_window):
             self.elements[i].add_to_scene(self.elements_index[i])
 
         self.populate()
+        self.update_self()
+
+    def remove_from_scene_1(self):
+        if (self.sprite != None):
+            self.sprite.remove()
+
+        for i in range(0, len(self.elements)):
+            self.elements[i].remove_from_scene()
+
+        for i in range(0,len(self.list)):
+            self.list[i].remove_from_scene()
 
     def toggle(self):
         for i in range(0, len(self.list)):
@@ -289,7 +304,7 @@ class settings_menu_fullscreen(base_button):
 
 class settings_menu_resolution_element(scroll_menu_element):
     def __init__(self, scroll_menu, resolution_value, text, group_num):
-        scroll_menu_element.__init__("settings_menu_resolution_element","settings_menu_element_c",group_num)
+        scroll_menu_element.__init__(self,"settings_menu_resolution_element","settings_menu_resolution_element_c",group_num)
 
         self.scroll_menu = scroll_menu
 
@@ -298,7 +313,7 @@ class settings_menu_resolution_element(scroll_menu_element):
         self.resolution_value = resolution_value
 
     def handler_leftclick(self, x, y):
-        config.resolution - self.resoluction_value
+        config.resolution = self.resolution_value
 
         cvsms.apply_settings()
         cvsms.write_settings()
@@ -306,14 +321,20 @@ class settings_menu_resolution_element(scroll_menu_element):
         self.scroll_menu.toggle()
         self.toggle(True)
 
-
 class settings_menu_resolution(scroll_menu):
     def __init__(self):
-        pass
+        scroll_menu.__init__(self, 5,[20,20],4,30,200,205,"scroll_slider", config.num_scene_groups + 2)
+
+        self.list = [settings_menu_resolution_element(self, 0, "1920x1080",self.group_num),
+                     settings_menu_resolution_element(self, 1, "1400x900", self.group_num),
+                     settings_menu_resolution_element(self, 2, "1200x900", self.group_num),
+                     settings_menu_resolution_element(self, 3, "1200x700", self.group_num),
+                     settings_menu_resolution_element(self, 4, "900x400", self.group_num),
+                     settings_menu_resolution_element(self, 5, "600x250", self.group_num)]
 
 class settings_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
         self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
-        self.elements_index = [4,5, None]
+        self.elements_index = [1,2, None]
