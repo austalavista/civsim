@@ -19,9 +19,20 @@ def apply_settings():
     if(config.fullscreen == 0):
         if(config.resolution == 0):
             config.window.set_fullscreen(fullscreen=False, width=1920, height=1080)
+        elif(config.resolution == 1):
+            config.window.set_fullscreen(fullscreen=False, width=1400, height=900)
+        elif (config.resolution == 2):
+            config.window.set_fullscreen(fullscreen=False, width=1200, height=900)
+        elif (config.resolution == 3):
+            config.window.set_fullscreen(fullscreen=False, width=1200, height=700)
+        elif (config.resolution == 4):
+            config.window.set_fullscreen(fullscreen=False, width=900, height=400)
+        elif (config.resolution == 5):
+            config.window.set_fullscreen(fullscreen=False, width=600, height=250)
 
         temp = config.window.get_size()
         config.global_transformation_group.scale(temp[0] / 1920, temp[1] / 1080)
+
 
 def write_settings():
     settings = open('settings', 'w+')

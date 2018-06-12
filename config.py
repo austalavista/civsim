@@ -35,7 +35,7 @@ global scene_objects_size
 global update_queue
 global update_queue_size
 
-scene_objects_size = 2000
+scene_objects_size = 1000
 scene_objects = [None] * scene_objects_size #objects that are on screen are added to this list for box checks and event handling
 
 update_queue_size = 100

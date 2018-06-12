@@ -16,13 +16,20 @@ class scene_object:
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
 
-    def add_to_scene(self,index):
+    def add_to_scene(self,index = None):
         self.add_to_scene_entry.args[0] = index
         self.add_to_scene_entry.add()
 
     def add_to_scene_1(self, args):
-        self.scene_index = args[0]
-        config.scene_objects[args[0]] = self
+        if(args[0] != None):
+            self.scene_index = args[0]
+            config.scene_objects[args[0]] = self
+        else:
+            for i in range(0, config.scene_objects_size):
+                if(config.scene_objects[i] == None):
+                    self.scene_index = i
+                    config.scene_objects[i] = self
+                    break
 
         for i in range(0,len(self.render_objects)):
             for j in range(0,len(self.render_objects[i])):
