@@ -374,7 +374,6 @@ def sprite_texture_init():
     image_init("settings_menu_fullscreen", "b")
     image_init("settings_menu_resolution_element", "b")
 
-
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")
     if(tag == "b"):

@@ -338,13 +338,9 @@ class settings_menu_resolution(scroll_menu):
                      settings_menu_resolution_element(self, 4, "900x400", self.group_num),
                      settings_menu_resolution_element(self, 5, "600x250", self.group_num)]
 
-<<<<<<< HEAD
-#---BASE MENU OBJECTS/CLASSES---
-=======
 class settings_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
         self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
         self.elements_index = [None, None, None]
->>>>>>> 6c40290059ce2a67a0bebe28b8e0173e4e920820
