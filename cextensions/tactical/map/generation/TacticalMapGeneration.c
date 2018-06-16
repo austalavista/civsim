@@ -1,5 +1,35 @@
 #include <Python.h>
 
+void recursive_river(int ogv_x, int ogv_y, int v_x, int v_y, int x, int y, float *rivermap, float *heightmap, int width, int height) {
+	int highest_prob = -100;
+	int highest_index[] = { 0,0 };
+	int potx, poty;
+	float tempprob;
+	
+	rivermap[x*height + y] = 1;
+
+	if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+		return;
+	}
+
+	for (potx = -1; potx < 2; potx++) {
+		for (poty = -1; poty < 2; poty++) {
+
+			if (potx != 0 || poty != 0) {
+				if (x + potx >= 0 && x + potx <= width && y + poty >= 0 && y + poty <= height) {
+					tempprob = potx * v_x + poty * v_y - abs(heightmap[x*height + y] - heightmap[(x + potx)*height + y + poty]) + (rand() % 3 - 1) / 2.0 - heightmap[(x + potx)*height + y + poty] / 6.0 + (potx * ogv_x + poty * ogv_y) / (4.0 + (rand() % 2 + 1) / 2);
+					
+					if (tempprob > highest_prob) {
+						highestprob = tempprob;
+						highest_index[0] = potx;
+						highest_index[1] = poty;
+					}
+				}
+			}
+		}
+	}
+	recursive_river(ogv_x, ogv_y, highest_index[0], highest_index[1], x + highest_index[0], y + highest_index[1], rivermap, heightmap, width, height);
+}
 
 int generate(int height, int width, int maxheight, int mountains, int hills, int forests, int rivers, int towns, int roads) {
 	int h, i, j, k, g; //iteration indices
@@ -238,6 +268,45 @@ int generate(int height, int width, int maxheight, int mountains, int hills, int
 						heightmap[i*height + j] = (heightmap[(i)*height + j + h] + heightmap[i*height + j]) / 2;
 					}
 				}
+			}
+		}
+	}
+
+	//River map
+	if (1) {
+		//set zero
+		for (i = 0; i < width; i++) {
+			for (j = 0; j < height; j++) {
+				rivermap[i*height + j] = 0;
+			}
+		}
+
+		//generate base
+		if (rivers > 0) {
+
+			for (h = 0; h < river; h++) {
+				tempa = 1000;
+				tempb = -1; //lowestcoords x
+				tempc = -1; //lowestcoords y
+
+				for (g = 0; g < 15; g++) {
+					tempx = rand() % (int)(width*0.5) + (int)(width * 0.7);
+					tempy = rand() % (int)(height*0.5) + (int)(height * 0.7);
+
+					if (heightmap[tempx*height + tempy] < tempa) {
+						tempa = heightmap[tempx*height + tempy];
+						tempb = tempx;
+						tempc = tempy;
+					}
+					
+				}
+				rivermap[tempb*height + tempc] = 1;
+				tempd = (-1 + (rand() % 2 * 2); //vector x
+				tempe = rand() % 2; //vector y
+
+				recursive_river(tempd, tempe, tempd, tempe, tempb + tempd, tempc + tempe, rivermap, heightmap, width, height);
+				recursive_river(-1 * tempd, -1 * tempe, -1 * tempd, -1 * tempe, tempb - tempd, tempc - tempe, rivermap, heightmap, width, height);
+
 			}
 		}
 	}
