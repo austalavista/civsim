@@ -92,7 +92,7 @@ class tactical_map(cvsmgmt.scene_object):
             for i in range(0,size_x):
                 self.height_map[i] = [0.0]*self.size_y
 
-            #self.height_map = np.zeros((size_x,size_y))
+            self.height_map = np.zeros((size_x,size_y))
 
             #gradual
             for f in range(0,3):
@@ -113,6 +113,7 @@ class tactical_map(cvsmgmt.scene_object):
 
                 self.temp = random.randrange(i,size_x)
                 self.temptemp = random.randrange(j,size_y)
+                
                 for y in range(j,self.temptemp):
                     for x in range(0,int((self.temptemp-j)/2)):
                         self.height_map[random.randrange(i,self.temptemp)][y] = self.height
