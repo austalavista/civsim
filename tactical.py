@@ -92,7 +92,7 @@ class tactical_map(cvsmgmt.scene_object):
             for i in range(0,size_x):
                 self.height_map[i] = [0.0]*self.size_y
 
-            #self.height_map = np.zeros((size_x,size_y))
+            self.height_map = np.zeros((size_x,size_y))
 
             #gradual
             for f in range(0,3):
@@ -113,6 +113,7 @@ class tactical_map(cvsmgmt.scene_object):
 
                 self.temp = random.randrange(i,size_x)
                 self.temptemp = random.randrange(j,size_y)
+                
                 for y in range(j,self.temptemp):
                     for x in range(0,int((self.temptemp-j)/2)):
                         self.height_map[random.randrange(i,self.temptemp)][y] = self.height
@@ -403,26 +404,6 @@ class tactical_map(cvsmgmt.scene_object):
                                             self.count += 1
 
                                 self.river_map[self.i][self.j] = (self.temp / self.count)
-
-                # remove bloat
-                for f in range(0, 0):
-
-                    for i in range(0, size_x):
-                        for j in range(0, size_y):
-
-                            if (self.river_map[i][j] < self.river_threshold):
-                                self.flag = True
-
-                                for h in (-1, 0, 1):
-                                    for k in (-1, 0, 1):
-
-                                        if (i + h > 0 and i + h < size_x and j + k > 0 and j + k < size_y):
-
-                                            if (self.river_map[i + h][j + k] > self.river_threshold):
-                                                self.flag = False
-
-                                if (self.flag):
-                                    self.river_map[i][j] = 0
 
             # height map smoothing
             if (river > 0):
