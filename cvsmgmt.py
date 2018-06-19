@@ -1,6 +1,7 @@
 #infrastructure for supporting game engine stuff
 
 import config
+import time
 
 class scene_object:
     def __init__(self, group_num = 0):
@@ -10,56 +11,39 @@ class scene_object:
         self.scene_index = None
         self.handlers = [False,False,False,False,False,False,False]
 
-        self.add_to_scene_entry = update_entry(self.add_to_scene_1, ["index"])
-        self.remove_from_scene_entry = update_entry(self.remove_from_scene_1)
-
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
 
-    def add_to_scene(self,index = None):
-        self.add_to_scene_entry.args[0] = index
-        self.add_to_scene_entry.add()
-
-    def add_to_scene_1(self, args):
-        if(args[0] != None):
-            self.scene_index = args[0]
-            config.scene_objects[args[0]] = self
-        else:
-            for i in range(0, config.scene_objects_size):
-                if(config.scene_objects[i] == None):
-                    self.scene_index = i
-                    config.scene_objects[i] = self
-                    break
+    def add_to_scene(self):
+        for i in range(0, config.scene_objects_size):
+            if(config.scene_objects[i] == None):
+                self.scene_index = i
+                config.scene_objects[i] = self
+                break
 
         for i in range(0,len(self.render_objects)):
             for j in range(0,len(self.render_objects[i])):
                 self.render_objects[i][j].add()
 
     def remove_from_scene(self):
-        self.remove_from_scene_entry.add()
-
-    def remove_from_scene_1(self):
-        for i in range(0,len(self.render_objects)):
-            for j in range(0,len(self.render_objects[i])):
-                self.render_objects[i][j].remove()
 
         if(self.scene_index != None):
+            for i in range(0,len(self.render_objects)):
+                for j in range(0,len(self.render_objects[i])):
+                    self.render_objects[i][j].remove()
+
             config.scene_objects[self.scene_index] = None
             self.scene_index = None
 
-    def coords_1(self, args):
-        self.x = args[0]
-        self.y = args[1]
+    def coords(self,x,y):
 
         for i in range(0, len(self.render_objects)):
             for j in range(0, len(self.render_objects[i])):
-                self.render_objects[i][j].coords(self.x,self.y)
+                self.render_objects[i][j].coords(x,y)
 
         self.checkbox.update_source()
 
-    def scene_translate_1(self, args):
-        dx = args[0]
-        dy =  args[1]
+    def scene_translate(self, dx,dy):
         config.scene_transformation_group.fcoords(dx, dy)
 
 class checkbox:
@@ -146,7 +130,7 @@ class checkbox:
 class update_entry:
     #animation and event entries are executed only on update()
 
-    def __init__(self, function, args = None):
+    def __init__(self, function = None, args = None):
         self.function = function
         self.args = args
 
@@ -156,13 +140,16 @@ class update_entry:
         self.timer = 0
 
     def run(self):
-        #print(self.timer)
+
         if(self.timer == 0):
+
             if(self.args != None):
                 self.function(self.args)
             else:
                 self.function()
+
             self.remove()
+
         else:
             self.timer -= 1
 
@@ -182,4 +169,31 @@ class update_entry:
                     config.update_queue[i] = self
                     break
 
+class release_handler_entry(update_entry):
+    def __init__(self, args = None):
+        update_entry.__init__(self, args = args)
+
+    def run(self):
+        if (self.timer == 0):
+
+            self.function(self.args[0], self.args[1])
+
+            self.remove()
+
+        else:
+            self.timer -= 1
+
+class drag_handler_entry(update_entry):
+    def __init__(self, args = None):
+        update_entry.__init__(self, args=args)
+
+    def run(self):
+        if (self.timer == 0):
+
+            self.function(self.args[0], self.args[1], self.args[2], self.args[3])
+
+            self.remove()
+
+        else:
+            self.timer -= 1
 #-----------------------------------------------------------------------------------------------------------------------
