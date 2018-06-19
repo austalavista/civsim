@@ -34,27 +34,44 @@ def on_mouse_scroll(x,y,scroll_x,scroll_y):
 
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
+    global mouse_release_entry
 
     if(config.click_selected != None):
         if(config.click_selected.handlers[4]):
-            config.click_selected.handler_release(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y)
+            mouse_release_entry.args[0] = x / config.global_transformation_group.scale_x
+            mouse_release_entry.args[1] = y / config.global_transformation_group.scale_y
+
+            mouse_release_entry.function = config.click_selected.handler_release
+
+            mouse_release_entry.add()
         config.click_selected = None
 
 @config.window.event
 def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
+    global mouse_drag_entry
 
     if(config.click_selected != None):
         if(buttons & pyglet.window.mouse.LEFT):
             if(config.click_selected.handlers[5]):
-                config.click_selected.handler_leftdrag(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,
-                                                       dx/config.global_transformation_group.scale_x ,
-                                                       dy/config.global_transformation_group.scale_y)
+                mouse_drag_entry.args[0] = x/config.global_transformation_group.scale_x
+                mouse_drag_entry.args[1] = y/config.global_transformation_group.scale_y
+                mouse_drag_entry.args[2] = dx/config.global_transformation_group.scale_x
+                mouse_drag_entry.args[3] = dy/config.global_transformation_group.scale_y
+
+                mouse_drag_entry.function = config.click_selected.handler_leftdrag
+
+                mouse_drag_entry.add()
 
         elif(buttons & pyglet.window.mouse.RIGHT):
             if (config.click_selected.handlers[6]):
-                config.click_selected.handler_rightdrag(x/config.global_transformation_group.scale_x ,y/config.global_transformation_group.scale_y,
-                                                        dx / config.global_transformation_group.scale_x,
-                                                        dy / config.global_transformation_group.scale_y)
+                mouse_drag_entry.args[0] = x / config.global_transformation_group.scale_x
+                mouse_drag_entry.args[1] = y / config.global_transformation_group.scale_y
+                mouse_drag_entry.args[2] = dx / config.global_transformation_group.scale_x
+                mouse_drag_entry.args[3] = dy / config.global_transformation_group.scale_y
+
+                mouse_drag_entry.function = config.click_selected.handler_rightdrag
+
+                mouse_drag_entry.add()
 
 @config.window.event
 def on_key_press(symbol,modifiers):
@@ -164,6 +181,8 @@ def coordinate_box_check_1(args):
         config.selected = None
 
 coordinate_box_check_entry = cvsmgmt.update_entry(coordinate_box_check_1,["x", "y", "event_type", "scroll_x", "scroll_y"] )
+mouse_drag_entry = cvsmgmt.drag_handler_entry(args = ["x","y","dx","dy"])
+mouse_release_entry = cvsmgmt.release_handler_entry(args = ["x", "y"])
 
 def coordinate_box_check(x, y, event_type, scroll_x = 0, scroll_y = 0):
     global coordinate_box_check_entry
@@ -177,6 +196,7 @@ def coordinate_box_check(x, y, event_type, scroll_x = 0, scroll_y = 0):
     coordinate_box_check_entry.add()
 
 def update(dt):
+
     for i in range(0, config.update_queue_size):
         if (config.update_queue[i] != None):
 

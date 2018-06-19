@@ -17,25 +17,15 @@ class base_window():
             self.sprite = None
 
         self.elements = None
-        self.elements_index = None
-
-        self.add_to_scene_entry = cvsmgmt.update_entry(self.add_to_scene_1)
-        self.remove_from_scene_entry = cvsmgmt.update_entry(self.remove_from_scene_1)
 
     def add_to_scene(self):
-        self.add_to_scene_entry.add()
-
-    def add_to_scene_1(self):
         if(self.sprite != None):
             self.sprite.add()
 
         for i in range(0,len(self.elements)):
-            self.elements[i].add_to_scene(self.elements_index[i])
+            self.elements[i].add_to_scene()
 
     def remove_from_scene(self):
-        self.remove_from_scene_entry.add()
-
-    def remove_from_scene_1(self):
         if(self.sprite != None):
             self.sprite.remove()
 
@@ -84,8 +74,6 @@ class scroll_slider(cvsmgmt.scene_object):
         self.handlers[0] = True
         self.handlers[5] = True
 
-        self.drag_slider_entry = cvsmgmt.update_entry(self.drag_slider, ["dy"])
-
     def update_self(self):
         #update sprite position and checkbox
         if(self.scroll_menu.max_position > 0):
@@ -97,11 +85,7 @@ class scroll_slider(cvsmgmt.scene_object):
         config.click_selected = self
 
     def handler_leftdrag(self, x,y,dx,dy):
-        self.drag_slider_entry.args[0] = (self.anchor_original - y + self.height)/self.height * self.scroll_menu.max_position
-        self.drag_slider_entry.add()
-
-    def drag_slider(self,args):
-        self.scroll_menu.pos(args[0])
+        self.scroll_menu.pos((self.anchor_original - y + self.height)/self.height * self.scroll_menu.max_position)
 
 class scroll_slider_box(cvsmgmt.scene_object):
     def __init__(self, scroll_menu, group_num, anchor, height, width):
@@ -191,34 +175,25 @@ class scroll_menu(base_window):
 
         for i in range(0, len(self.list)):
             if(self.list[i].scene_index != None):
-                self.list[i].remove_from_scene_1()
+                self.list[i].remove_from_scene()
 
         if(self.scene_index != None):
             for i in range(0, self.num_elements):
-                self.list[i + int(self.position)].coords_1([self.anchor[0],self.anchor[1] + self.element_height * (self.num_elements - i-1)])
-                self.list[i + int(self.position)].add_to_scene(self.scene_index+3+i)
+                self.list[i + int(self.position)].coords(self.anchor[0],self.anchor[1] + self.element_height * (self.num_elements - i-1))
+                self.list[i + int(self.position)].add_to_scene()
         else:
             for i in range(0, self.num_elements):
-                self.list[i + int(self.position)].coords_1([self.anchor[0],self.anchor[1] + self.element_height * (self.num_elements - i-1)])
+                self.list[i + int(self.position)].coords(self.anchor[0],self.anchor[1] + self.element_height * (self.num_elements - i-1))
                 self.list[i + int(self.position)].add_to_scene()
 
-    def add_to_scene(self, fake_index):
-        self.add_to_scene_entry.add()
-
-    def add_to_scene_1(self):
-        if (self.sprite != None):
-            self.sprite.add()
-
+    def add_to_scene(self):
         for i in range(0, 3):
-            self.elements[i].add_to_scene(self.elements_index[i])
+            self.elements[i].add_to_scene()
 
         self.populate()
         self.update_self()
 
-    def remove_from_scene_1(self):
-        if (self.sprite != None):
-            self.sprite.remove()
-
+    def remove_from_scene(self):
         for i in range(0, len(self.elements)):
             self.elements[i].remove_from_scene()
 
@@ -343,4 +318,3 @@ class settings_menu(base_window):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
         self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
-        self.elements_index = [None, None, None]

@@ -3,6 +3,7 @@
 import config
 import pyglet
 import cvsmr, cvsmm, cvsmgmt
+import time
 
 def apply_settings():
     #fullscreen
@@ -32,7 +33,6 @@ def apply_settings():
 
         temp = config.window.get_size()
         config.global_transformation_group.scale(temp[0] / 1920, temp[1] / 1080)
-
 
 def write_settings():
     settings = open('settings', 'w+')
