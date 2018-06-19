@@ -213,6 +213,9 @@ class main_menu_play(base_button):
         config.click_selected = self
         self.toggle_sprite()
 
+        config.gs_entries[0].function = cvsms.open_play_menu
+        config.gs_entries[0].add(2)
+
     def handler_release(self,x,y):
         self.toggle_sprite()
 

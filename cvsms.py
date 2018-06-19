@@ -4,6 +4,7 @@ import config
 import pyglet
 import cvsmr, cvsmm, cvsmgmt
 import time
+import core
 
 def apply_settings():
     #fullscreen
@@ -92,7 +93,9 @@ def open_main_menu():
 
     config.menus["settings_menu"] = cvsmm.settings_menu()
 
-    global mainscreen
-    mainscreen = cvsmr.sprite_object("mainscreen", [0,0],0)
-    mainscreen.add()
+def open_play_menu():
+    config.menus["main_menu"].remove_from_scene()
+
+    core.init_provinces()
+    config.scene_transformation_group.scale(0.2,0.2)
 

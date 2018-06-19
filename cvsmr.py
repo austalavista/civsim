@@ -355,6 +355,7 @@ def line_groups_init():
     config.line_groups["2/3"] = line_group(2, 3)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
+    config.line_groups["1/1"] = line_group(1, 1)
 
 def texture_groups_init():
     #config.texture_groups[name] = pyglet.graphics.TextureGroup(pyglet.image.load(file).get_texture(),parent=config.groups[group_num])
@@ -367,7 +368,6 @@ def sprite_texture_init():
     image_init("main_menu_play", "b")
     image_init("main_menu_settings", "b")
     image_init("main_menu_exitgame", "b")
-    image_init("mainscreen")
 
     image_init("settings_menu")
     image_init("settings_menu_back", "b")

@@ -91,8 +91,8 @@ def coordinate_box_check_1(args):
     menu_x = args[0]
     menu_y = args[1]
 
-    trans_x = (args[0] - config.scene_transformation_group.x) / config.scene_transformation_group.scale_x
-    trans_y = (args[1] - config.scene_transformation_group.y) / config.scene_transformation_group.scale_y
+    trans_x = (args[0] ) / config.scene_transformation_group.scale_x - config.scene_transformation_group.x
+    trans_y = (args[1] ) / config.scene_transformation_group.scale_y - config.scene_transformation_group.y
 
     broadcheck_hits = [False] * 10
     index = 0
@@ -134,27 +134,32 @@ def coordinate_box_check_1(args):
                     x = trans_x
                     y = trans_y
 
-                for j in range(0,int(len(broadcheck_hits[i].checkbox.narrow_checkbox)/3)):
+                for j in range(0,int(len(broadcheck_hits[i].checkbox.narrow_checkbox)/6)):
 
-                    temp = j*3
+                    temp = j*6
 
-                    ba = (broadcheck_hits[i].checkbox.narrow_checkbox[temp + 2] - broadcheck_hits[i].checkbox.narrow_checkbox[temp],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1])
+                    v0 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - broadcheck_hits[i].checkbox.narrow_checkbox[temp+2],
+                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3]])
 
-                    ca = (broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4] - broadcheck_hits[i].checkbox.narrow_checkbox[temp],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1])
+                    v1 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4],
+                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5]])
 
-                    d = ba[0] * ca[0] - ba[1] * ca[0]
+                    v2 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - x,broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - y])
 
-                    temp = (y * ba[0] - x * ba[1]) / d
-                    if(temp > 0 and temp < 1):
-                        temp = (x * ca[1] - y * ca[0]) / d
-                        if(temp > 0 and temp < 1):
-                            temp = (x * (ba[1] - ca[1]) + y * (ca[0] - ba[0]) + ba[0] * ca[1] - ba[1] * ca[0]) / d
-                            if(temp > 0 and temp < 1):
-                                object = broadcheck_hits[i]
-                                peakgroup = object.group_num
-                                break
+                    dot00 = numpy.dot(v0, v0)
+                    dot01 = numpy.dot(v0, v1)
+                    dot02 = numpy.dot(v0, v2)
+                    dot11 = numpy.dot(v1, v1)
+                    dot12 = numpy.dot(v1, v2)
+
+                    invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
+                    u = (dot11 * dot02 - dot01 * dot12) * invDenom
+                    v = (dot00 * dot12 - dot01 * dot02) * invDenom
+
+                    if( (u >= 0) and (v >= 0) and (u + v < 1)):
+                        object = broadcheck_hits[i]
+                        peakgroup = object.group_num
+                        break
 
     #call handlers
     if(object != None):

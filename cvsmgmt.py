@@ -81,16 +81,16 @@ class checkbox:
                 if( i % 2 == 0):
                     if(source.vertices[i] < self.min_x):
                         self.min_x = source.vertices[i]
-                    elif(source.vertices > self.max_x):
+                    elif(source.vertices[i] > self.max_x):
                         self.max_x = source.vertices[i]
                 else:
                     if (source.vertices[i] < self.min_y):
                         self.min_y = source.vertices[i]
-                    elif (source.vertices > self.max_y):
+                    elif (source.vertices[i] > self.max_y):
                         self.max_y = source.vertices[i]
 
             self.broad_checkbox = [self.min_x, self.min_y,
-                                   self.max_x, self.min_y]
+                                   self.max_x, self.max_y]
 
             self.narrow_checkbox = source.vertices #dont double dcoords this!
 
