@@ -4,16 +4,16 @@ import config
 
 class scenario:
     def __init__(self):
-        self.map = [None]*1500
+        self.map = [None]*916
 
     def set(self):
+        self.index = 0
         for i in range(0,len(config.provinces)):
-            if(config.provinces[i] != None and self.map[i] != None):
-                config.provinces[i].set_nation(self.map[i])
-            else:
-                print(config.provinces[i], self.map[i], i)
-                break
-
+            if(config.provinces[i] != None):
+                while(self.map[self.index][0] < config.provinces[i].id):
+                    self.index += 1
+                if(self.map[self.index][0] == config.provinces[i].id):
+                    config.provinces[i].set_nation(self.map[self.index][1])
 
 
 class nation:
@@ -36,6 +36,7 @@ class province(cvsmgmt.scene_object):
         self.border = None
         self.name = None
         self.nation = None
+        self.id = None
 
     def set_nation(self, nation):
         self.nation = config.nations[nation]
@@ -84,6 +85,7 @@ def init_provinces():
         config.provinces[i] = province()
         config.provinces[i].render_objects[0][0] = temp_poly
         config.provinces[i].checkbox.set_source(temp_poly)
+        config.provinces[i].id = int(map[i*2].split("]")[0][1:])
 
     #borders
     config.province_borders = cvsmgmt.scene_object()
@@ -133,6 +135,7 @@ def init_scenarios():
             #scenario map
             file = open("scenarios/" + name + "/map.txt","r").read().split("\n")
             for i in range(0,len(file)):
-                config.scenarios[name].map[i] = file[i].split("\t")[1]
+                temp = file[i].split("\t")
+                config.scenarios[name].map[i] = (int(temp[0]),temp[1])
 
 
