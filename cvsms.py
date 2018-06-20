@@ -99,4 +99,8 @@ def open_play_menu():
     core.init_provinces()
     config.scene_transformation_group.scale(0.1,0.1)
     config.scene_transformation_group.fcoords(840,0)
+    core.init_nations()
+    core.init_scenarios()
+
+    config.scenarios["examplescenario"].set()
 

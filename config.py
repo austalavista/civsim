@@ -1,8 +1,20 @@
 import pyglet
 
+#---CORE----
 global provinces
+global nation_colors
+global scenarios
 
 provinces = [None] * 1500
+nations = {}
+scenarios = {}
+
+#---MISC GRAPHICS---
+global province_borders
+global nation_borders
+
+province_borders = None
+nation_borders = None
 
 #---SETTINGS---
 global fullscreen

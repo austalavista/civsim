@@ -9,6 +9,7 @@ import time
 #Create window
 config.aa = pyglet.gl.Config(sample_buffers=1, samples=3)  # ANTIALIASING
 config.window = pyglet.window.Window(config=config.aa, resizable=False)
+fps_display = pyglet.clock.ClockDisplay()
 
 #EVENTS----------------------------------------------------------------------------------------------------------------
 @config.window.event
@@ -82,6 +83,7 @@ config.window.on_key_press = on_key_press
 def on_draw():
     config.window.clear()
     config.batch.draw()
+    fps_display.draw()
 
 #OTHER-----------------------------------------------------------------------------------------------------------------
 def coordinate_box_check_1(args):
@@ -117,7 +119,7 @@ def coordinate_box_check_1(args):
 
                 broadcheck_hits[index] = config.scene_objects[i]
                 index += 1
-    print(broadcheck_hits)
+
     #narrow checks
     for i in range(0, index):
         if(broadcheck_hits[i].group_num > peakgroup):
@@ -210,7 +212,7 @@ def update(dt):
 #RUN-------------------------------------------------------------------------------------------------------------------
 cvsms.initialize()
 
-pyglet.clock.schedule_interval(update, 1/60.0)
+pyglet.clock.schedule_interval(update, 1/80.0)
 pyglet.app.run()
 
 
