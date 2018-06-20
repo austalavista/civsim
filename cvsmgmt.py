@@ -43,8 +43,27 @@ class scene_object:
 
         self.checkbox.update_source()
 
-    def scene_translate(self, dx,dy):
-        config.scene_transformation_group.fcoords(dx, dy)
+    def nodrag_click_scene(self,x,y):
+        self.nodrag_x = x
+        self.nodrag_y = y
+
+        self.nodrag = True
+
+    def nodrag_leftdrag_scene(self,x,y):
+        config.scene_transformation_group.fcoords((x-self.nodrag_x), (y-self.nodrag_y))
+
+        self.nodrag_x = x
+        self.nodrag_y = y
+
+        self.nodrag = False
+
+    def zoom(self,x,y,scroll_y):
+        if (scroll_y > 0):
+            config.scene_transformation_group.fscale(2, 2)
+            config.scene_transformation_group.fcoords(-1*x, -1*y)
+        else:
+            config.scene_transformation_group.fscale(0.5, 0.5)
+            config.scene_transformation_group.fcoords( x/2, y/2)
 
 class checkbox:
     def __init__(self, group = 0):

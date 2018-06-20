@@ -6,15 +6,29 @@ class province(cvsmgmt.scene_object):
         cvsmgmt.scene_object.__init__(self, group_num = 1)
         self.render_objects=[[None],[None]]
         self.handlers[0] = True
+        self.handlers[3] = True
+        self.handlers[4] = True
+        self.handlers[5] = True
 
         self.name = None
         self.nation = None
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
-        self.render_objects[0][0].solid_color_coords(255,0,0)
-        self.render_objects[0][0].remove()
-        self.render_objects[0][0].add()
+
+        self.nodrag_click_scene(x,y)
+
+    def handler_leftdrag(self,x,y,dx,dy):
+        self.nodrag_leftdrag_scene(x,y)
+
+    def handler_release(self,x,y):
+        if(self.nodrag):
+            self.render_objects[0][0].solid_color_coords(255, 0, 0)
+            self.render_objects[0][0].remove()
+            self.render_objects[0][0].add()
+
+    def handler_scroll(self,x,y,scroll_x,scroll_y):
+        self.zoom(x,y,scroll_y)
 
 def init_provinces():
     file = open("resources/map/mapt.txt", "r").read()

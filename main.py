@@ -165,23 +165,23 @@ def coordinate_box_check_1(args):
     if(object != None):
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0]):
-                relevance = config.selected.handler_leftclick(x, y, object = object)
+                relevance = config.selected.handler_leftclick(args[0], args[1], object = object)
             elif (args[2] == 1 and object.handlers[1]):
-                relevance = config.selected.handler_rightclick(x, y, object = object)
+                relevance = config.selected.handler_rightclick(args[0], args[1], object = object)
             elif (args[2] == 2 and object.handlers[2]):
-                relevance = config.selected.handler_middleclick(x, y, object = object)
+                relevance = config.selected.handler_middleclick(args[0], args[1], object = object)
             elif (args[2] == 3 and object.handlers[3]):
-                relevance = config.selected.handler_scroll(x, y, args[3], args[4], object = object)
+                relevance = config.selected.handler_scroll(args[0], args[1], args[3], args[4], object = object)
 
         if(not relevance):
             if(args[2] == 0 and object.handlers[0]):
-                object.handler_leftclick(x = x,y = y)
+                object.handler_leftclick(x = args[0],y = args[1])
             elif(args[2] == 1 and object.handlers[1]):
-                object.handler_rightclick(x = x,y = y)
+                object.handler_rightclick(x = args[0],y = args[1])
             elif(args[2] == 2 and object.handlers[2]):
-                object.handler_middleclick(x = x,y = y)
+                object.handler_middleclick(x = args[0],y = args[1])
             elif(args[2] == 3 and object.handlers[3]):
-                object.handler_scroll(x = x,y = y, scroll_x = args[3],scroll_y = args[4])
+                object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
         config.selected = None
 

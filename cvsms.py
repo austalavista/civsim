@@ -97,5 +97,6 @@ def open_play_menu():
     config.menus["main_menu"].remove_from_scene()
 
     core.init_provinces()
-    config.scene_transformation_group.scale(0.2,0.2)
+    config.scene_transformation_group.scale(0.1,0.1)
+    config.scene_transformation_group.fcoords(840,0)
 
