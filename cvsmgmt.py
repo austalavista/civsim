@@ -93,7 +93,7 @@ class checkbox:
             self.max_x = source.vertices[0]
             self.min_x = source.vertices[0]
             self.max_y = source.vertices[1]
-            self.min_y = source.vertices[2]
+            self.min_y = source.vertices[1]
 
             for i in range(2, len(source.vertices)):
 

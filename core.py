@@ -23,9 +23,7 @@ class province(cvsmgmt.scene_object):
 
     def handler_release(self,x,y):
         if(self.nodrag):
-            self.render_objects[0][0].solid_color_coords(255, 0, 0)
-            self.render_objects[0][0].remove()
-            self.render_objects[0][0].add()
+            self.remove_from_scene()
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)

@@ -117,7 +117,7 @@ def coordinate_box_check_1(args):
 
                 broadcheck_hits[index] = config.scene_objects[i]
                 index += 1
-
+    print(broadcheck_hits)
     #narrow checks
     for i in range(0, index):
         if(broadcheck_hits[i].group_num > peakgroup):
