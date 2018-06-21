@@ -22,7 +22,6 @@ if(True):
                         temp[1],
                         int(temp[2].split(",")[0]),
                         int(temp[2].split(",")[1]))
-        #print(provinces[r])
 
     vector_lists = [None] * len(provinces)
     for r in range(0,len(provinces)):

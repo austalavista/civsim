@@ -2,10 +2,12 @@ import pyglet
 
 #---CORE----
 global provinces
+global provinces_id
 global nation_colors
 global scenarios
 
 provinces = [None] * 1500
+provinces_id = {}
 nations = {}
 scenarios = {}
 

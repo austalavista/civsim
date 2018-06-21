@@ -102,5 +102,13 @@ def open_play_menu():
     core.init_nations()
     core.init_scenarios()
 
+    for i in range(0,1500):
+        if(config.provinces[i] != None):
+            if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
+                config.provinces[i].add_to_scene()
+    #config.province_borders.add_to_scene()
+
     config.scenarios["examplescenario"].set()
+    core.draw_nation_borders()
+    config.nation_borders.add_to_scene()
 

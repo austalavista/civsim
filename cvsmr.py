@@ -130,6 +130,9 @@ class polygon_object:
     def solid_color_coords(self,red,green,blue):
         self.colors = [red,green,blue]*int(len(self.vertices)/2)
 
+    def update_color(self):
+        self.vertex_list.colors = self.colors
+
     def add(self):
         if(self.vertices_temp == None):
             self.vertices_temp = self.vertices

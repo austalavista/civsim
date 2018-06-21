@@ -15,7 +15,6 @@ class scenario:
                 if(self.map[self.index][0] == config.provinces[i].id):
                     config.provinces[i].set_nation(self.map[self.index][1])
 
-
 class nation:
     def __init__(self):
         self.color = None
@@ -23,6 +22,8 @@ class nation:
         self.adjective = None
 
         self.provinces = []
+        self.border = None
+        self.id = None
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -34,6 +35,8 @@ class province(cvsmgmt.scene_object):
         self.handlers[5] = True
 
         self.border = None
+        self.adjacents_border = []
+        self.adjacents = []
         self.name = None
         self.nation = None
         self.id = None
@@ -41,8 +44,11 @@ class province(cvsmgmt.scene_object):
     def set_nation(self, nation):
         self.nation = config.nations[nation]
         self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
-        self.render_objects[0][0].remove()
-        self.render_objects[0][0].add()
+        self.render_objects[0][0].update_color()
+
+    def set_id(self, id):
+        self.id = id
+        config.provinces_id[str(id)] = self
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
@@ -54,7 +60,7 @@ class province(cvsmgmt.scene_object):
 
     def handler_release(self,x,y):
         if(self.nodrag):
-            self.remove_from_scene()
+            pass
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
@@ -81,16 +87,16 @@ def init_provinces():
                 temp_poly.vertices[j*2] = float(temp[0])
                 temp_poly.vertices[j*2+1] = (11000 - float(temp[1]))
 
-        temp_poly.solid_color_coords(0,0,0)
+        temp_poly.solid_color_coords(255,255,255)
         config.provinces[i] = province()
         config.provinces[i].render_objects[0][0] = temp_poly
         config.provinces[i].checkbox.set_source(temp_poly)
-        config.provinces[i].id = int(map[i*2].split("]")[0][1:])
 
-    #borders
+        config.provinces[i].set_id(int(map[i*2].split("]")[0][1:]))
+
+    #province borders
     config.province_borders = cvsmgmt.scene_object()
     config.province_borders.render_objects = [[None]*int(len(map)/2)]
-
     file = open("resources/map/mapl.txt", "r").read()
     map = file.split("\n")
     for i in range(0,int(len(map)/2)):#int(len(map)/2)
@@ -108,10 +114,24 @@ def init_provinces():
 
         temp_poly.convert_loop()
         config.provinces[i].border = temp_poly
-        config.provinces[i].add_to_scene()
 
         config.province_borders.render_objects[0][i] = temp_poly
-    config.province_borders.add_to_scene()
+
+    #setting adjacents
+    file = open("resources/map/mapa.txt", "r").read()
+    adj = file.split("\n")
+    for i in range(0,int(len(map)/2)):
+        temp = adj[1+i*2].split('\t')
+
+        for j in range(0,len(temp)):
+            if(temp[j] != '' and temp[j] != 'False'):
+                config.provinces[i].adjacents_border.append(int(temp[j]))
+
+                if(int(temp[j]) not in config.provinces[i].adjacents):
+                    config.provinces[i].adjacents.append(int(temp[j]))
+
+            elif(temp[j] == 'False'):
+                config.provinces[i].adjacents_border.append(-1)
 
 def init_nations():
     file = open("resources/map/nationdata.txt", "r").read()
@@ -124,6 +144,7 @@ def init_nations():
         tempnation.name = temp[0]
         tempnation.adjective = temp[2]
         tempnation.color = (int(temp[1][0:2],16),int(temp[1][2:4],16),int(temp[1][4:6],16))
+        tempnation.id = i
 
         config.nations[tempnation.name] = tempnation
 
@@ -138,4 +159,28 @@ def init_scenarios():
                 temp = file[i].split("\t")
                 config.scenarios[name].map[i] = (int(temp[0]),temp[1])
 
+def draw_nation_borders():
+    # nation borders
+    config.nation_borders = cvsmgmt.scene_object()
+    config.nation_borders.render_objects = [[None] * 916]
+    index = 0
+    for i in range(0, 1500):
+        if(config.provinces[i] != None and config.provinces[i].nation != None):
+            temp_line = cvsmr.line_object(config.line_groups["2/3"])
+            config.nation_borders.render_objects[0][index] = temp_line
+            #config.provinces[i].nation.border = temp_line
+
+            for j in range(0, len(config.provinces[i].adjacents_border)):
+
+                if (config.provinces[i].adjacents_border[j] == -1 or config.provinces[(config.provinces[i].adjacents_border[j])].nation == None or config.provinces[(config.provinces[i].adjacents_border[j])].nation.id != config.provinces[i].nation.id):
+                    if(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)] == -1 or config.provinces[(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)])].nation == None or config.provinces[(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)])].nation.id != config.provinces[i].nation.id):
+
+                        temp_line.vertices.append(config.provinces[i].border.vertices[j*4])
+                        temp_line.vertices.append(config.provinces[i].border.vertices[j * 4 + 1])
+                        temp_line.vertices.append(config.provinces[i].border.vertices[(j*4 + 2) % len(config.provinces[i].border.vertices)])
+                        temp_line.vertices.append(config.provinces[i].border.vertices[(j * 4 + 3) % len(config.provinces[i].border.vertices)])
+
+            temp_line.solid_color_coords(200, 200, 200)
+
+            index += 1
 
