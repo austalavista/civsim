@@ -23,7 +23,8 @@ class scene_object:
 
         for i in range(0,len(self.render_objects)):
             for j in range(0,len(self.render_objects[i])):
-                self.render_objects[i][j].add()
+                if(self.render_objects[i][j] != None):
+                    self.render_objects[i][j].add()
 
     def remove_from_scene(self):
 

@@ -55,7 +55,7 @@ class sprite_object:
 class polygon_object:
     render_type = "polygon"
 
-    def __init__(self, group_num, texture_group=None, ):
+    def __init__(self, group_num = 0, texture_group=None, ):
         self.vertex_list = None
 
         self.vertices_polygon = None #comes in format [[x1,y1],[x2,y2]], need to call convert_to_triangles
@@ -66,10 +66,7 @@ class polygon_object:
         self.texture_coords = None
         self.texture_group = texture_group
 
-        if(texture_group == None):
-            self.group_num = 0
-        else:
-            self.group_num = group_num
+        self.group_num = group_num
 
         self.anchor = [0, 0]
         self.scale_x = 1
@@ -356,6 +353,7 @@ def ordered_transformation_groups_init():
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
     config.line_groups["2/3"] = line_group(2, 3)
+    config.line_groups["1/2"] = line_group(1, 2)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
     config.line_groups["1/1"] = line_group(1, 1)
@@ -365,6 +363,7 @@ def texture_groups_init():
     pass
 
 def sprite_texture_init():
+    image_init("ocean")
     image_init("scroll_slider")
 
     image_init("main_menu")

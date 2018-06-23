@@ -14,9 +14,11 @@ scenarios = {}
 #---MISC GRAPHICS---
 global province_borders
 global nation_borders
+global ocean
 
 province_borders = None
 nation_borders = None
+ocean = None
 
 #---SETTINGS---
 global fullscreen

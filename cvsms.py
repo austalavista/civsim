@@ -68,7 +68,7 @@ def initialize():
     apply_settings()
 
     # resources
-    pyglet.resource.path = ['resources', 'resources/UI', 'resources/misc']
+    pyglet.resource.path = ['resources', 'resources/UI', 'resources/map']
 
     config.gs_entries[0].function = pyglet.resource.reindex
     config.gs_entries[0].add(0)
@@ -96,9 +96,7 @@ def open_main_menu():
 def open_play_menu():
     config.menus["main_menu"].remove_from_scene()
 
-    core.init_provinces()
-    config.scene_transformation_group.scale(0.1,0.1)
-    config.scene_transformation_group.fcoords(840,0)
+    core.init_provinces(2)
     core.init_nations()
     core.init_scenarios()
 
@@ -106,9 +104,14 @@ def open_play_menu():
         if(config.provinces[i] != None):
             if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
                 config.provinces[i].add_to_scene()
-    #config.province_borders.add_to_scene()
+
+    config.province_borders.add_to_scene()
 
     config.scenarios["examplescenario"].set()
     core.draw_nation_borders()
     config.nation_borders.add_to_scene()
+
+    config.ocean = core.ocean()
+    config.ocean.add_to_scene()
+
 
