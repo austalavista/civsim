@@ -53,18 +53,46 @@ class scene_object:
     def nodrag_leftdrag_scene(self,x,y):
         config.scene_transformation_group.fcoords((x-self.nodrag_x), (y-self.nodrag_y))
 
+        if (config.scene_transformation_group.x > 0):
+            config.scene_transformation_group.x = 0
+
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+
+        if (config.scene_transformation_group.y > 0):
+            config.scene_transformation_group.y = 0
+
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
+
         self.nodrag_x = x
         self.nodrag_y = y
 
         self.nodrag = False
 
-    def zoom(self,x,y,scroll_y):
+    def zoom(self, x, y, scroll_y):
         if (scroll_y > 0):
-            config.scene_transformation_group.fscale(2, 2)
-            config.scene_transformation_group.fcoords(-1*x, -1*y)
+            if(config.scene_transformation_group.scale_x < 16.0):
+                config.scene_transformation_group.fscale(2, 2)
+                config.scene_transformation_group.fcoords(-1 * x, -1 * y)
         else:
-            config.scene_transformation_group.fscale(0.5, 0.5)
-            config.scene_transformation_group.fcoords( x/2, y/2)
+            if (config.scene_transformation_group.scale_x > 1.0):
+                config.scene_transformation_group.fscale(0.5, 0.5)
+                config.scene_transformation_group.fcoords(x / 2, y / 2)
+
+        if (config.scene_transformation_group.x > 0):
+            config.scene_transformation_group.x = 0
+
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+
+        if (config.scene_transformation_group.y > 0):
+            config.scene_transformation_group.y = 0
+
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
+
+
 
 class checkbox:
     def __init__(self, group = 0):

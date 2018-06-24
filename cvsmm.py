@@ -321,3 +321,5 @@ class settings_menu(base_window):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
         self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
+
+#-----------------------------------------
