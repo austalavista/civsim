@@ -99,6 +99,7 @@ def open_play_menu():
     core.init_provinces(2)
     core.init_nations()
     core.init_scenarios()
+    core.init_saves()
 
     for i in range(0,1500):
         if(config.provinces[i] != None):

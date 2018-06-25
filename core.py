@@ -6,6 +6,31 @@ class scenario:
     def __init__(self):
         self.map = [None]*916
 
+        self.year = None
+        self.month = None
+        self.day = None
+
+        self.description = None
+
+    def set(self):
+        self.index = 0
+        for i in range(0,len(config.provinces)):
+            if(config.provinces[i] != None):
+                while(self.map[self.index][0] < config.provinces[i].id):
+                    self.index += 1
+                if(self.map[self.index][0] == config.provinces[i].id):
+                    config.provinces[i].set_nation(self.map[self.index][1])
+
+class save:
+    def __init__(self):
+        self.map = [None]*916
+
+        self.year = None
+        self.month = None
+        self.day = None
+
+        self.nation = None
+
     def set(self):
         self.index = 0
         for i in range(0,len(config.provinces)):
@@ -86,7 +111,6 @@ class ocean(cvsmgmt.scene_object):
 
     def handler_scroll(self, x, y, scroll_x, scroll_y):
         self.zoom(x, y, scroll_y)
-
 
 #----------------------------------------------------------------------------------------------------------------------
 
@@ -180,6 +204,29 @@ def init_scenarios():
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
                 config.scenarios[name].map[i] = (int(temp[0]),temp[1])
+
+            file = open("scenarios/" + name + "/info.txt", "r").read().split("\n")
+            config.scenarios[name].year = int(file[1])
+            config.scenarios[name].month = file[2]
+            config.scenarios[name].day = int(file[3])
+            config.scenarios[name].description = file[4]
+
+def init_saves():
+    for root, dirs, files in os.walk("./saves"):
+        for name in dirs:
+            config.saves[name] = save()
+
+            #scenario map
+            file = open("saves/" + name + "/map.txt","r").read().split("\n")
+            for i in range(0,len(file)):
+                temp = file[i].split("\t")
+                config.saves[name].map[i] = (int(temp[0]),temp[1])
+
+            file = open("saves/" + name + "/info.txt", "r").read().split("\n")
+            config.saves[name].year = int(file[1])
+            config.saves[name].month = file[2]
+            config.saves[name].day = int(file[3])
+            config.saves[name].nation= file[4]
 
 def draw_nation_borders():
     # nation borders

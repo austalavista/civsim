@@ -10,6 +10,7 @@ provinces = [None] * 1500
 provinces_id = {}
 nations = {}
 scenarios = {}
+saves = {}
 
 #---MISC GRAPHICS---
 global province_borders
