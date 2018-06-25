@@ -129,8 +129,8 @@ class scroll_menu_element(base_button):
             self.render_objects[0][0].switch_image(self.sprite_name)
 
 class scroll_menu(base_window):
-    def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None):
-        base_window.__init__(self=self, anchor=anchor, group_num = group_num, sprite_name = None)
+    def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None, sprite_name = None):
+        base_window.__init__(self=self, anchor=anchor, group_num = group_num, sprite_name = sprite_name)
 
         self.list = list_of_elements
 
@@ -323,3 +323,107 @@ class settings_menu(base_window):
         self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
 
 #-----------------------------------------
+
+class play_saves_toggle(base_button):
+    def __init__(self,menu):
+        base_button.__init__(self,[400,100], "play_saves_toggle", None)
+        self.menu = menu
+
+    def handler_leftclick(self, x,y):
+        self.menu.list[0].add_to_scene()
+        self.menu.list[1].remove_from_scene()
+        self.menu.list[7].add_to_scene()
+        self.remove_from_scene()
+
+class play_scenarios_toggle(base_button):
+    def __init__(self,menu):
+        base_button.__init__(self,[400,100], "play_scenarios_toggle", None)
+        self.menu = menu
+
+    def handler_leftclick(self, x,y):
+        self.menu.list[1].add_to_scene()
+        self.menu.list[2].remove_from_scene()
+        self.menu.list[6].add_to_scene()
+        self.remove_from_scene()
+
+class play_start(base_button):
+    def __init__(self):
+        base_button.__init__(self,[400,100], "play_start", "play_start_c")
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.toggle_sprite()
+
+class play_back(base_button):
+    def __init__(self):
+        base_button.__init__(self,[400,10], "play_back", "play_back_c")
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.toggle_sprite()
+
+class play_saves_element(scroll_menu_element):
+    def __init__(self, scroll_menu, save, group_num):
+        scroll_menu_element.__init__(self,"play_menu_scroll_element","play_menu_scroll_element_c",group_num)
+
+        self.scroll_menu = scroll_menu
+
+        self.save = save
+        self.render_objects[0].append(cvsmr.label_object(save.name + "\n\n" + str(save.month) + " " + str(save.day) + ", " + str(save.year) ,[0,0],group_num+1, anchor_offset = [5,5]))
+
+    def handler_leftclick(self, x, y):
+        self.save.set()
+
+        self.scroll_menu.toggle()
+        self.toggle(True)
+
+class play_saves(scroll_menu):
+    def __init__(self):
+        scroll_menu.__init__(self, None,[20,20],6,80,280,290,"scroll_slider", config.num_scene_groups, sprite_name = "play_menu_scroll")
+
+        self.list = []
+        for i in range(0, config.saves):
+            self.list.append(play_saves_element(self,config.saves[i], self.group_num))
+
+class play_scenarios_element(scroll_menu_element):
+    def __init__(self, scroll_menu, scenario, group_num):
+        scroll_menu_element.__init__(self,"play_menu_scroll_element","play_menu_scroll_element_c",group_num)
+
+        self.scroll_menu = scroll_menu
+
+        self.scenario = scenario
+        self.render_objects[0].append(cvsmr.label_object(scenario.name + "\n\n" + str(scenario.month) + " " + str(scenario.day) + ", " + str(scenario.year) ,[0,0],group_num+1, anchor_offset = [5,5]))
+
+    def handler_leftclick(self, x, y):
+        self.scenario.set()
+
+        self.scroll_menu.toggle()
+        self.toggle(True)
+
+class play_scenarios(scroll_menu):
+    def __init__(self):
+        scroll_menu.__init__(self, None,[20,20],6,80,280,290,"scroll_slider", config.num_scene_groups, sprite_name = "play_menu_scroll")
+
+        self.list = []
+        for i in range(0, config.scenarios):
+            self.list.append(play_scenarios_element(self, config.scenarios[i], self.group_num))
+
+class play_menu(base_window):
+    def __init__(self):
+        base_window.__init__(self=self, anchor=[0, 0], sprite_name="play_menu")
+
+        self.elements = [play_saves(), play_scenarios(), play_scenarioinfo(), play_nationinfo(), play_start(), play_back(), play_saves_toggle(), play_scenarios_toggle()]
+
+    def add_to_scene(self):
+        if(self.sprite != None):
+            self.sprite.add()
+
+        #load scenarios scroll menu first
+        for i in range(1,len(self.elements)):
+            self.elements[i].add_to_scene()

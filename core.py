@@ -30,6 +30,7 @@ class save:
         self.day = None
 
         self.nation = None
+        self.name = None
 
     def set(self):
         self.index = 0
@@ -197,36 +198,39 @@ def init_nations():
 def init_scenarios():
     for root, dirs, files in os.walk("./scenarios"):
         for name in dirs:
-            config.scenarios[name] = scenario()
+            temp_scenario = scenario()
+            config.scenarios.append(temp_scenario)
 
             #scenario map
             file = open("scenarios/" + name + "/map.txt","r").read().split("\n")
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
-                config.scenarios[name].map[i] = (int(temp[0]),temp[1])
+                temp_scenario.map[i] = (int(temp[0]),temp[1])
 
             file = open("scenarios/" + name + "/info.txt", "r").read().split("\n")
-            config.scenarios[name].year = int(file[1])
-            config.scenarios[name].month = file[2]
-            config.scenarios[name].day = int(file[3])
-            config.scenarios[name].description = file[4]
+            temp_scenario.year = int(file[1])
+            temp_scenario.month = file[2]
+            temp_scenario.day = int(file[3])
+            temp_scenario.description = file[4]
 
 def init_saves():
     for root, dirs, files in os.walk("./saves"):
         for name in dirs:
-            config.saves[name] = save()
+            temp_save = save()
+            config.saves.append(temp_save)
 
             #scenario map
             file = open("saves/" + name + "/map.txt","r").read().split("\n")
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
-                config.saves[name].map[i] = (int(temp[0]),temp[1])
+                temp_save.map[i] = (int(temp[0]),temp[1])
 
             file = open("saves/" + name + "/info.txt", "r").read().split("\n")
-            config.saves[name].year = int(file[1])
-            config.saves[name].month = file[2]
-            config.saves[name].day = int(file[3])
-            config.saves[name].nation= file[4]
+            temp_save.name = file[0]
+            temp_save.year = int(file[1])
+            temp_save.month = file[2]
+            temp_save.day = int(file[3])
+            temp_save.nation= file[4]
 
 def draw_nation_borders():
     # nation borders
