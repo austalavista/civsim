@@ -81,6 +81,10 @@ class scroll_slider(cvsmgmt.scene_object):
             self.anchor[1] = (self.scroll_menu.max_position - self.scroll_menu.position) /self.scroll_menu.max_position * self.height + self.anchor_original
             self.render_objects[0][0].coords(self.anchor[0],self.anchor[1])
             self.checkbox.update_source()
+        else:
+            self.anchor[1] = self.height + self.anchor_original
+            self.render_objects[0][0].coords(self.anchor[0], self.anchor[1])
+            self.checkbox.update_source()
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
@@ -101,6 +105,22 @@ class scroll_slider_box(cvsmgmt.scene_object):
 
     def handler_leftclick(self, x,y):
         self.scroll_menu.pos((self.height - (y-self.anchor[1]))/self.height * self.scroll_menu.max_position)
+
+class scroll_slider_button(base_button):
+    def __init__(self, direction, scroll_menu, anchor, sprite_name,clicked_sprite_name, group_num):
+        base_button.__init__(self, anchor, sprite_name, clicked_sprite_name,group_num)
+
+        self.scroll_menu = scroll_menu
+        self.direction = direction # 1 or -1
+
+    def handler_leftclick(self, x, y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+        self.scroll_menu.dpos(self.direction)
+
+    def handler_release(self, x, y):
+        self.toggle_sprite()
 
 class scroll_menu_box(cvsmgmt.scene_object):
     #set as same group as scroll elements
@@ -130,8 +150,8 @@ class scroll_menu_element(base_button):
             self.render_objects[0][0].switch_image(self.sprite_name)
 
 class scroll_menu(base_window):
-    def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None, sprite_name = None):
-        base_window.__init__(self=self, anchor=anchor, group_num = group_num, sprite_name = sprite_name)
+    def __init__(self, scene_index, anchor, num_elements, element_height, width, slider_x_offset, slider_name, group_num = config.num_scene_groups + 1, list_of_elements = None, slider_y_clip = 34, slider_y_offset = 5):
+        base_window.__init__(self=self, anchor=anchor, group_num = group_num)
 
         self.list = list_of_elements
 
@@ -142,10 +162,12 @@ class scroll_menu(base_window):
         self.position = 0
         self.max_position = 0
 
-        self.scroll_slider = scroll_slider(scroll_menu = self, group_num = group_num+1, sprite_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1]], height =  self.pix_height)
+        self.scroll_slider = scroll_slider(scroll_menu = self, group_num = group_num+1, sprite_name = slider_name, anchor = [anchor[0] + slider_x_offset, anchor[1] + slider_y_clip + slider_y_offset], height =  self.pix_height - slider_y_clip * 2 - slider_y_offset * 2)
         self.elements = [self.scroll_slider,
-                         scroll_slider_box(self, group_num, [anchor[0] + slider_x_offset, anchor[1]], self.pix_height, self.scroll_slider.render_objects[0][0].width),
-                         scroll_menu_box(self, group_num, anchor, self.pix_height, width)]
+                         scroll_slider_box(self, group_num, [anchor[0] + slider_x_offset, anchor[1] + slider_y_clip + slider_y_offset], self.pix_height - slider_y_clip * 2, self.scroll_slider.render_objects[0][0].width),
+                         scroll_menu_box(self, group_num, anchor, self.pix_height, width),
+                         scroll_slider_button(-1, self, [anchor[0] + slider_x_offset, anchor[1] + self.pix_height - slider_y_clip - slider_y_offset], "scroll_button_up", "scroll_button_up_c", group_num),
+                         scroll_slider_button(1, self, [anchor[0] + slider_x_offset, anchor[1] + slider_y_offset], "scroll_button_down", "scroll_button_down_c",group_num)]
 
         self.scene_index = scene_index
         if(scene_index != None):
@@ -156,7 +178,7 @@ class scroll_menu(base_window):
     def populate(self, list_of_elements = None):
         if(list_of_elements != None):
             self.list = list_of_elements
-        self.max_position = len(self.list) - self.num_elements
+        self.max_position = max(len(self.list) - self.num_elements, 0)
         self.position = 0
 
     def pos(self, p):
@@ -188,7 +210,7 @@ class scroll_menu(base_window):
                 self.list[i + int(self.position)].add_to_scene()
 
     def add_to_scene(self):
-        for i in range(0, 3):
+        for i in range(0, 5):
             self.elements[i].add_to_scene()
 
         self.populate()
@@ -376,7 +398,8 @@ class play_saves_element(scroll_menu_element):
         self.scroll_menu = scroll_menu
 
         self.save = save
-        self.render_objects[0].append(cvsmr.label_object(save.name + "\n\n" + str(save.month) + " " + str(save.day) + ", " + str(save.year) ,[0,0],group_num+1, anchor_offset = [5,5]))
+        self.render_objects[0].append(cvsmr.label_object(save.name,[0,0],group_num+1, anchor_offset = [10,80]))
+        self.render_objects[0].append(cvsmr.label_object(str(save.month) + " " + str(save.day) + ", " + str(save.year),[0, 0], group_num + 1, anchor_offset = [10,10]))
 
     def handler_leftclick(self, x, y):
         self.save.set()
@@ -389,7 +412,7 @@ class play_saves_element(scroll_menu_element):
 
 class play_saves(scroll_menu):
     def __init__(self):
-        scroll_menu.__init__(self, None,[20,20],6,104,342,350,"scroll_slider", config.num_scene_groups, sprite_name = "play_menu_saves")
+        scroll_menu.__init__(self, None,[15,20],6,104,342,350,"scroll_slider", config.num_scene_groups)
 
         self.list = []
         for i in range(0, len(config.saves)):
@@ -402,8 +425,8 @@ class play_scenarios_element(scroll_menu_element):
         self.scroll_menu = scroll_menu
 
         self.scenario = scenario
-        self.render_objects[0].append(cvsmr.label_object(scenario.name ,[0,0],group_num+1, anchor_offset = [5,60]))
-        self.render_objects[0].append(cvsmr.label_object(str(scenario.month) + " " + str(scenario.day) + ", " + str(scenario.year), [0, 0], group_num + 1, anchor_offset=[5, 5]))
+        self.render_objects[0].append(cvsmr.label_object(scenario.name ,[0,0],group_num+1, anchor_offset = [10,80]))
+        self.render_objects[0].append(cvsmr.label_object(str(scenario.month) + " " + str(scenario.day) + ", " + str(scenario.year), [0, 0], group_num + 1, anchor_offset=[10, 10]))
 
     def handler_leftclick(self, x, y):
         self.scenario.set()
@@ -416,12 +439,11 @@ class play_scenarios_element(scroll_menu_element):
 
 class play_scenarios(scroll_menu):
     def __init__(self):
-        scroll_menu.__init__(self, None,[20,20],6,104,342,350,"scroll_slider", config.num_scene_groups, sprite_name = "play_menu_scenarios")
+        scroll_menu.__init__(self, None,[18,15],6,104,342,350,"scroll_slider", config.num_scene_groups+1)
 
         self.list = []
         for i in range(0, len(config.scenarios)):
             self.list.append(play_scenarios_element(self, config.scenarios[i], self.group_num))
-
 
 class play_menu(base_window):
     def __init__(self):

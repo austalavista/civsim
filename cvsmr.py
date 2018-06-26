@@ -365,6 +365,8 @@ def texture_groups_init():
 def sprite_texture_init():
     image_init("ocean")
     image_init("scroll_slider")
+    image_init("scroll_button_up", "b")
+    image_init("scroll_button_down", "b")
 
     image_init("main_menu")
     image_init("main_menu_play", "b")
