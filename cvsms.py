@@ -111,9 +111,9 @@ def open_play_menu():
 
     config.province_borders.add_to_scene()
 
-    config.scenarios[0].set()
+    #config.scenarios[0].set()
     core.draw_nation_borders()
-    config.nation_borders.add_to_scene()
+    #config.nation_borders.add_to_scene()
 
     config.ocean = core.ocean()
     config.ocean.add_to_scene()

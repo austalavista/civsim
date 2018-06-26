@@ -412,11 +412,29 @@ class play_saves_element(scroll_menu_element):
 
 class play_saves(scroll_menu):
     def __init__(self):
-        scroll_menu.__init__(self, None,[15,20],6,104,342,350,"scroll_slider", config.num_scene_groups)
+        scroll_menu.__init__(self, None,[18,15],6,104,342,350,"scroll_slider", config.num_scene_groups+1)
 
         self.list = []
         for i in range(0, len(config.saves)):
             self.list.append(play_saves_element(self,config.saves[i], self.group_num))
+
+class play_saves_toggle(base_button):
+    def __init__(self):
+        base_button.__init__(self,[193,638], "play_menu_saves_toggle", "play_menu_saves_toggle_c")
+        self.handlers[4] = False
+        self.state = False
+
+    def handler_leftclick(self, x,y):
+
+
+        if (not self.state):
+            self.state = True
+            self.toggle_sprite()
+            config.menus["play_menu"].elements[1].remove_from_scene()
+            config.menus["play_menu"].elements[5].toggle_sprite()
+            config.menus["play_menu"].elements[5].state = False
+            config.menus["play_menu"].elements[0].add_to_scene()
+            config.menus["play_menu"].elements[0].toggle()
 
 class play_scenarios_element(scroll_menu_element):
     def __init__(self, scroll_menu, scenario, group_num):
@@ -445,11 +463,28 @@ class play_scenarios(scroll_menu):
         for i in range(0, len(config.scenarios)):
             self.list.append(play_scenarios_element(self, config.scenarios[i], self.group_num))
 
+class play_scenarios_toggle(base_button):
+    def __init__(self):
+        base_button.__init__(self,[23,638], "play_menu_scenarios_toggle_c", "play_menu_scenarios_toggle")
+        self.handlers[4] = False
+        self.state = True
+
+    def handler_leftclick(self, x,y):
+
+        if(not self.state):
+            self.state = True
+            self.toggle_sprite()
+            config.menus["play_menu"].elements[0].remove_from_scene()
+            config.menus["play_menu"].elements[4].toggle_sprite()
+            config.menus["play_menu"].elements[4].state = False
+            config.menus["play_menu"].elements[1].add_to_scene()
+            config.menus["play_menu"].elements[1].toggle()
+
 class play_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="play_menu")
 
-        self.elements = [play_saves(), play_scenarios(), play_start(), play_back()]
+        self.elements = [play_saves(), play_scenarios(), play_start(), play_back(), play_saves_toggle(), play_scenarios_toggle()]
 
     def add_to_scene(self):
         if(self.sprite != None):

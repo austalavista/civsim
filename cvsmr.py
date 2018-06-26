@@ -382,8 +382,8 @@ def sprite_texture_init():
     image_init("play_menu_back", "b")
     image_init("play_menu_scroll_element", "b")
     image_init("play_menu")
-    image_init("play_menu_scenarios")
-    image_init("play_menu_saves")
+    image_init("play_menu_scenarios_toggle", "b")
+    image_init("play_menu_saves_toggle", "b")
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")
