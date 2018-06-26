@@ -101,6 +101,9 @@ def open_play_menu():
     core.init_scenarios()
     core.init_saves()
 
+    config.menus["play_menu"] = cvsmm.play_menu()
+    config.menus["play_menu"].add_to_scene()
+
     for i in range(0,1500):
         if(config.provinces[i] != None):
             if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):

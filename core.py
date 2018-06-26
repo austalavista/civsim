@@ -9,6 +9,7 @@ class scenario:
         self.year = None
         self.month = None
         self.day = None
+        self.name = None
 
         self.description = None
 
@@ -208,6 +209,7 @@ def init_scenarios():
                 temp_scenario.map[i] = (int(temp[0]),temp[1])
 
             file = open("scenarios/" + name + "/info.txt", "r").read().split("\n")
+            temp_scenario.name = file[0]
             temp_scenario.year = int(file[1])
             temp_scenario.month = file[2]
             temp_scenario.day = int(file[3])
