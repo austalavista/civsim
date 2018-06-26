@@ -43,6 +43,16 @@ def write_settings():
 
     settings.close()
 
+def clear_scene():
+    for i in range(0, config.scene_objects_size):
+        if(config.scene_objects[i] != None):
+            config.scene_objects[i].remove_from_scene()
+
+def clear_menus():
+    for key in config.menus:
+        config.menus[key].remove_from_scene()
+#-----------------------------------------------------------------------------------------------------------------------
+
 def initialize():
     cvsmr.ordered_transformation_groups_init()
 
@@ -96,10 +106,12 @@ def open_main_menu():
 def open_play_menu():
     config.menus["main_menu"].remove_from_scene()
 
-    core.init_provinces(2)
-    core.init_nations()
-    core.init_scenarios()
-    core.init_saves()
+    if(not config.init):
+        core.init_provinces(2)
+        core.init_nations()
+        core.init_scenarios()
+        core.init_saves()
+        config.init = True
 
     config.menus["play_menu"] = cvsmm.play_menu()
     config.menus["play_menu"].add_to_scene()

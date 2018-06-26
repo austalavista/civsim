@@ -391,6 +391,10 @@ class play_back(base_button):
     def handler_release(self,x,y):
         self.toggle_sprite()
 
+        cvsms.clear_scene()
+        cvsms.clear_menus()
+        cvsms.open_main_menu()
+
 class play_saves_element(scroll_menu_element):
     def __init__(self, scroll_menu, save, group_num):
         scroll_menu_element.__init__(self,"play_menu_scroll_element","play_menu_scroll_element_c",group_num)

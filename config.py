@@ -5,12 +5,14 @@ global provinces
 global provinces_id
 global nation_colors
 global scenarios
+global init
 
 provinces = [None] * 1500
 provinces_id = {}
 nations = {}
 scenarios = []
 saves = []
+init = False #have the saves, provinces, scenarios etc been initialized?
 
 #---MISC GRAPHICS---
 global province_borders
