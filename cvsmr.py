@@ -157,8 +157,6 @@ class polygon_object:
         self.vertex_list.delete()
 
 class line_object:
-    render_object_type = "line"
-
     def __init__(self,line_group):
         #line type can be either 1 for line, or 0 for loop
         self.vertex_list = None
@@ -248,12 +246,10 @@ class line_object:
         self.vertex_list.delete()
 
 class label_object:
-    render_object_type = "label"
-
     def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
-                                       x = anchor[0],
-                                       y = anchor[1],
+                                       x = anchor[0]+ anchor_offset[0],
+                                       y = anchor[1] + anchor_offset[1],
                                        group = config.groups[group_num])
         self.anchor = anchor
         self.anchor_offset = anchor_offset
@@ -282,6 +278,52 @@ class label_object:
 
     def remove(self):
         self.label.batch = None
+
+class layout_object:
+    def __init__(self,  font_name, font_size, anchor, width, height, group_num, color = (255,255,255,255), anchor_offset = [0,0]):
+        self.anchor = anchor
+        self.anchor_offset = anchor_offset
+        self.group_num = group_num
+        self.width = width
+        self.height = height
+        self.font_name = font_name
+        self.font_size = font_size
+        self.color = color
+
+        self.text = ''
+
+    def set_text(self,text):
+        self.text = text
+
+        self.document = pyglet.text.decode_text(text)
+        self.document.set_style(0,len(self.text), dict(font_name = self.font_name, font_size = self.font_size, color = self.color))
+
+        self.layout = pyglet.text.layout.TextLayout(self.document, width = self.width, height = self.height, multiline=True, wrap_lines=True)
+
+        self.layout.foreground_group = config.layout_groups[self.group_num]
+
+        self.layout.color = self.color
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def coords(self, x, y):
+        self.anchor = [x,y]
+
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def dcoords(self,dx,dy):
+        self.anchor[0] += dx
+        self.anchor[1] += dy
+
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def add(self):
+        self.layout.batch = config.batch
+
+    def remove(self):
+        self.layout.delete()
 
 #---GROUPS---
 class line_group(pyglet.graphics.Group):
@@ -349,6 +391,11 @@ def ordered_transformation_groups_init():
 
     for i in range(config.num_scene_groups,config.num_scene_groups + config.num_menu_groups):
         config.groups.append(pyglet.graphics.OrderedGroup(i,parent=config.menu_ordered_group))
+
+def layout_groups_init():
+    for i in range(0,config.num_menu_groups + config.num_menu_groups):
+        config.layouttop_groups.append(pyglet.text.layout.TextLayoutGroup(parent = config.groups[i]))
+        config.layout_groups.append(pyglet.text.layout.TextLayoutForegroundGroup(0, parent = config.layouttop_groups[i]))
 
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)

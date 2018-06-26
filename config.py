@@ -93,4 +93,6 @@ groups = []
 
 texture_groups = {}
 line_groups = {}
+layouttop_groups = []
+layout_groups = []
 

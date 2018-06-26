@@ -93,6 +93,8 @@ def initialize():
     config.gs_entries[4].function = cvsmr.sprite_texture_init
     config.gs_entries[4].add(4)
 
+    cvsmr.layout_groups_init()
+
     #open main menu
     config.gs_entries[5].function = open_main_menu
     config.gs_entries[5].add(5)
@@ -112,8 +114,10 @@ def open_play_menu():
         core.init_scenarios()
         core.init_saves()
         config.init = True
+        config.menus["play_menu"] = cvsmm.play_menu()
+        config.ocean = core.ocean()
+        core.draw_nation_borders()
 
-    config.menus["play_menu"] = cvsmm.play_menu()
     config.menus["play_menu"].add_to_scene()
 
     for i in range(0,1500):
@@ -123,11 +127,8 @@ def open_play_menu():
 
     config.province_borders.add_to_scene()
 
-    #config.scenarios[0].set()
-    core.draw_nation_borders()
-    #config.nation_borders.add_to_scene()
 
-    config.ocean = core.ocean()
+
     config.ocean.add_to_scene()
 
 

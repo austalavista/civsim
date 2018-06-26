@@ -227,6 +227,8 @@ class scroll_menu(base_window):
         for i in range(0, len(self.list)):
                 self.list[i].toggle(False)
 
+#-------------------------------------------
+
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):
@@ -459,6 +461,9 @@ class play_scenarios_element(scroll_menu_element):
         self.scroll_menu.toggle()
         self.toggle(True)
 
+        config.menus["play_menu"].elements[6].set_name(self.scenario.name)
+        config.menus["play_menu"].elements[6].set_description(self.scenario.description)
+
 class play_scenarios(scroll_menu):
     def __init__(self):
         scroll_menu.__init__(self, None,[18,15],6,104,342,350,"scroll_slider", config.num_scene_groups+1)
@@ -484,11 +489,29 @@ class play_scenarios_toggle(base_button):
             config.menus["play_menu"].elements[1].add_to_scene()
             config.menus["play_menu"].elements[1].toggle()
 
+class scenario_info(cvsmgmt.scene_object):
+    def __init__(self):
+        cvsmgmt.scene_object.__init__(self)
+
+        self.render_objects = [[cvsmr.label_object("Select a scenario/save", [20,1020],config.num_scene_groups+1),
+                                cvsmr.layout_object("Times New Roman", 15, [20,600],350,400, config.num_scene_groups+1)
+                                ]]
+        self.render_objects[0][1].set_text("")
+
+    def set_description(self, description):
+        self.render_objects[0][1].remove()
+        self.render_objects[0][1].set_text(description)
+
+        self.render_objects[0][1].add()
+
+    def set_name(self,name):
+        self.render_objects[0][0].label.text = name
+
 class play_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="play_menu")
 
-        self.elements = [play_saves(), play_scenarios(), play_start(), play_back(), play_saves_toggle(), play_scenarios_toggle()]
+        self.elements = [play_saves(), play_scenarios(), play_start(), play_back(), play_saves_toggle(),play_scenarios_toggle(), scenario_info()]
 
     def add_to_scene(self):
         if(self.sprite != None):
