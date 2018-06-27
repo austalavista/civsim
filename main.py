@@ -9,6 +9,7 @@ import time
 #Create window
 config.aa = pyglet.gl.Config(sample_buffers=1, samples=3)  # ANTIALIASING
 config.window = pyglet.window.Window(config=config.aa, resizable=False)
+fps_display = pyglet.clock.ClockDisplay()
 
 #EVENTS----------------------------------------------------------------------------------------------------------------
 @config.window.event
@@ -35,7 +36,6 @@ def on_mouse_scroll(x,y,scroll_x,scroll_y):
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
     global mouse_release_entry
-
     if(config.click_selected != None):
         if(config.click_selected.handlers[4]):
             mouse_release_entry.args[0] = x / config.global_transformation_group.scale_x
@@ -82,6 +82,7 @@ config.window.on_key_press = on_key_press
 def on_draw():
     config.window.clear()
     config.batch.draw()
+    fps_display.draw()
 
 #OTHER-----------------------------------------------------------------------------------------------------------------
 def coordinate_box_check_1(args):
@@ -91,8 +92,8 @@ def coordinate_box_check_1(args):
     menu_x = args[0]
     menu_y = args[1]
 
-    trans_x = (args[0] - config.scene_transformation_group.x) / config.scene_transformation_group.scale_x
-    trans_y = (args[1] - config.scene_transformation_group.y) / config.scene_transformation_group.scale_y
+    trans_x = (args[0] ) / config.scene_transformation_group.scale_x - config.scene_transformation_group.x
+    trans_y = (args[1] ) / config.scene_transformation_group.scale_y - config.scene_transformation_group.y
 
     broadcheck_hits = [False] * 10
     index = 0
@@ -127,56 +128,61 @@ def coordinate_box_check_1(args):
 
             elif(broadcheck_hits[i].checkbox.triangles):
 
-                if (config.scene_objects[i].group_num >= config.num_scene_groups):
+                if (broadcheck_hits[i].group_num >= config.num_scene_groups):
                     x = menu_x
                     y = menu_y
                 else:
                     x = trans_x
                     y = trans_y
 
-                for j in range(0,int(len(broadcheck_hits[i].checkbox.narrow_checkbox)/3)):
+                for j in range(0,int(len(broadcheck_hits[i].checkbox.narrow_checkbox)/6)):
 
-                    temp = j*3
+                    temp = j*6
 
-                    ba = (broadcheck_hits[i].checkbox.narrow_checkbox[temp + 2] - broadcheck_hits[i].checkbox.narrow_checkbox[temp],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1])
+                    v0 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp+2]),
+                                     float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3])])
 
-                    ca = (broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4] - broadcheck_hits[i].checkbox.narrow_checkbox[temp],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1])
+                    v1 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4]),
+                                     float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5])])
 
-                    d = ba[0] * ca[0] - ba[1] * ca[0]
+                    v2 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(x),float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(y)])
 
-                    temp = (y * ba[0] - x * ba[1]) / d
-                    if(temp > 0 and temp < 1):
-                        temp = (x * ca[1] - y * ca[0]) / d
-                        if(temp > 0 and temp < 1):
-                            temp = (x * (ba[1] - ca[1]) + y * (ca[0] - ba[0]) + ba[0] * ca[1] - ba[1] * ca[0]) / d
-                            if(temp > 0 and temp < 1):
-                                object = broadcheck_hits[i]
-                                peakgroup = object.group_num
-                                break
+                    dot00 = numpy.dot(v0, v0)
+                    dot01 = numpy.dot(v0, v1)
+                    dot02 = numpy.dot(v0, v2)
+                    dot11 = numpy.dot(v1, v1)
+                    dot12 = numpy.dot(v1, v2)
+
+                    invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
+                    u = (dot11 * dot02 - dot01 * dot12) * invDenom
+                    v = (dot00 * dot12 - dot01 * dot02) * invDenom
+
+                    if( (u >= 0) and (v >= 0) and (u + v < 1)):
+                        object = broadcheck_hits[i]
+                        peakgroup = object.group_num
+                        break
 
     #call handlers
     if(object != None):
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0]):
-                relevance = config.selected.handler_leftclick(x, y, object = object)
+                relevance = config.selected.handler_leftclick(args[0], args[1], object = object)
             elif (args[2] == 1 and object.handlers[1]):
-                relevance = config.selected.handler_rightclick(x, y, object = object)
+                relevance = config.selected.handler_rightclick(args[0], args[1], object = object)
             elif (args[2] == 2 and object.handlers[2]):
-                relevance = config.selected.handler_middleclick(x, y, object = object)
+                relevance = config.selected.handler_middleclick(args[0], args[1], object = object)
             elif (args[2] == 3 and object.handlers[3]):
-                relevance = config.selected.handler_scroll(x, y, args[3], args[4], object = object)
+                relevance = config.selected.handler_scroll(args[0], args[1], args[3], args[4], object = object)
 
         if(not relevance):
             if(args[2] == 0 and object.handlers[0]):
-                object.handler_leftclick(x = x,y = y)
+                object.handler_leftclick(x = args[0],y = args[1])
             elif(args[2] == 1 and object.handlers[1]):
-                object.handler_rightclick(x = x,y = y)
+                object.handler_rightclick(x = args[0],y = args[1])
             elif(args[2] == 2 and object.handlers[2]):
-                object.handler_middleclick(x = x,y = y)
+                object.handler_middleclick(x = args[0],y = args[1])
             elif(args[2] == 3 and object.handlers[3]):
-                object.handler_scroll(x = x,y = y, scroll_x = args[3],scroll_y = args[4])
+                object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
         config.selected = None
 
@@ -205,7 +211,7 @@ def update(dt):
 #RUN-------------------------------------------------------------------------------------------------------------------
 cvsms.initialize()
 
-pyglet.clock.schedule_interval(update, 1/60.0)
+pyglet.clock.schedule_interval(update, 1/80.0)
 pyglet.app.run()
 
 

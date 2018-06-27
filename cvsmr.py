@@ -55,7 +55,7 @@ class sprite_object:
 class polygon_object:
     render_type = "polygon"
 
-    def __init__(self, group_num, texture_group=None, ):
+    def __init__(self, group_num = 0, texture_group=None, ):
         self.vertex_list = None
 
         self.vertices_polygon = None #comes in format [[x1,y1],[x2,y2]], need to call convert_to_triangles
@@ -66,10 +66,7 @@ class polygon_object:
         self.texture_coords = None
         self.texture_group = texture_group
 
-        if(texture_group == None):
-            self.group_num = 0
-        else:
-            self.group_num = group_num
+        self.group_num = group_num
 
         self.anchor = [0, 0]
         self.scale_x = 1
@@ -130,6 +127,9 @@ class polygon_object:
     def solid_color_coords(self,red,green,blue):
         self.colors = [red,green,blue]*int(len(self.vertices)/2)
 
+    def update_color(self):
+        self.vertex_list.colors = self.colors
+
     def add(self):
         if(self.vertices_temp == None):
             self.vertices_temp = self.vertices
@@ -157,8 +157,6 @@ class polygon_object:
         self.vertex_list.delete()
 
 class line_object:
-    render_object_type = "line"
-
     def __init__(self,line_group):
         #line type can be either 1 for line, or 0 for loop
         self.vertex_list = None
@@ -248,17 +246,20 @@ class line_object:
         self.vertex_list.delete()
 
 class label_object:
-    render_object_type = "label"
-
     def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
-                                       x = anchor[0],
-                                       y = anchor[1],
+                                       x = anchor[0]+ anchor_offset[0],
+                                       y = anchor[1] + anchor_offset[1],
                                        group = config.groups[group_num])
         self.anchor = anchor
         self.anchor_offset = anchor_offset
         self.group_num = group_num
         self.scene_object_index = None
+
+    def set_style(self, font_size = 12, font_name = "arial", color = (0,0,0,255) ):
+        self.label.font_name = font_name
+        self.label.font_size = font_size
+        self.label.color = color
 
     def coords(self, x, y):
         self.label.x = x + self.anchor_offset[0]
@@ -282,6 +283,52 @@ class label_object:
 
     def remove(self):
         self.label.batch = None
+
+class layout_object:
+    def __init__(self,  font_name, font_size, anchor, width, height, group_num, color = (255,255,255,255), anchor_offset = [0,0]):
+        self.anchor = anchor
+        self.anchor_offset = anchor_offset
+        self.group_num = group_num
+        self.width = width
+        self.height = height
+        self.font_name = font_name
+        self.font_size = font_size
+        self.color = color
+
+        self.text = ''
+
+    def set_text(self,text):
+        self.text = text
+
+        self.document = pyglet.text.decode_text(text)
+        self.document.set_style(0,len(self.text), dict(font_name = self.font_name, font_size = self.font_size, color = self.color))
+
+        self.layout = pyglet.text.layout.TextLayout(self.document, width = self.width, height = self.height, multiline=True, wrap_lines=True)
+
+        self.layout.foreground_group = config.layout_groups[self.group_num]
+
+        self.layout.color = self.color
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def coords(self, x, y):
+        self.anchor = [x,y]
+
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def dcoords(self,dx,dy):
+        self.anchor[0] += dx
+        self.anchor[1] += dy
+
+        self.layout.x = self.anchor[0] + self.anchor_offset[0]
+        self.layout.y = self.anchor[1] + self.anchor_offset[1]
+
+    def add(self):
+        self.layout.batch = config.batch
+
+    def remove(self):
+        self.layout.delete()
 
 #---GROUPS---
 class line_group(pyglet.graphics.Group):
@@ -350,29 +397,45 @@ def ordered_transformation_groups_init():
     for i in range(config.num_scene_groups,config.num_scene_groups + config.num_menu_groups):
         config.groups.append(pyglet.graphics.OrderedGroup(i,parent=config.menu_ordered_group))
 
+def layout_groups_init():
+    for i in range(0,config.num_menu_groups + config.num_menu_groups):
+        config.layouttop_groups.append(pyglet.text.layout.TextLayoutGroup(parent = config.groups[i]))
+        config.layout_groups.append(pyglet.text.layout.TextLayoutForegroundGroup(0, parent = config.layouttop_groups[i]))
+
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
     config.line_groups["2/3"] = line_group(2, 3)
+    config.line_groups["1/2"] = line_group(1, 2)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
+    config.line_groups["1/1"] = line_group(1, 1)
 
 def texture_groups_init():
     #config.texture_groups[name] = pyglet.graphics.TextureGroup(pyglet.image.load(file).get_texture(),parent=config.groups[group_num])
     pass
 
 def sprite_texture_init():
+    image_init("ocean")
     image_init("scroll_slider")
+    image_init("scroll_button_up", "b")
+    image_init("scroll_button_down", "b")
 
     image_init("main_menu")
     image_init("main_menu_play", "b")
     image_init("main_menu_settings", "b")
     image_init("main_menu_exitgame", "b")
-    image_init("mainscreen")
 
     image_init("settings_menu")
     image_init("settings_menu_back", "b")
     image_init("settings_menu_fullscreen", "b")
     image_init("settings_menu_resolution_element", "b")
+
+    image_init("play_menu_start", "b")
+    image_init("play_menu_back", "b")
+    image_init("play_menu_scroll_element", "b")
+    image_init("play_menu")
+    image_init("play_menu_scenarios_toggle", "b")
+    image_init("play_menu_saves_toggle", "b")
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")

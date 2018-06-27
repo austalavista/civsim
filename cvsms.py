@@ -4,6 +4,7 @@ import config
 import pyglet
 import cvsmr, cvsmm, cvsmgmt
 import time
+import core
 
 def apply_settings():
     #fullscreen
@@ -42,6 +43,16 @@ def write_settings():
 
     settings.close()
 
+def clear_scene():
+    for i in range(0, config.scene_objects_size):
+        if(config.scene_objects[i] != None):
+            config.scene_objects[i].remove_from_scene()
+
+def clear_menus():
+    for key in config.menus:
+        config.menus[key].remove_from_scene()
+#-----------------------------------------------------------------------------------------------------------------------
+
 def initialize():
     cvsmr.ordered_transformation_groups_init()
 
@@ -67,7 +78,7 @@ def initialize():
     apply_settings()
 
     # resources
-    pyglet.resource.path = ['resources', 'resources/UI', 'resources/misc']
+    pyglet.resource.path = ['resources', 'resources/UI', 'resources/map']
 
     config.gs_entries[0].function = pyglet.resource.reindex
     config.gs_entries[0].add(0)
@@ -82,6 +93,8 @@ def initialize():
     config.gs_entries[4].function = cvsmr.sprite_texture_init
     config.gs_entries[4].add(4)
 
+    cvsmr.layout_groups_init()
+
     #open main menu
     config.gs_entries[5].function = open_main_menu
     config.gs_entries[5].add(5)
@@ -92,7 +105,30 @@ def open_main_menu():
 
     config.menus["settings_menu"] = cvsmm.settings_menu()
 
-    global mainscreen
-    mainscreen = cvsmr.sprite_object("mainscreen", [0,0],0)
-    mainscreen.add()
+def open_play_menu():
+    config.menus["main_menu"].remove_from_scene()
+
+    if(not config.init):
+        core.init_provinces(2)
+        core.init_nations()
+        core.init_scenarios()
+        core.init_saves()
+        config.init = True
+        config.menus["play_menu"] = cvsmm.play_menu()
+        config.ocean = core.ocean()
+        core.draw_nation_borders()
+
+    config.menus["play_menu"].add_to_scene()
+
+    for i in range(0,1500):
+        if(config.provinces[i] != None):
+            if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
+                config.provinces[i].add_to_scene()
+
+    config.province_borders.add_to_scene()
+
+
+
+    config.ocean.add_to_scene()
+
 

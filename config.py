@@ -1,12 +1,35 @@
 import pyglet
 
+#---CORE----
+global provinces
+global provinces_id
+global nation_colors
+global scenarios
+global init
+
+provinces = [None] * 1500
+provinces_id = {}
+nations = {}
+scenarios = []
+saves = []
+init = False #have the saves, provinces, scenarios etc been initialized?
+
+#---MISC GRAPHICS---
+global province_borders
+global province_labels
+global nation_borders
+global ocean
+
+province_borders = None
+nation_borders = None
+ocean = None
+
 #---SETTINGS---
 global fullscreen
 fullscreen = 1
 
 global resolution
 resolution = 0
-
 
 #---COMMON-------------------------------------------------------------------------------------------------------------
 
@@ -35,7 +58,7 @@ global scene_objects_size
 global update_queue
 global update_queue_size
 
-scene_objects_size = 1000
+scene_objects_size = 2000
 scene_objects = [None] * scene_objects_size #objects that are on screen are added to this list for box checks and event handling
 
 update_queue_size = 50
@@ -71,4 +94,6 @@ groups = []
 
 texture_groups = {}
 line_groups = {}
+layouttop_groups = []
+layout_groups = []
 

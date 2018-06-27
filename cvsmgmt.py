@@ -23,7 +23,8 @@ class scene_object:
 
         for i in range(0,len(self.render_objects)):
             for j in range(0,len(self.render_objects[i])):
-                self.render_objects[i][j].add()
+                if(self.render_objects[i][j] != None):
+                    self.render_objects[i][j].add()
 
     def remove_from_scene(self):
 
@@ -43,8 +44,55 @@ class scene_object:
 
         self.checkbox.update_source()
 
-    def scene_translate(self, dx,dy):
-        config.scene_transformation_group.fcoords(dx, dy)
+    def nodrag_click_scene(self,x,y):
+        self.nodrag_x = x
+        self.nodrag_y = y
+
+        self.nodrag = True
+
+    def nodrag_leftdrag_scene(self,x,y):
+        config.scene_transformation_group.fcoords((x-self.nodrag_x), (y-self.nodrag_y))
+
+        if (config.scene_transformation_group.x > 0):
+            config.scene_transformation_group.x = 0
+
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+
+        if (config.scene_transformation_group.y > 0):
+            config.scene_transformation_group.y = 0
+
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
+
+        self.nodrag_x = x
+        self.nodrag_y = y
+
+        self.nodrag = False
+
+    def zoom(self, x, y, scroll_y):
+        if (scroll_y > 0):
+            if(config.scene_transformation_group.scale_x < 16.0):
+                config.scene_transformation_group.fscale(2, 2)
+                config.scene_transformation_group.fcoords(-1 * x, -1 * y)
+        else:
+            if (config.scene_transformation_group.scale_x > 1.0):
+                config.scene_transformation_group.fscale(0.5, 0.5)
+                config.scene_transformation_group.fcoords(x / 2, y / 2)
+
+        if (config.scene_transformation_group.x > 0):
+            config.scene_transformation_group.x = 0
+
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+
+        if (config.scene_transformation_group.y > 0):
+            config.scene_transformation_group.y = 0
+
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
+
+
 
 class checkbox:
     def __init__(self, group = 0):
@@ -74,23 +122,23 @@ class checkbox:
             self.max_x = source.vertices[0]
             self.min_x = source.vertices[0]
             self.max_y = source.vertices[1]
-            self.min_y = source.vertices[2]
+            self.min_y = source.vertices[1]
 
             for i in range(2, len(source.vertices)):
 
                 if( i % 2 == 0):
                     if(source.vertices[i] < self.min_x):
                         self.min_x = source.vertices[i]
-                    elif(source.vertices > self.max_x):
+                    elif(source.vertices[i] > self.max_x):
                         self.max_x = source.vertices[i]
                 else:
                     if (source.vertices[i] < self.min_y):
                         self.min_y = source.vertices[i]
-                    elif (source.vertices > self.max_y):
+                    elif (source.vertices[i] > self.max_y):
                         self.max_y = source.vertices[i]
 
             self.broad_checkbox = [self.min_x, self.min_y,
-                                   self.max_x, self.min_y]
+                                   self.max_x, self.max_y]
 
             self.narrow_checkbox = source.vertices #dont double dcoords this!
 
