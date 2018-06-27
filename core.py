@@ -62,11 +62,14 @@ class province(cvsmgmt.scene_object):
         self.handlers[5] = True
 
         self.border = None
+        self.label = None
+
         self.adjacents_border = []
         self.adjacents = []
         self.name = None
         self.nation = None
         self.id = None
+        self.inside_coord = None
 
     def set_nation(self, nation):
         self.nation = config.nations[nation]
@@ -86,8 +89,11 @@ class province(cvsmgmt.scene_object):
         self.nodrag_leftdrag_scene(x,y)
 
     def handler_release(self,x,y):
-        if(self.nodrag):
-            pass
+        if(self.nodrag or True):
+            if(self.nation != None):
+                config.menus["play_menu"].elements[7].set_province(self.name)
+                config.menus["play_menu"].elements[7].set_nation(self.nation.name)
+
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
@@ -101,7 +107,6 @@ class ocean(cvsmgmt.scene_object):
 
         self.render_objects = [[cvsmr.sprite_object("ocean", [0,0], 0)]]
         self.checkbox.set_source(self.render_objects[0][0])
-
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
@@ -129,16 +134,19 @@ def init_provinces(group):
         for j in range(0, len(file) - 1):
             if (file[j] != ''):
                 temp = file[j].split(",")
-                temp_poly.vertices[j*2] = float(temp[0]) / 10 + 820
-                temp_poly.vertices[j*2+1] = (11000 - float(temp[1])) / 10
+                temp_poly.vertices[j*2] = float(temp[0]) / 10.0 + 820.0
+                temp_poly.vertices[j*2+1] = (11000 - float(temp[1])) / 10.0
 
         temp_poly.solid_color_coords(255,255,255)
         config.provinces[i] = province()
         config.provinces[i].render_objects[0][0] = temp_poly
 
         config.provinces[i].checkbox.set_source(temp_poly)
-
         config.provinces[i].set_id(int(map[i*2].split("]")[0][1:]))
+
+        config.provinces[i].name = map[i*2].split("\t")[1]
+
+        config.provinces[i].inside_coord = [int(map[i * 2].split("\t")[2].split(",")[0]) + 820, (11000 - int(map[i * 2].split("\t")[2].split(",")[1]) * 10) / 10]
 
     #province borders
     config.province_borders = cvsmgmt.scene_object()
@@ -258,4 +266,3 @@ def draw_nation_borders():
             temp_line.solid_color_coords(40, 40, 40)
 
             index += 1
-

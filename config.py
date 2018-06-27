@@ -16,6 +16,7 @@ init = False #have the saves, provinces, scenarios etc been initialized?
 
 #---MISC GRAPHICS---
 global province_borders
+global province_labels
 global nation_borders
 global ocean
 

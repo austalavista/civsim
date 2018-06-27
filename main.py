@@ -36,7 +36,6 @@ def on_mouse_scroll(x,y,scroll_x,scroll_y):
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
     global mouse_release_entry
-
     if(config.click_selected != None):
         if(config.click_selected.handlers[4]):
             mouse_release_entry.args[0] = x / config.global_transformation_group.scale_x
@@ -129,7 +128,7 @@ def coordinate_box_check_1(args):
 
             elif(broadcheck_hits[i].checkbox.triangles):
 
-                if (config.scene_objects[i].group_num >= config.num_scene_groups):
+                if (broadcheck_hits[i].group_num >= config.num_scene_groups):
                     x = menu_x
                     y = menu_y
                 else:
@@ -140,13 +139,13 @@ def coordinate_box_check_1(args):
 
                     temp = j*6
 
-                    v0 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - broadcheck_hits[i].checkbox.narrow_checkbox[temp+2],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3]])
+                    v0 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp+2]),
+                                     float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 3])])
 
-                    v1 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4],
-                          broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5]])
+                    v1 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 4]),
+                                     float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 5])])
 
-                    v2 = numpy.array([broadcheck_hits[i].checkbox.narrow_checkbox[temp] - x,broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1] - y])
+                    v2 = numpy.array([float(broadcheck_hits[i].checkbox.narrow_checkbox[temp]) - float(x),float(broadcheck_hits[i].checkbox.narrow_checkbox[temp + 1]) - float(y)])
 
                     dot00 = numpy.dot(v0, v0)
                     dot01 = numpy.dot(v0, v1)

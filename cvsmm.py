@@ -507,11 +507,25 @@ class scenario_info(cvsmgmt.scene_object):
     def set_name(self,name):
         self.render_objects[0][0].label.text = name
 
+class nation_info(cvsmgmt.scene_object):
+    def __init__(self):
+        cvsmgmt.scene_object.__init__(self)
+
+        self.render_objects = [[cvsmr.label_object("", [500, 1020], config.num_scene_groups + 1),
+                                cvsmr.label_object("", [500, 620], config.num_scene_groups + 1)
+                                ]]
+
+    def set_province(self,province):
+        self.render_objects[0][0].label.text = "province: " + province
+
+    def set_nation(self,nation):
+        self.render_objects[0][1].label.text = "nation: " + nation
+
 class play_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="play_menu")
 
-        self.elements = [play_saves(), play_scenarios(), play_start(), play_back(), play_saves_toggle(),play_scenarios_toggle(), scenario_info()]
+        self.elements = [play_saves(), play_scenarios(), play_start(), play_back(), play_saves_toggle(),play_scenarios_toggle(), scenario_info(),nation_info()]
 
     def add_to_scene(self):
         if(self.sprite != None):

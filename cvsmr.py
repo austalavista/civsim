@@ -256,6 +256,11 @@ class label_object:
         self.group_num = group_num
         self.scene_object_index = None
 
+    def set_style(self, font_size = 12, font_name = "arial", color = (0,0,0,255) ):
+        self.label.font_name = font_name
+        self.label.font_size = font_size
+        self.label.color = color
+
     def coords(self, x, y):
         self.label.x = x + self.anchor_offset[0]
         self.label.y = y + self.anchor_offset[1]
