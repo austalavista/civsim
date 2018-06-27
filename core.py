@@ -89,7 +89,7 @@ class province(cvsmgmt.scene_object):
         self.nodrag_leftdrag_scene(x,y)
 
     def handler_release(self,x,y):
-        if(self.nodrag or True):
+        if(self.nodrag):
             if(self.nation != None):
                 config.menus["play_menu"].elements[7].set_province(self.name)
                 config.menus["play_menu"].elements[7].set_nation(self.nation.name)
