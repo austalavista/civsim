@@ -11,6 +11,11 @@ class scene_object:
         self.scene_index = None
         self.handlers = [False,False,False,False,False,False,False]
 
+        self.min_limit_x = 0
+        self.max_limit_x = 19200
+        self.min_limit_y = 0
+        self.max_limit_y = 10800
+
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
 
@@ -53,17 +58,17 @@ class scene_object:
     def nodrag_leftdrag_scene(self,x,y):
         config.scene_transformation_group.fcoords((x-self.nodrag_x), (y-self.nodrag_y))
 
-        if (config.scene_transformation_group.x > 0):
-            config.scene_transformation_group.x = 0
+        if (config.scene_transformation_group.x > self.min_limit_x):
+            config.scene_transformation_group.x = self.min_limit_x
 
-        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
-            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > self.max_limit_x):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - self.max_limit_x
 
-        if (config.scene_transformation_group.y > 0):
-            config.scene_transformation_group.y = 0
+        if (config.scene_transformation_group.y > self.min_limit_y):
+            config.scene_transformation_group.y = self.min_limit_y
 
-        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
-            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > self.max_limit_y):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - self.max_limit_y
 
         self.nodrag_x = x
         self.nodrag_y = y
@@ -72,26 +77,25 @@ class scene_object:
 
     def zoom(self, x, y, scroll_y):
         if (scroll_y > 0):
-            if(config.scene_transformation_group.scale_x < 16.0):
+            if(config.scene_transformation_group.scale_x < 3.2):
                 config.scene_transformation_group.fscale(2, 2)
                 config.scene_transformation_group.fcoords(-1 * x, -1 * y)
         else:
-            if (config.scene_transformation_group.scale_x > 1.0):
+            if (config.scene_transformation_group.scale_x > 0.1):
                 config.scene_transformation_group.fscale(0.5, 0.5)
                 config.scene_transformation_group.fcoords(x / 2, y / 2)
 
-        if (config.scene_transformation_group.x > 0):
-            config.scene_transformation_group.x = 0
+        if (config.scene_transformation_group.x > self.min_limit_x):
+            config.scene_transformation_group.x = self.min_limit_x
 
-        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > 1920):
-            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - 1920
+        elif(abs(config.scene_transformation_group.x - 1920/config.scene_transformation_group.scale_x) > self.max_limit_x):
+            config.scene_transformation_group.x = 1920/ config.scene_transformation_group.scale_x - self.max_limit_x
 
-        if (config.scene_transformation_group.y > 0):
-            config.scene_transformation_group.y = 0
+        if (config.scene_transformation_group.y > self.min_limit_y):
+            config.scene_transformation_group.y = self.min_limit_y
 
-        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > 1080):
-            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - 1080
-
+        elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > self.max_limit_y):
+            config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - self.max_limit_y
 
 
 class checkbox:
