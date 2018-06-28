@@ -9,7 +9,7 @@
 9	Tras-o-Montes	145	788
 10	Porto	122	784
 11	Orense	145	766
-12	Vigo	129	753		
+12	Vigo	129	753	
 14	Lugo	147	742
 15	Asturias	178	748
 16	Leon	177	765
@@ -32,7 +32,7 @@
 33	Vizcaya	238	766
 34	La Rjoja	226	781
 35	Soria	228	802
-36	Guadalajara	227	822
+36	Guadalajara	230	825
 37	Madrid	204	828
 38	Toledo	211	855
 39	Ciudad Real	196	871
@@ -55,15 +55,15 @@
 56	Zaragoza	259	810
 57	Huesca	282	790
 58	Navarra	256	778
-59	Baleares	338	869	
+59	Baleares	338	869
 100	Labourd	275	765
 101	Armagnac	295	774
-102	Gers	304	749
+102	Gers	301	752
 103	Landes	278	746
 104	Bordeaux	286	726
-105	Dordogne	311	718
-106	La Rochelle	295	703
-107	Poitiers	303	682
+105	Dordogne	311	711
+106	La Rochelle	292	702
+107	Poitiers	298	680
 108	Lucon	280	675
 109	Anjou	294	658
 110	Nantes	274	654
@@ -95,47 +95,60 @@
 136	Le Mans	321	659
 137	Orleans	343	652
 138	Auxerre	366	653
-139	Tours	331	679
-140	Nevers	365	670
-141	Dijon	385	666
-142	Besancon	409	663
-143	Franche-Comte	407	681
-144	Autun	382	687
-145	Bourbonnais	355	695
-146	Limoges	331	701
-147	Auvergne	357	719
-148	Lyon	376	710
+139	Tours	319	684
+140	Nevers	367	669
+141	Chatillon	386	663
+142	Hericourt	414	661
+143	Besancon	409	674
+144	Dijon	388	682
+145	Bourbonnais	357	692
+146	Limoges	336	700
+147	Vichy	352	712
+148	Macon	376	708
 149	Ain	398	704
-150	Chambery	398	724
+150	Lyon	398	724
 151	Provence	408	753
 152	Toulon	408	772
 153	Valence	381	735
 154	Avignon	392	747
 155	Marseille	387	764
-156	Gard	362	747
-157	Aveyron-Tarn	339	751
+156	Gard	368	752
+157	Aveyron	346	740
 158	Montpellier	355	765
 159	Aude	334	776
-160	Toulouse	316	773
+160	Toulouse	316	775
 161	Roussilon	336	790
 162	Luxembourg	414	612
-163	Neufchateau	404	606
-164	Hainaut	380	586
-165	Flanders	370	575
-166	Liege	407	589
-167	Charleroi	392	596
-168	Antwerp	394	575
+163	Arlon	405	604
+164	Mons	378	589
+165	Bruges	366	574
+166	Liege	408	589
+167	Charleroi	393	595
+168	Antwerp	398	574
 169	Breda	403	562
-170	Zeeland	386	564
-171	Holland	394	549
-172	Utrecht	412	550
-173	Gelre	421	536
-174	Friesland	420	522
+170	Middleburg	386	564
+171	Den Haag	392	552
+172	Utrecht	406	547
+173	Zwolle	418	534
+174	Leeuwarden	414	523
 175	Limburg	409	572
 176	Metz	420	628
-177	Grenoble	407	735
+177	Grenoble	406	735
 178	Bourges	351	673
-179	Quercy	329	728	
+179	Quercy	332	723
+180	Charolais	376	687
+181	Pontarlier	403	688
+182	Montauban	321	746
+183	Bergerac	308	733
+184	Tarn	339	756
+185	Auvergne	363	726
+186	Chateauroux	337	677
+187	Brussels	389	582
+188	Ghent	382	574
+189	Amsterdam	396	541
+190	Arnhem	415	552
+191	Gelderland	418	543
+192	Groningen	428	523
 200	Cornwall	239	570
 201	Devon	254	565
 202	Somerset	273	558
@@ -150,7 +163,7 @@
 211	Gwent	268	542
 212	Dyfed	254	535
 213	Ceredigion	266	523
-214	Gweynned	267	508
+214	Gwynned	267	508
 215	Worcestshire	282	534
 216	Northampton	302	530
 217	Cambridge	323	532
@@ -208,21 +221,22 @@
 313	Mantua	488	729
 314	Parma	474	739
 315	Montferrat	447	737
-316	Piedmont	432	740
+316	Piedmont	431	749
 317	Nice	425	761
 318	Savona	442	757
 319	Genoa	470	750
 320	Lucca	486	759
 321	Modena	488	744
 322	Bologna	502	748
-323	Ravenna	518	756
-324	Florence	511	769
+323	Ravenna	517	753
+324	Florence	510	767
 325	Pisa	494	768
 326	Siena	504	786
 327	Viterbo	519	803
 328	Umbria	528	788
 329	Marche	542	777
-330	Pescara	547	800		
+330	Pescara	547	800
+331	Turin	431	735
 332	Latina	538	818
 333	Rome	526	813
 334	Naples	560	827
@@ -231,7 +245,8 @@
 337	Salerno	579	836
 338	Potenza	601	847
 339	Bari	607	832
-340	Taranto	632	841		
+340	Taranto	632	841
+341	Urbino	526	767
 342	Cosenza	612	874
 343	Calabria	608	898
 344	Catania	577	918
@@ -245,7 +260,7 @@
 352	Corte	462	801
 353	Valtellina	475	705
 354	Rovigo	510	725
-355	Piacenza	460	735		
+355	Piacenza	460	735	
 400	Reykjavik	129	148
 401	Selfoss	148	171
 402	Eglissataoir	197	169
@@ -262,8 +277,8 @@
 413	Storstrom	502	464
 414	Copenhagen	510	456
 415	Bornholm	550	469
-416	Lund	527	460
-417	Scania	534	444
+416	Malmo	527	460
+417	Kristianstad	534	444
 418	Blekinge	553	438
 419	Halland	518	425
 420	Kronoberg	539	425
@@ -290,24 +305,22 @@
 441	Vasterbotten	587	214
 442	Norbotten	602	171
 443	Kiruna	573	145
-444	Rogaland	427	379
-445	Vestagder	440	384
-446	Austagder	453	379
-447	Telemark	459	359
-448	Vestfold	477	355
-449	Ostfold	494	361
-450	Oslo	490	344
+444	Stavanger	427	379
+445	Lund	523	447
+446	Kristiansand	450	382
+447	Telemark	459	359		
+450	Oslo	487	352
 451	Hamar	500	326
 452	Oppland	473	314
 453	Buskerund	463	334
-454	Hordaland	434	337
+454	Bergen	434	337
 455	Fjordane	439	307
 456	Bismo	463	294
 457	Heldmark	492	293
-458	Sortrondelag	471	266
-459	Nordtrondelag	503	230
+458	Trondheim	471	266
+459	Trondelag	503	230
 460	Nordland	524	166
-461	Troms	569	98
+461	Tromso	569	98
 462	Finnmark	623	74
 463	Lappi	628	114
 464	Tanhua	661	128
@@ -345,9 +358,9 @@
 516	Saarland	429	619
 517	Pfalz	445	620
 518	Darmstadt	456	609
-519	Frankfurt	467	593
-520	Nassau	451	591
-521	Kassel	468	576
+519	Frankfurt	455	596
+520	Wiesbaden	449	588
+521	Kassel	473	574
 522	Gottingen	477	555
 523	Lippe	461	543
 524	Hanover	482	539
@@ -355,7 +368,7 @@
 526	Lubeck	487	507
 527	Rostock	502	510
 528	Stralsund	520	498
-529	Vorpommern	531	505
+529	Greifswald	531	505
 530	Gustrow	520	515
 531	Uckermark	536	519
 532	Berlin	539	536
@@ -375,11 +388,11 @@
 546	Dresden	538	576
 547	Bautzen	551	568
 548	Stolp	585	486
-549	Hinterpommern	568	498
+549	Kolberg	568	498
 550	Stettin	553	505
-551	Neu-Stettin	581	504
-552	Stargard	564	512
-553	Neumark	552	523
+551	Neustettin	581	504
+552	Stargard	554	517
+553	Neumark	565	519
 554	Sternberg	557	537
 555	Glogau	564	554
 556	Liegnitz	570	573
@@ -390,7 +403,9 @@
 561	Dithmarschen	467	498
 562	Hamburg	475	507
 563	Dortmund	445	571
-564	Ratibor	607	588	
+564	Ratibor	607	588
+565	Offenbach	468	595
+566	Marburg	460	581	
 600	Slezsko	610	611
 601	Olomouc	599	603
 602	Brno	589	622
@@ -417,12 +432,12 @@
 624	Ravensburg	469	659
 625	Breisgau	445	657
 626	Ulm	473	644
-627	Lausanne	426	689
-628	Valais	437	702
-629	Altdorf	450	688
-630	Bern	439	675
-631	Ticino	461	699
-632	Graubunden	470	685
+627	Geneva	422	691
+628	Zermatt	437	702
+629	Lucerne	450	688
+630	Bern	429	678
+631	Locarno	461	699
+632	Chur	476	689
 633	Vorarlberg	480	677
 634	Innsbruck	498	677
 635	Tirol	521	671
@@ -436,10 +451,11 @@
 643	Klagenfurt	555	685
 644	Wurzburg	487	611
 645	Oberpfalz	511	615
-646	Zurich	455	671
+646	Zurich	462	672
 647	Pardubice	563	609
 648	Svitavy	582	608
-649	Eisenstadt	584	654		
+649	Eisenstadt	584	654
+650	Basel	444	673	
 700	Danzig	600	489
 701	Marienburg	616	490
 702	Ermland	638	492
@@ -465,7 +481,7 @@
 725	Narva	693	340
 726	Tallinn	669	352
 727	Sakala	684	363
-728	Saaremaa	646	372		
+728	Saaremaa	646	372	
 800	Pomerelia	601	503
 801	Bydgoszcz	584	516
 802	Torun	613	525
@@ -496,16 +512,14 @@
 827	Brest	698	524
 828	Kovel	706	545
 829	Tarnobrzeg	695	566
-830	Brody	715	582
-831	Lwow	700	593
-832	Podhajce	738	598
+830	Lwow	712	581
+831	Tarnopol	706	603
+832	Podhajce	737	595
 833	Rowne	734	572
 834	Luck	724	550
 835	Kielce	696	498
 836	Leszno	585	548
 837	Przemsyl	673	578
-838	Stryi	706	608
-839	Tarnopol	718	599		
 900	Bratislava	605	636
 901	Nitra	619	647
 902	Trencin	618	625
@@ -527,11 +541,11 @@
 918	Miskolc	664	637
 919	Szabolcs	685	639
 920	Timisoara	680	696
-921	Cluj	699	657
-922	Maramures	719	641
-923	Sighisoara	733	659
-924	Covasna	757	667
-925	Brasov	751	682
+921	Cluj	699	655
+922	Maramures	712	641
+923	Sighisoara	727	671
+924	Bistrita	728	652
+925	Brasov	759	678
 926	Hunedoara	704	697
 927	Caransebes	699	716
 928	Halicz	725	618
@@ -550,14 +564,16 @@
 941	Constanta	816	709
 942	Galati	799	691
 943	Muntenia	790	711
-944	Targoviste	775	695
-945	Pitesti	744	703
+944	Targoviste	759	700
+945	Pitesti	737	706
 946	Bucharest	765	723
 947	Craiova	737	728
 948	Oltenia	718	719
-949	Deva	697	677
-950	Sibiu	725	680
-951	Lucenec	649	628		
+949	Deva	694	676
+950	Sibiu	731	689
+951	Lucenec	649	628
+952	Miercurea	751	660
+953	Buzau	780	692	
 1000	Gorizia	547	702
 1001	Kranj	561	698
 1002	Velenje	580	691
@@ -572,11 +588,11 @@
 1011	Zadar	588	750
 1012	Split	603	762
 1013	Dubrovnik	633	779
-1014	Herzegovina	632	765
-1015	Tomislavgrad	612	752
-1016	Una Sana	598	733
-1017	Sarajevo	639	747
-1018	Banja Luka	628	729
+1014	Trebinje	633	767
+1015	Bugojno	616	747
+1016	Bihac	597	736
+1017	Sarajevo	639	748
+1018	Banja Luka	613	729
 1019	Novi Sad	650	710
 1020	Subotica	663	701
 1021	Belgrade	683	734
@@ -586,8 +602,8 @@
 1025	Vranje	711	776
 1026	Novi Pazar	669	762
 1027	Pristina	687	780
-1028	Cetinje	648	777
-1029	Podgorica	665	776
+1028	Kotor	646	779
+1029	Cetinje	656	785
 1030	Lezhe	670	794
 1031	Durres	676	813
 1032	Vlore	675	832
@@ -623,7 +639,7 @@
 1062	Sparta	743	915
 1063	Edirne	814	780
 1064	Gallipoli	810	799
-1065	Kostantiniyye	835	784
+1065	Constantinople	835	784
 1066	Corfu	677	857
 1067	Kefalonia	699	894
 1068	Crete	806	956
@@ -633,21 +649,21 @@
 1072	Pancevo	673	717
 1073	Kragujevac	686	749
 1074	Ohrid	689	805
-1075	Blagovegrad	740	793		
+1075	Blagovegrad	740	793
+1076	Pjlevlja	660	772
+1077	Brcko	635	728		
 1100	Rhodes	862	916
 1101	Lesvos	811	847
 1102	Uskudar	874	783
 1103	Bursa	866	799
 1104	Canakkale	821	823
-1105	Izmir	838	861
-1106	Bodrum	850	879
-1107	Denizli	857	861
-1108	Esme	875	853
-1109	Soma	855	840
-1110	Balikesir	849	816
-1111	Emet	876	831
-1112	Bilecik	881	810
-1113	Eskisehir	896	796
+1105	Izmir	842	860
+1106	Bodrum	850	879		
+1108	Denizli	873	856
+1109	Balikesir	855	840
+1110	Bandirma	849	816
+1111	Usak	880	829	
+1113	Eskisehir	892	800
 1114	Kutafya	911	826
 1115	Isparta	905	847
 1116	Burdur	895	866
@@ -680,8 +696,8 @@
 1143	Kilis	1036	839
 1144	Ayvalik	834	840
 1145	Iskenderun	1022	857
-1146	Marmaris	872	884
-1147	Duzce	908	775		
+1146	Marmaris	873	882
+1147	Duzce	908	775	
 1163	Sanliurfa	1077	813
 1164	Diyarbakir	1092	786
 1165	Elazig	1062	780
@@ -696,11 +712,11 @@
 1174	Abkhazia	1051	662
 1175	Sochi	1025	657
 1176	Limassol	978	903
-1177	Nicosia	969	914		
-1200	Yalta	908	672
-1201	Sevastopol	908	662
-1202	Yevpatoriya	894	653
-1203	Dzhankoy	911	647
+1177	Nicosia	969	914	
+1200	Sevastopol	908	669
+1201	Feodosia	919	656
+1202	Yevpatoriya	895	654
+1203	Dzhankoy	908	645
 1204	Kerc	940	645
 1205	Odessa	842	632
 1206	Shryajeve	828	620
@@ -771,7 +787,7 @@
 1271	Buzuluk	1079	385
 1272	Oktyabrsky	1087	342
 1273	Buguluma	1051	327
-1274	Kazan	1010	312		
+1274	Kazan	1010	312	
 1300	Litovsk	719	504
 1301	Grodno	718	474
 1302	Minsk	744	488
@@ -846,119 +862,6 @@
 1371	Apatity	694	125
 1372	Murmansk	690	80
 1373	Kola	753	96		
-1400	Strait of Gibraltar	118	931
-1401	Alboran Sea	227	948
-1402	Barbary Coast	314	920
-1403	Balearic Sea	307	857
-1404	Algerian Coast	396	912
-1405	Western Mediterranean Sea	395	847
-1406	Gulf of Lion	373	790
-1407	Ligurian Sea	437	796
-1408	Tyrrhenian Sea	511	836
-1409	Bay of Naples	568	886
-1410	Skerki Bank	489	907
-1411	Gulf of Gabes	548	990
-1412	Strait of Messina	621	951
-1413	Gulf of Sirte	663	1035
-1414	Ionian Sea	667	928
-1415	Gulf of Taranto	642	884
-1416	Gulf of Venice	534	732
-1417	Adriatic Sea	553	751
-1418	Dalmatian Coast	589	786
-1419	Gulf of Manfredonia	643	816
-1420	Hellenic Coast	688	885
-1421	Myrtoan Sea	772	933
-1422	Libyan Sea	782	996
-1423	Sea of Crete	845	950
-1424	Bay of Alexandria	884	999
-1425	Palestinian Coast	984	986
-1426	Eastern Mediterranean Sea	963	943
-1427	Levantine Sea	1009	917
-1428	Gulf of Alexandretta	1002	873
-1429	Cicillian Sea	944	900
-1430	Gulf of Satalia	897	918
-1431	Gulluk Gulf	825	895
-1432	Aegean Sea	791	860
-1433	Thermaic Gulf	758	848
-1434	Thracian Sea	779	827
-1435	Sea of Marmara	842	797
-1436	Bosphorus Coast	871	760
-1437	Gulf of Varna	845	721
-1438	Gulf of Odessa	869	671
-1439	Western Black Sea	892	718
-1440	Paphlagonian Coast	928	730
-1441	Gulf of Sinop	985	721
-1442	Eastern Black Sea	993	697
-1443	Feodosia Gulf	940	678
-1444	Sea of Azov	943	619
-1445	Tsemes Bay	997	670
-1446	Imereti Bay	1052	700
-1447	Moroccan Coast	43	968
-1448	Setubal Bay	51	879
-1449	Iberian Shelf	17	805
-1450	Lusitanian Sea	83	774
-1451	Iberian Plain	33	697
-1452	Finisterre Bay	122	714
-1453	Cantabrian Sea	200	730
-1454	Cote d'Argent	256	724
-1455	Bay of Biscay	204	687
-1456	Quiberon Bay	250	668
-1457	Bay of Douarnenez	201	621
-1458	Trevelyan Escarpment	114	641
-1459	West European Basin	28	604
-1460	Porcupine Seabight	41	509
-1461	Western Celtic Sea	122	552
-1462	Dingle Bay	156	486
-1463	Rockall	103	427
-1464	Donegal Bay	195	429
-1465	Northeastern Atlantic	179	367
-1466	Icelandic Coast	119	265
-1467	Greenland Sea	34	365
-1468	Faxa Bay	47	158
-1469	Denmark Strait	118	49
-1470	Icelandic Sea	302	88
-1471	Jokulsarlon Bay	255	211
-1472	Faroe Coast	261	302
-1473	Shetland Coast	351	318
-1474	Orkney Coast	281	342
-1475	Sea of the Hebrides	234	418
-1476	Irish Sea	257	485
-1477	St George's Channel	229	535
-1478	Eastern Celtic Sea	185	551
-1479	Cote d'Armor	260	592
-1480	English Channel	314	590
-1481	Dutch Coast	378	542
-1482	Dogger Bank	360	523
-1483	Northumberland Coast	339	478
-1484	Firth of Forth	322	428
-1485	Moray Firth	332	382
-1486	Northern North Sea	388	425
-1487	Southern North Sea	382	478
-1488	Heligoland Bight	434	488
-1489	Danish Coast	438	443
-1490	Northern Gulf of Bothnia	620	214
-1491	Souther Gulf of Bothnia	597	279
-1492	Sea of Aland	592	319
-1493	Archipelago Sea	631	336
-1494	Gulf of Finland	694	320
-1495	Gulf of Riga	620	390
-1496	Baltic Sea	585	390
-1497	Bay of Gdansk	613	441
-1498	Bay of Pomerania	563	467
-1499	Oresund	503	487
-1500	Kattegat	501	432
-1501	Skagerrak	481	391
-1502	Norwegian Coast	438	404
-1503	Southern Norwegian Sea	380	359
-1504	Northern Norwegian Sea	451	232
-1505	Southern Jan Mayen Sea	365	239
-1506	Northern Jan Mayen Sea	422	168
-1507	Lofoten Sea	515	91
-1508	Spitzberg Sea	467	39
-1509	Kola Bay	665	20
-1510	Cheshskaya Gulf	810	21
-1511	Barents Sea	789	63
-1512	White Sea	763	141		
 1600	Aleppo	1043	851
 1601	Homs	1050	872
 1602	Latakia	1031	891
@@ -974,56 +877,82 @@
 1612	Suwayda	1070	941
 1613	Palmyra	1091	914
 1614	Tabqah	1088	878
-1615	Raqqa	1075	847		
+1615	Raqqa	1075	847
+1616	Sinai	1036	1060
 1617	Hasakah	1094	832
 1618	Maan	1057	1023
 1619	Eilat	1040	1017
-1620	Arish	1016	1017
-1621	Nekhel	1028	1038
-1622	Port Said	993	1027
-1623	Sinai	1012	1052
-1624	Sharm	1035	1070		
-1700	Damietta	954	1027
-1701	Suez	981	1060
-1702	Hurghada	998	1092
-1703	Faiyum	951	1082
-1704	Cairo	947	1050
-1705	Alexandria	908	1058
-1706	Marsah Matruh	849	1054
-1707	Tobruk	785	1055
-1708	Benghazi	724	1048
-1709	Ajdabiya	717	1087
-1710	Ras Lanuf	647	1091
-1711	Sirte	604	1088
-1712	Tripoli	552	1057
-1713	Waddan	551	1085
-1714	Dirj	501	1086
-1715	Tataouine	473	1064
-1716	Gabes	489	1039
-1717	Gafsa	447	1032
-1718	Kasserine	455	987
-1719	Sfax	485	1000
-1720	Sousse	482	974
-1721	Tunis	471	948
-1722	Constantine	408	954
-1723	Batna	406	982
-1724	Biskra	395	1022
-1725	Toggourt	424	1071
-1726	Ghardaia	365	1053
-1727	Laghouat	339	1011
-1728	Djelfa	347	977
-1729	Algiers	348	953
-1730	Chlef	305	960
-1731	Tiaret	297	987
-1732	Oran	250	977
-1733	Saida	245	1007
-1734	Oujda	212	1017
-1735	Nador	199	985
-1736	Midar	171	968
-1737	Fez	160	989
-1738	Errachidia	173	1012
-1739	Marrakesh	120	1019
-1740	Safi	73	1031
-1741	Casablanca	92	999
-1742	Rabat	129	980
-1743	Tangier	142	957
+1620	Arish	1012	1016
+1621	Thamad	1027	1034
+1622	Zaranik	996	1036
+1623	Tur	1015	1057
+1624	Zaafarana	1021	1092
+1625	Beni Suef	988	1087
+1626	Faiyum	955	1088
+1627	Giza	946	1066
+1628	Cairo	969	1059
+1629	Benha	956	1045
+1630	Suez	984	1053
+1631	Ismailiyah	975	1040
+1632	Said	964	1030
+1633	Dumyat	951	1027
+1634	Damanhur	936	1032
+1635	Alexandria	921	1043
+1636	Tanta	931	1055
+1637	Marsa Matruh	890	1054
+1638	Salloum	836	1055	
+1700	Tobruk	783	1056
+1701	Baida	740	1041
+1702	Benghazi	718	1060
+1703	Brega	715	1090
+1704	Ras Lanuf	647	1092
+1705	Sirte	603	1091
+1706	Misurata	586	1064
+1707	Tripoli	558	1057
+1708	Zuwara	525	1058
+1709	Tabaqah	549	1087
+1710	Dirj	501	1086
+1711	Tataouine	472	1067
+1712	Kebili	444	1029
+1713	Kasserine	458	988
+1714	Medenine	494	1041
+1715	Gabes	472	1023
+1716	Sfax	488	999
+1717	Sousse	483	976
+1718	Tunis	481	956
+1719	Bizerte	457	955
+1720	Toggourt	424	1074
+1721	Biskra	394	1022
+1722	Laghouat	364	1053
+1723	Djelfa	336	1011
+1724	Batna	396	991
+1725	Tebessa	427	984
+1726	Annaba	428	954
+1727	Skikda	398	953
+1728	Constantine	402	970
+1729	Setif	373	974
+1730	Bejaia	364	952
+1731	Algiers	336	951
+1732	Oussera	342	975
+1733	Blida	316	962
+1734	Chlef	291	959
+1735	Tiaret	298	986
+1736	Siddi Bel Abbes	264	992
+1737	Oran	258	967
+1738	Tlemcen	231	984
+1739	Aricha	237	1009
+1740	Figuig	207	1016
+1741	Oujda	198	995
+1742	Anoual	178	1010
+1743	Ouarzazate	136	1022
+1744	Marrakech	104	1024
+1745	Meknes	145	1002
+1746	Fez	163	986
+1747	Nador	197	977
+1748	Hocelma	169	969
+1749	Agadir	65	1039
+1750	Safi	78	1013
+1751	Casablanca	100	999
+1752	Rabat	126	981
+1753	Tetouan	144	959
+1754	Ceuta	145	945

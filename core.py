@@ -4,7 +4,7 @@ import config
 
 class scenario:
     def __init__(self):
-        self.map = [None]*916
+        self.map = [None]*config.num_provinces
 
         self.year = None
         self.month = None
@@ -24,7 +24,7 @@ class scenario:
 
 class save:
     def __init__(self):
-        self.map = [None]*916
+        self.map = [None]*config.num_provinces
 
         self.year = None
         self.month = None
@@ -245,9 +245,9 @@ def init_saves():
 def draw_nation_borders():
     # nation borders
     config.nation_borders = cvsmgmt.scene_object()
-    config.nation_borders.render_objects = [[None] * 916]
+    config.nation_borders.render_objects = [[None] * config.num_provinces]
     index = 0
-    for i in range(0, 1500):
+    for i in range(0, config.num_provinces):
         if(config.provinces[i] != None and config.provinces[i].nation != None):
             temp_line = cvsmr.line_object(config.line_groups["2/3"])
             config.nation_borders.render_objects[0][index] = temp_line

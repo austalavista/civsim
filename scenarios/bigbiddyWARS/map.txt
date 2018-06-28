@@ -1,10 +1,10 @@
-1	Venice
-2	Venice
-3	Venice
-4	Venice
+1	Portugal
+2	Portugal
+3	Portugal
+4	Portugal
 5	Portugal
 6	Portugal
-7	Venice
+7	Portugal
 8	Portugal
 9	Portugal
 10	Portugal
@@ -13,7 +13,7 @@
 14	Castile
 15	Castile
 16	Castile
-17	Venice
+17	Castile
 18	Castile
 19	Castile
 20	Castile
@@ -24,7 +24,7 @@
 25	Castile
 26	Castile
 27	Castile
-28	Venice
+28	Castile
 29	Castile
 30	Castile
 31	Castile
@@ -126,9 +126,9 @@
 167	Liege
 168	Brabant
 169	Brabant
-170	Brabant
+170	Zeeland
 171	Holland
-172	Gelre
+172	Utrecht
 173	Utrecht
 174	Friesland
 175	Liege
@@ -136,6 +136,19 @@
 177	France
 178	France
 179	France
+180	Burgundy
+181	Burgundy
+182	France
+183	France
+184	France
+185	France
+186	France
+187	Brabant
+188	Flanders
+189	Holland
+190	Gelre
+191	Gelre
+192	Groningen
 200	England
 201	England
 202	England
@@ -223,6 +236,7 @@
 328	The Papal States
 329	The Papal States
 330	Naples
+331	Savoy
 332	The Papal States
 333	The Papal States
 334	Naples
@@ -232,6 +246,7 @@
 338	Naples
 339	Naples
 340	Naples
+341	Urbino
 342	Naples
 343	Naples
 344	Aragon
@@ -270,12 +285,12 @@
 421	Sweden
 422	Sweden
 423	Sweden
-424	Denmark
+424	Norway
 425	Sweden
 426	Sweden
 427	Sweden
 428	Sweden
-429	Denmark
+429	Norway
 430	Sweden
 431	Sweden
 432	Sweden
@@ -290,25 +305,23 @@
 441	Sweden
 442	Sweden
 443	Sweden
-444	Denmark
+444	Norway
 445	Denmark
-446	Denmark
-447	Denmark
-448	Denmark
-449	Denmark
-450	Denmark
-451	Denmark
-452	Denmark
-453	Denmark
-454	Denmark
-455	Denmark
-456	Denmark
-457	Denmark
-458	Denmark
-459	Denmark
-460	Denmark
-461	Denmark
-462	Denmark
+446	Norway
+447	Norway
+450	Norway
+451	Norway
+452	Norway
+453	Norway
+454	Norway
+455	Norway
+456	Norway
+457	Norway
+458	Norway
+459	Norway
+460	Norway
+461	Norway
+462	Norway
 463	Sweden
 464	Sweden
 465	Sweden
@@ -378,7 +391,7 @@
 549	Pomerania
 550	Pomerania
 551	Pomerania
-552	Teutonic Order
+552	Pomerania
 553	Teutonic Order
 554	Brandenburg
 555	Bohemia
@@ -391,6 +404,8 @@
 562	Hamburg
 563	Berg
 564	Bohemia
+565	Hesse
+566	Hesse
 600	Bohemia
 601	Bohemia
 602	Bohemia
@@ -420,10 +435,10 @@
 627	Savoy
 628	Savoy
 629	Switzerland
-630	Austria
+630	Switzerland
 631	Milan
 632	Switzerland
-633	Austria
+633	Switzerland
 634	Austria
 635	Salzburg
 636	Austria
@@ -436,10 +451,11 @@
 643	Austria
 644	Wurzburg
 645	The Palatinate
-646	Austria
+646	Switzerland
 647	Bohemia
 648	Bohemia
 649	Austria
+650	Switzerland
 700	Teutonic Order
 701	Teutonic Order
 702	Teutonic Order
@@ -465,7 +481,7 @@
 725	Livonian Order
 726	Livonian Order
 727	Livonian Order
-728	Livonian Order	
+728	Livonian Order
 800	Teutonic Order
 801	Poland
 802	Poland
@@ -504,8 +520,6 @@
 835	Lithuania
 836	Poland
 837	Poland
-838	Poland
-839	Poland	
 900	Hungary
 901	Hungary
 902	Hungary
@@ -557,7 +571,9 @@
 948	Wallachia
 949	Hungary
 950	Hungary
-951	Hungary	
+951	Hungary
+952	Hungary
+953	Wallachia
 1000	Venice
 1001	Austria
 1002	Austria
@@ -586,8 +602,8 @@
 1025	Ottomans
 1026	Serbia
 1027	Serbia
-1028	Serbia
-1029	Serbia
+1028	Herzegovina
+1029	Zeta
 1030	Serbia
 1031	Albania
 1032	Albania
@@ -634,6 +650,8 @@
 1073	Serbia
 1074	Ottomans
 1075	Ottomans
+1076	Serbia
+1077	Bosnia
 1100	The Knights
 1101	Genoa
 1102	Ottomans
@@ -641,12 +659,10 @@
 1104	Ottomans
 1105	Ottomans
 1106	Ottomans
-1107	Ottomans
 1108	Ottomans
 1109	Ottomans
 1110	Ottomans
 1111	Ottomans
-1112	Ottomans
 1113	Ottomans
 1114	Ottomans
 1115	Ottomans
@@ -697,8 +713,8 @@
 1175	Georgia
 1176	Cyprus
 1177	Cyprus
-1200	Genoa
-1201	Theodoro
+1200	Theodoro
+1201	Genoa
 1202	Crimean Khanate
 1203	Crimean Khanate
 1204	Genoa
@@ -750,7 +766,7 @@
 1250	Golden Horde
 1251	Golden Horde
 1252	Golden Horde
-1253	Venice
+1253	Golden Horde
 1254	Golden Horde
 1255	Golden Horde
 1256	Golden Horde
@@ -761,13 +777,13 @@
 1261	Golden Horde
 1262	Golden Horde
 1263	Nogai
-1264	Venice
-1265	Venice
+1264	Nogai
+1265	Golden Horde
 1266	Golden Horde
 1267	Kazan
-1268	Venice
+1268	Kazan
 1269	Kazan
-1270	Venice
+1270	Kazan
 1271	Nogai
 1272	Kazan
 1273	Kazan
@@ -845,7 +861,7 @@
 1370	Novgorod
 1371	Novgorod
 1372	Novgorod
-1373	Novgorod	
+1373	Novgorod
 1600	Mamluks
 1601	Mamluks
 1602	Mamluks
@@ -862,6 +878,7 @@
 1613	Fadl
 1614	Fadl
 1615	Fadl
+1616	Mamluks
 1617	Aq Qoyunlu
 1618	Mamluks
 1619	Mamluks
@@ -870,47 +887,72 @@
 1622	Mamluks
 1623	Mamluks
 1624	Mamluks
+1625	Mamluks
+1626	Mamluks
+1627	Mamluks
+1628	Mamluks
+1629	Mamluks
+1630	Mamluks
+1631	Mamluks
+1632	Mamluks
+1633	Mamluks
+1634	Mamluks
+1635	Mamluks
+1636	Mamluks
+1637	Mamluks
+1638	Mamluks
 1700	Mamluks
 1701	Mamluks
 1702	Mamluks
-1703	Mamluks
-1704	Mamluks
-1705	Mamluks
-1706	Mamluks
-1707	Mamluks
-1708	Mamluks
+1703	Fezzan
+1704	Fezzan
+1705	Fezzan
+1706	Tunis
+1707	Tunis
+1708	Tunis
 1709	Fezzan
 1710	Fezzan
-1711	Fezzan
-1712	Tunis
-1713	Fezzan
-1714	Fezzan
-1715	Djerid
+1711	Djerid
+1712	Djerid
+1713	Tunis
+1714	Tunis
+1715	Tunis
 1716	Tunis
-1717	Djerid
+1717	Tunis
 1718	Tunis
 1719	Tunis
-1720	Tunis
-1721	Tunis
-1722	Tunis
-1723	Tunis
-1724	Tuggurt
-1725	Tuggurt
-1726	Mzab
-1727	Mzab
-1728	Tlemcen
+1720	Tuggurt
+1721	Tuggurt
+1722	Mzab
+1723	Mzab
+1724	Tunis
+1725	Tunis
+1726	Tunis
+1727	Tunis
+1728	Tunis
 1729	Tlemcen
 1730	Tlemcen
 1731	Tlemcen
 1732	Tlemcen
 1733	Tlemcen
 1734	Tlemcen
-1735	Morocco
-1736	Morocco
-1737	Morocco
-1738	Morocco
-1739	Morocco
+1735	Tlemcen
+1736	Tlemcen
+1737	Tlemcen
+1738	Tlemcen
+1739	Tlemcen
 1740	Morocco
 1741	Morocco
 1742	Morocco
 1743	Morocco
+1744	Morocco
+1745	Morocco
+1746	Morocco
+1747	Morocco
+1748	Morocco
+1749	Morocco
+1750	Morocco
+1751	Morocco
+1752	Morocco
+1753	Morocco
+1754	Portugal

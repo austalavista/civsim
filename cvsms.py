@@ -120,7 +120,7 @@ def open_play_menu():
 
     config.menus["play_menu"].add_to_scene()
 
-    for i in range(0,1500):
+    for i in range(0,config.num_provinces):
         if(config.provinces[i] != None):
             if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
                 config.provinces[i].add_to_scene()

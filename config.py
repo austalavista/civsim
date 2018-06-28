@@ -6,8 +6,10 @@ global provinces_id
 global nation_colors
 global scenarios
 global init
+global num_provinces
 
-provinces = [None] * 1500
+num_provinces = 958
+provinces = [None] * num_provinces
 provinces_id = {}
 nations = {}
 scenarios = []
