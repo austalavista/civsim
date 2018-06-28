@@ -72,9 +72,14 @@ class province(cvsmgmt.scene_object):
         self.inside_coord = None
 
     def set_nation(self, nation):
-        self.nation = config.nations[nation]
-        self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
-        self.render_objects[0][0].update_color()
+        if(nation != None):
+            self.nation = config.nations[nation]
+            self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
+            self.render_objects[0][0].update_color()
+        else:
+            self.nation = None
+            self.render_objects[0][0].solid_color_coords(255,255,255)
+            self.render_objects[0][0].update_color()
 
     def set_id(self, id):
         self.id = id
