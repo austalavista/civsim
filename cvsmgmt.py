@@ -97,7 +97,6 @@ class scene_object:
         elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > self.max_limit_y):
             config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - self.max_limit_y
 
-
 class checkbox:
     def __init__(self, group = 0):
         self.group = group
@@ -117,7 +116,7 @@ class checkbox:
 
         if(source.render_type == "sprite"):
             self.broad_checkbox = [self.source.anchor[0],self.source.anchor[1],
-                                   self.source.anchor[0] + self.source.width, self.source.anchor[1] + self.source.height]
+                                   self.source.anchor[0] + self.source.sprite.width, self.source.anchor[1] + self.source.sprite.height]
 
         elif(source.render_type == "polygon"):
             self.narrow_check = True

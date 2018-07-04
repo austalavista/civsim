@@ -114,10 +114,11 @@ def open_play_menu():
         core.init_scenarios()
         core.init_saves()
         config.init = True
-        config.menus["play_menu"] = cvsmm.play_menu()
+
         config.ocean = core.ocean()
         core.draw_nation_borders()
 
+    config.menus["play_menu"] = cvsmm.play_menu()
     config.menus["play_menu"].add_to_scene()
 
     for i in range(0,config.num_provinces):
@@ -131,5 +132,6 @@ def open_play_menu():
 
     config.ocean.add_to_scene()
     config.scene_transformation_group.scale(0.1,0.1)
+    config.scene_transformation_group.coords(0,0)
 
 

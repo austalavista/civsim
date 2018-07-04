@@ -88,12 +88,14 @@ class province(cvsmgmt.scene_object):
         self.id = id
         config.provinces_id[str(id)] = self
 
-    def on_screen(self, threshold_x = 100, threshold_y = 100):
+    def on_screen(self):
 
-        if(self.inside_coord[0] > -1 * config.scene_transformation_group.x - threshold_x and
-           self.inside_coord[0] < abs(config.scene_transformation_group.x) + 1920/ config.scene_transformation_group.scale_x + threshold_x and
-           self.inside_coord[1] > -1 * config.scene_transformation_group.y - threshold_y and
-           self.inside_coord[1] < abs(config.scene_transformation_group.y) + 1080 / config.scene_transformation_group.scale_x + threshold_y):
+        if(self.inside_coord[0] > config.screen_bound_left and
+           self.inside_coord[0] < config.screen_bound_right and
+           self.inside_coord[1] > config.screen_bound_bottom and
+           self.inside_coord[1] < config.screen_bound_top):
+
+            self.on_screened = True
             return True
         else:
             return False
@@ -107,6 +109,7 @@ class province(cvsmgmt.scene_object):
         self.nodrag_leftdrag_scene(x,y)
 
         if (config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
             for i in range(0, config.num_provinces):
                 if (config.provinces[i].on_screen()):
                     config.provinces[i].label.add()
@@ -126,10 +129,10 @@ class province(cvsmgmt.scene_object):
         self.zoom(x,y,scroll_y)
 
         if(config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
             for i in range(0, config.num_provinces):
                 if(config.provinces[i].on_screen()):
                     config.provinces[i].label.add()
-                    config.provinces[i].on_screened = True
 
         elif(config.scene_transformation_group.scale_x > 0.3):
             for i in range(0, config.num_provinces):
@@ -162,8 +165,18 @@ class ocean(cvsmgmt.scene_object):
 
 #----------------------------------------------------------------------------------------------------------------------
 
+def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
+    config.screen_bound_left = -1 * config.scene_transformation_group.x - threshold_x
+    config.screen_bound_right = abs(config.scene_transformation_group.x) + 1920/ config.scene_transformation_group.scale_x + threshold_x
+    config.screen_bound_top = abs(config.scene_transformation_group.y) + 1080 / config.scene_transformation_group.scale_x + threshold_y
+    config.screen_bound_bottom =  -1 * config.scene_transformation_group.y - threshold_y
+
 def init_provinces(group):
     mysize = 10
+
+    file = open("resources/map/num.txt", "r").read()
+    config.num_provinces = int(file)
+    config.provinces = [None] * config.num_provinces
 
     #polygon
     file = open("resources/map/mapt.txt", "r").read()
