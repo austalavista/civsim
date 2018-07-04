@@ -1,10 +1,11 @@
 import os
+import time
 import cvsmr, cvsmgmt
 import config
 
 class scenario:
     def __init__(self):
-        self.map = [None]*916
+        self.map = [None]*config.num_provinces
 
         self.year = None
         self.month = None
@@ -24,7 +25,7 @@ class scenario:
 
 class save:
     def __init__(self):
-        self.map = [None]*916
+        self.map = [None]*config.num_provinces
 
         self.year = None
         self.month = None
@@ -71,14 +72,33 @@ class province(cvsmgmt.scene_object):
         self.id = None
         self.inside_coord = None
 
+        self.on_screened = False
+
     def set_nation(self, nation):
-        self.nation = config.nations[nation]
-        self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
-        self.render_objects[0][0].update_color()
+        if(nation != None):
+            self.nation = config.nations[nation]
+            self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
+            self.render_objects[0][0].update_color()
+        else:
+            self.nation = None
+            self.render_objects[0][0].solid_color_coords(255,255,255)
+            self.render_objects[0][0].update_color()
 
     def set_id(self, id):
         self.id = id
         config.provinces_id[str(id)] = self
+
+    def on_screen(self):
+
+        if(self.inside_coord[0] > config.screen_bound_left and
+           self.inside_coord[0] < config.screen_bound_right and
+           self.inside_coord[1] > config.screen_bound_bottom and
+           self.inside_coord[1] < config.screen_bound_top):
+
+            self.on_screened = True
+            return True
+        else:
+            return False
 
     def handler_leftclick(self,x,y):
         config.click_selected = self
@@ -88,15 +108,37 @@ class province(cvsmgmt.scene_object):
     def handler_leftdrag(self,x,y,dx,dy):
         self.nodrag_leftdrag_scene(x,y)
 
+        if (config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
+            for i in range(0, config.num_provinces):
+                if (config.provinces[i].on_screen()):
+                    config.provinces[i].label.add()
+                    config.provinces[i].on_screened = True
+
+                elif(config.provinces[i].on_screened):
+                    config.provinces[i].label.remove()
+                    config.provinces[i].on_screened = False
+
     def handler_release(self,x,y):
         if(self.nodrag):
             if(self.nation != None):
                 config.menus["play_menu"].elements[7].set_province(self.name)
                 config.menus["play_menu"].elements[7].set_nation(self.nation.name)
 
-
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
+
+        if(config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
+            for i in range(0, config.num_provinces):
+                if(config.provinces[i].on_screen()):
+                    config.provinces[i].label.add()
+
+        elif(config.scene_transformation_group.scale_x > 0.3):
+            for i in range(0, config.num_provinces):
+                if(config.provinces[i].on_screened):
+                    config.provinces[i].label.remove()
+                    config.provinces[i].on_screened = False
 
 class ocean(cvsmgmt.scene_object):
     def __init__(self):
@@ -106,6 +148,8 @@ class ocean(cvsmgmt.scene_object):
         self.handlers[3] = True
 
         self.render_objects = [[cvsmr.sprite_object("ocean", [0,0], 0)]]
+        self.render_objects[0][0].scale(100,100)
+
         self.checkbox.set_source(self.render_objects[0][0])
 
     def handler_leftclick(self,x,y):
@@ -121,7 +165,19 @@ class ocean(cvsmgmt.scene_object):
 
 #----------------------------------------------------------------------------------------------------------------------
 
+def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
+    config.screen_bound_left = -1 * config.scene_transformation_group.x - threshold_x
+    config.screen_bound_right = abs(config.scene_transformation_group.x) + 1920/ config.scene_transformation_group.scale_x + threshold_x
+    config.screen_bound_top = abs(config.scene_transformation_group.y) + 1080 / config.scene_transformation_group.scale_x + threshold_y
+    config.screen_bound_bottom =  -1 * config.scene_transformation_group.y - threshold_y
+
 def init_provinces(group):
+    mysize = 10
+
+    file = open("resources/map/num.txt", "r").read()
+    config.num_provinces = int(file)
+    config.provinces = [None] * config.num_provinces
+
     #polygon
     file = open("resources/map/mapt.txt", "r").read()
     map = file.split("\n")
@@ -134,8 +190,8 @@ def init_provinces(group):
         for j in range(0, len(file) - 1):
             if (file[j] != ''):
                 temp = file[j].split(",")
-                temp_poly.vertices[j*2] = float(temp[0]) / 10.0 + 820.0
-                temp_poly.vertices[j*2+1] = (11000 - float(temp[1])) / 10.0
+                temp_poly.vertices[j*2] = (float(temp[0]) / 10.0 + 820.0)*mysize
+                temp_poly.vertices[j*2+1] = ((11000 - float(temp[1])) / 10.0)*mysize
 
         temp_poly.solid_color_coords(255,255,255)
         config.provinces[i] = province()
@@ -146,7 +202,9 @@ def init_provinces(group):
 
         config.provinces[i].name = map[i*2].split("\t")[1]
 
-        config.provinces[i].inside_coord = [int(map[i * 2].split("\t")[2].split(",")[0]) + 820, (11000 - int(map[i * 2].split("\t")[2].split(",")[1]) * 10) / 10]
+        config.provinces[i].inside_coord = [(int(map[i * 2].split("\t")[2].split(",")[0]) + 820)*mysize, (11000 - int(map[i * 2].split("\t")[2].split(",")[1]) * 10) *mysize/10 ]
+        config.provinces[i].label = (cvsmr.label_object(config.provinces[i].name,config.provinces[i].inside_coord,3 ))
+        config.provinces[i].label.set_style(font_size = 11)
 
     #province borders
     config.province_borders = cvsmgmt.scene_object()
@@ -163,8 +221,8 @@ def init_provinces(group):
         for j in range(0, len(file)):
             if (file[j] != ''):
                 temp = file[j].split(",")
-                temp_poly.vertices_loop[j * 2] = ((float(temp[0]))) / 10 + 820
-                temp_poly.vertices_loop[j * 2 + 1] = (11000 - float(temp[1])) / 10
+                temp_poly.vertices_loop[j * 2] = (((float(temp[0]))) / 10 + 820)*mysize
+                temp_poly.vertices_loop[j * 2 + 1] = ((11000 - float(temp[1])) / 10)*mysize
 
         temp_poly.convert_loop()
         config.provinces[i].border = temp_poly
@@ -245,9 +303,9 @@ def init_saves():
 def draw_nation_borders():
     # nation borders
     config.nation_borders = cvsmgmt.scene_object()
-    config.nation_borders.render_objects = [[None] * 916]
+    config.nation_borders.render_objects = [[None] * config.num_provinces]
     index = 0
-    for i in range(0, 1500):
+    for i in range(0, config.num_provinces):
         if(config.provinces[i] != None and config.provinces[i].nation != None):
             temp_line = cvsmr.line_object(config.line_groups["2/3"])
             config.nation_borders.render_objects[0][index] = temp_line

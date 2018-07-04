@@ -35,7 +35,7 @@ Belgium	635151	Belgian
 Berg	3C5560	Bergish
 Bohemia	C6B257	Bohemian
 Bornholm	7A820E	Bornholmian
-Bosnia	489DCE	Bosnian
+Bosnia	7AAFDD	Bosnian
 Bosnia-Herzegovina	B6A3A7	Bosnian
 Brabant	6BAF76	Brabantian
 Brandenburg	706262	Brandenburgian
@@ -82,6 +82,7 @@ Egypt	D3A10A	Egyptian
 England	B22117	English
 Epirus	A3FFFF	Epiri
 Eretna	D63B2C	Eretnid
+Erfurt	EFAAAA	Erfurtish
 Erzincan	B59FFF	Erzincanli
 Estonia	7F1F67	Estonian
 European Union	0F2D8F	European
@@ -115,12 +116,13 @@ Great Britain	932D2D	British
 Great Horde	BFB699	Great Horde
 Great Perm	5B70A5	Permian
 Greece	6795CE	Greek
+Groningen	46754D	Groningen
 Hainaut	2B8DAC	Hainautian
 Halberstadt	4F8E36	Halberstadter
 Halych	6D6436	Halych
 Hamburg	886B99	Hamburgish
 Hanover	BC6E5C	Hanoverian
-Herzegovina	D396C2	Herzegovinan
+Herzegovina	ABC0CC	Herzegovinan
 Hesse	E5BC16	Hessian
 Holland	C48050	Hollandish
 Holstein	E5A5AC	Holsteinian
@@ -129,7 +131,7 @@ Hungary	96424C	Hungarian
 Iceland	386899	Icelandic
 Illyria	575FB2	Illyrian
 Ireland	4A685C	Irish
-Isfendiyar	626D65	Isfendiyarid
+Isfendiyar	592C5B	Isfendiyarid
 Israel	7AD0FF	Israeli
 Italy	456628	Italian
 Jordan	C67F85	Jordanian
@@ -223,7 +225,7 @@ Ragusa	9E609C	Ragusan
 Ramazan	B20000	Ramanid
 Ravensburg	506FC4	Ravensburgish
 Regensburg	6BB7D3	Regensburgish
-Riga	9D87C1	Rigan
+Riga	C4BFCC	Rigan
 Roman Empire	A30061	Roman
 Romania	007891	Romanian
 Rostov	FFBE9C	Rostovian
@@ -294,6 +296,7 @@ United Baltic States	478691	Baltic
 United Carpathian States	7F6E0E	Union
 United Kingdom	A52929	British
 United Scandinavia	226696	Scandinavian
+Urbino	1A83C9	Urbinoan
 Utrecht	DFA840	Utrechtian
 Valencia	00619E	Valencian
 Venice	229696	Venetian
@@ -311,3 +314,5 @@ Wurttemberg	34824E	Wurttembergish
 Wurzburg	893478	Wurzburgish
 Yaroslav	6D3E2B	Yaroslavian
 Yugoslavia	6B7899	Yugoslav
+Zeeland	564E48	Zeelandish
+Zeta	B75065	Zetan

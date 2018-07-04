@@ -396,6 +396,9 @@ class play_back(base_button):
         cvsms.clear_scene()
         cvsms.clear_menus()
         cvsms.open_main_menu()
+        for i in range(0, config.num_provinces):
+            config.provinces[i].set_nation(None)
+        config.menus["play_menu"] = None
 
 class play_saves_element(scroll_menu_element):
     def __init__(self, scroll_menu, save, group_num):

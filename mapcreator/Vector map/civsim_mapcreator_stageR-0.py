@@ -59,7 +59,7 @@ def get_next_ccw():
         position = 0
 
     temp = position_to_coords(position)
-    while(pix[temp[0],temp[1]] != border and pix[temp[0],temp[1]] != straight_indicator):
+    while(pix[temp[0],temp[1]] != border):
         position += 1
         if (position > 7):
             position = 0
