@@ -26,6 +26,9 @@ class sprite_object:
 
         #use sprite.position(), sprite.update()
 
+    def __del__(self):
+        self.sprite.delete()
+
     def switch_image(self, sprite_name):
         self.sprite.image = config.sprite_textures[sprite_name]
 
@@ -255,6 +258,9 @@ class label_object:
         self.anchor_offset = anchor_offset
         self.group_num = group_num
         self.scene_object_index = None
+
+    def __del__(self):
+        self.label.delete()
 
     def set_style(self, font_size = 12, font_name = "arial", color = (0,0,0,255) ):
         self.label.font_name = font_name

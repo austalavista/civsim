@@ -9,6 +9,12 @@ nations = {}
 scenarios = []
 saves = []
 init = False #have the saves, provinces, scenarios etc been initialized?
+state = "main_menu"
+
+time_entry = None
+day = 1
+month = "January"
+year = 1444
 
 #---MISC GRAPHICS---
 

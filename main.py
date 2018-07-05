@@ -211,7 +211,7 @@ def update(dt):
 #RUN-------------------------------------------------------------------------------------------------------------------
 cvsms.initialize()
 
-pyglet.clock.schedule_interval(update, 1/80.0)
+pyglet.clock.schedule_interval(update, 1/60.0)
 pyglet.app.run()
 
 

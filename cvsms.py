@@ -100,12 +100,14 @@ def initialize():
     config.gs_entries[5].add(5)
 
 def open_main_menu():
+    config.state = "main_menu"
     config.menus["main_menu"] = cvsmm.main_menu()
     config.menus["main_menu"].add_to_scene()
 
     config.menus["settings_menu"] = cvsmm.settings_menu()
 
 def open_play_menu():
+    config.state = "play_menu"
     config.menus["main_menu"].remove_from_scene()
 
     if(not config.init):
@@ -134,4 +136,16 @@ def open_play_menu():
     config.scene_transformation_group.scale(0.1,0.1)
     config.scene_transformation_group.coords(0,0)
 
+def start():
+    config.state = "in_game_menu"
 
+    config.menus["play_menu"].remove_from_scene()
+    config.menus["main_menu"] = None
+    config.menus["play_menu"] = None
+
+    config.time_entry = core.time_entry()
+    config.time_entry.speed = 1
+    config.time_entry.add()
+
+    config.menus["in_game_menu"] = cvsmm.in_game_menu()
+    config.menus["in_game_menu"].add_to_scene()

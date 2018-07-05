@@ -379,6 +379,8 @@ class play_start(base_button):
         config.click_selected = self
         self.toggle_sprite()
 
+        cvsms.start()
+
     def handler_release(self,x,y):
         self.toggle_sprite()
 
@@ -417,6 +419,7 @@ class play_saves_element(scroll_menu_element):
         config.nation_borders.add_to_scene()
 
         self.scroll_menu.toggle()
+
         self.toggle(True)
 
 class play_saves(scroll_menu):
@@ -537,3 +540,17 @@ class play_menu(base_window):
         #load scenarios scroll menu first
         for i in range(1,len(self.elements)):
             self.elements[i].add_to_scene()
+
+#-------------------------------------------
+
+class in_game_date(cvsmgmt.scene_object):
+    def __init__(self):
+        cvsmgmt.scene_object.__init__(self, group_num = config.num_scene_groups + 1)
+
+        self.render_objects = [[cvsmr.label_object(str(config.day) + "/" + config.month + "/" + str(config.year), [20,100], self.group_num)]]
+
+class in_game_menu(base_window):
+    def __init__(self):
+        base_window.__init__(self=self, anchor=[0, 0], sprite_name=None)
+
+        self.elements = [in_game_date()]
