@@ -357,13 +357,12 @@ def init_datastructures():
     for i in range(0, len(file)):
         config.universal_data[i] = float(file[i])
 
-    config.province_data = np.zeros((config.num_provinces,config.num_province_attributes))
+    config.province_data = np.ones((config.num_provinces,config.num_province_attributes))
 
-    config.owner_mask = np.zeros((config.num_provinces,config.num_nations))
+    config.owner_mask = np.ones((config.num_provinces,config.num_nations)) # temp for testing
 
-    config.nation_data = np.zeros((config.num_nations,config.num_nation_attributes))
+    config.nation_data = np.ones((config.num_nations,config.num_nation_attributes))
 
-    print(config.province_data.flags)
 #-----------------------------------------------------------------------------------------------------------------------
 
 def time_update():
@@ -417,7 +416,11 @@ def time_update():
         config.menus["in_game_menu"].elements[0].render_objects[0][0].label.text = str(config.day) + "/" + config.month + "/" + str(config.year)
 
     s = time.time()
+
+    calculations.demographics()
     calculations.agriculture()
+
+
     e = time.time()
     print(e-s)
 
