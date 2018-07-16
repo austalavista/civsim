@@ -26,6 +26,9 @@ class sprite_object:
 
         #use sprite.position(), sprite.update()
 
+    def __del__(self):
+        self.sprite.delete()
+
     def switch_image(self, sprite_name):
         self.sprite.image = config.sprite_textures[sprite_name]
 
@@ -256,6 +259,9 @@ class label_object:
         self.group_num = group_num
         self.scene_object_index = None
 
+    def __del__(self):
+        self.label.delete()
+
     def set_style(self, font_size = 12, font_name = "arial", color = (0,0,0,255) ):
         self.label.font_name = font_name
         self.label.font_size = font_size
@@ -436,6 +442,9 @@ def sprite_texture_init():
     image_init("play_menu")
     image_init("play_menu_scenarios_toggle", "b")
     image_init("play_menu_saves_toggle", "b")
+
+    image_init("in_game_menu_date_pause", "b")
+    image_init("in_game_menu_date_speed", "b")
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")

@@ -2,6 +2,8 @@ import os
 import time
 import cvsmr, cvsmgmt
 import config
+import numpy as np
+import calculations
 
 class scenario:
     def __init__(self):
@@ -23,6 +25,10 @@ class scenario:
                 if(self.map[self.index][0] == config.provinces[i].id):
                     config.provinces[i].set_nation(self.map[self.index][1])
 
+        config.day = self.day
+        config.month = self.month
+        config.year = self.year
+
 class save:
     def __init__(self):
         self.map = [None]*config.num_provinces
@@ -43,13 +49,16 @@ class save:
                 if(self.map[self.index][0] == config.provinces[i].id):
                     config.provinces[i].set_nation(self.map[self.index][1])
 
+        config.day = self.day
+        config.month = self.month
+        config.year = self.year
+
 class nation:
     def __init__(self):
         self.color = None
         self.name = None
         self.adjective = None
 
-        self.provinces = []
         self.border = None
         self.id = None
 
@@ -121,9 +130,11 @@ class province(cvsmgmt.scene_object):
 
     def handler_release(self,x,y):
         if(self.nodrag):
-            if(self.nation != None):
-                config.menus["play_menu"].elements[7].set_province(self.name)
-                config.menus["play_menu"].elements[7].set_nation(self.nation.name)
+
+            if(config.state == "play_menu"):
+                if(self.nation != None):
+                    config.menus["play_menu"].elements[7].set_province(self.name)
+                    config.menus["play_menu"].elements[7].set_nation(self.nation.name)
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
@@ -163,6 +174,23 @@ class ocean(cvsmgmt.scene_object):
     def handler_scroll(self, x, y, scroll_x, scroll_y):
         self.zoom(x, y, scroll_y)
 
+class time_entry(cvsmgmt.update_entry):
+    def __init__(self, args=None):
+        cvsmgmt.update_entry.__init__(self, args=args)
+        self.speed = 0
+        self.timer = 60
+    def run(self):
+        if (self.timer <= 0):
+
+            self.timer = 60
+            time_update()
+
+        else:
+            self.timer -= self.speed
+
+    def set_speed(self, speed):
+        self.speed = speed
+
 #----------------------------------------------------------------------------------------------------------------------
 
 def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
@@ -174,12 +202,16 @@ def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
 def init_provinces(group):
     mysize = 10
 
-    file = open("resources/map/num.txt", "r").read()
+    fileone = open("resources/map/num.txt", "r")
+    file = fileone.read()
+    fileone.close()
     config.num_provinces = int(file)
     config.provinces = [None] * config.num_provinces
 
     #polygon
-    file = open("resources/map/mapt.txt", "r").read()
+    fileone = open("resources/map/mapt.txt", "r")
+    file = fileone.read()
+    fileone.close()
     map = file.split("\n")
     for i in range(0,int(len(map)/2)):
         file = map[i*2+1].split("\t")
@@ -209,7 +241,9 @@ def init_provinces(group):
     #province borders
     config.province_borders = cvsmgmt.scene_object()
     config.province_borders.render_objects = [[None]*int(len(map)/2)]
-    file = open("resources/map/mapl.txt", "r").read()
+    fileone = open("resources/map/mapl.txt", "r")
+    file = fileone.read()
+    fileone.close()
     map = file.split("\n")
     for i in range(0,int(len(map)/2)):#int(len(map)/2)
         file = map[i*2+1].split("\t")
@@ -230,7 +264,9 @@ def init_provinces(group):
         config.province_borders.render_objects[0][i] = temp_poly
 
     #setting adjacents
-    file = open("resources/map/mapa.txt", "r").read()
+    fileone = open("resources/map/mapa.txt", "r")
+    file = fileone.read()
+    fileone.close()
     adj = file.split("\n")
     for i in range(0,int(len(map)/2)):
         if(config.provinces[i] != None):
@@ -248,9 +284,11 @@ def init_provinces(group):
                         config.provinces[i].adjacents_border.append(-1)
 
 def init_nations():
-    file = open("resources/map/nationdata.txt", "r").read()
-    data = file.split("\n")
+    file = open("resources/map/nationdata.txt", "r")
+    data = file.read().split("\n")
+    file.close()
 
+    config.num_nations = len(data)
     for i in range(0,len(data)):
         temp = data[i].split("\t")
 
@@ -269,12 +307,17 @@ def init_scenarios():
             config.scenarios.append(temp_scenario)
 
             #scenario map
-            file = open("scenarios/" + name + "/map.txt","r").read().split("\n")
+            fileone = open("scenarios/" + name + "/map.txt","r")
+            file = fileone.read().split("\n")
+            fileone.close()
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
                 temp_scenario.map[i] = (int(temp[0]),temp[1])
 
-            file = open("scenarios/" + name + "/info.txt", "r").read().split("\n")
+            #scenario info
+            fileone = open("scenarios/" + name + "/info.txt", "r")
+            file = fileone.read().split("\n")
+            fileone.close()
             temp_scenario.name = file[0]
             temp_scenario.year = int(file[1])
             temp_scenario.month = file[2]
@@ -288,17 +331,94 @@ def init_saves():
             config.saves.append(temp_save)
 
             #scenario map
-            file = open("saves/" + name + "/map.txt","r").read().split("\n")
+            fileone = open("saves/" + name + "/map.txt","r")
+            file = fileone.read().split("\n")
+            fileone.close()
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
                 temp_save.map[i] = (int(temp[0]),temp[1])
 
-            file = open("saves/" + name + "/info.txt", "r").read().split("\n")
+            fileone = open("saves/" + name + "/info.txt", "r")
+            file = fileone.read().split("\n")
+            fileone.close()
             temp_save.name = file[0]
             temp_save.year = int(file[1])
             temp_save.month = file[2]
             temp_save.day = int(file[3])
             temp_save.nation= file[4]
+
+def init_datastructures():
+
+    fileone = open("resources/universal_data.txt", "r")
+    file = fileone.read().split("\n")
+    fileone.close()
+
+    config.universal_data = np.zeros((len(file), 1))
+    for i in range(0, len(file)):
+        config.universal_data[i] = float(file[i])
+
+    config.province_data = np.ones((config.num_provinces,config.num_province_attributes))
+
+    config.owner_mask = np.ones((config.num_provinces,config.num_nations)) # temp for testing
+
+    config.nation_data = np.ones((config.num_nations,config.num_nation_attributes))
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+def time_update():
+    month_transition = False
+    year_transition = False
+
+    #Update date
+    if(True):
+        config.day += 1
+        if(config.day == 29 and config.month == "February"):
+            config.month = "March"
+            config.day = 1
+            month_transition = True
+        elif(config.day == 31):
+            if(config.month == "April"):
+                config.day = 1
+                config.month = "May"
+                month_transition = True
+            elif(config.month == "June"):
+                config.day = 1
+                config.month = "July"
+                month_transition = True
+            elif(config.month == "September"):
+                config.day = 1
+                config.month = "October"
+                month_transition = True
+            elif(config.month == "November"):
+                config.day = 1
+                config.month = "December"
+                month_transition = True
+        elif(config.day == 32):
+            config.day = 1
+            month_transition = True
+
+            if(config.month == "January"):
+                config.month = "February"
+            elif(config.month == "March"):
+                config.month = "April"
+            elif(config.month == "May"):
+                config.month = "June"
+            elif(config.month == "July"):
+                config.month = "August"
+            elif(config.month == "August"):
+                config.month = "September"
+            elif(config.month == "October"):
+                config.month = "November"
+            elif(config.month == "December"):
+                config.month = "January"
+                year_transition = True
+
+        config.menus["in_game_menu"].elements[0].render_objects[0][0].label.text = str(config.day) + "/" + config.month + "/" + str(config.year)
+
+    calculations.demographics()
+    calculations.agriculture()
+    calculations.population()
+
 
 def draw_nation_borders():
     # nation borders
@@ -324,3 +444,4 @@ def draw_nation_borders():
             temp_line.solid_color_coords(40, 40, 40)
 
             index += 1
+

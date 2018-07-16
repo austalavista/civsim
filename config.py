@@ -5,10 +5,30 @@ import pyglet
 num_provinces = 958
 provinces = None
 provinces_id = {}
+
+num_nations = -1
 nations = {}
+
 scenarios = []
 saves = []
+
 init = False #have the saves, provinces, scenarios etc been initialized?
+state = "main_menu"
+
+time_entry = None
+day = 1
+month = "January"
+year = 1444
+
+#---BIG DATA---
+num_province_attributes = 10
+province_data = None
+
+num_nation_attributes = 10
+nation_data = None
+owner_mask = None
+
+universal_data = None
 
 #---MISC GRAPHICS---
 
