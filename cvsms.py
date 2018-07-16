@@ -144,7 +144,7 @@ def start():
     config.menus["play_menu"] = None
 
     config.time_entry = core.time_entry()
-    config.time_entry.speed = 1
+    config.time_entry.speed = 0
     config.time_entry.add()
 
     config.menus["in_game_menu"] = cvsmm.in_game_menu()

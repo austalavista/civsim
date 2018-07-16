@@ -227,8 +227,6 @@ class scroll_menu(base_window):
         for i in range(0, len(self.list)):
                 self.list[i].toggle(False)
 
-#-------------------------------------------
-
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):
@@ -551,14 +549,42 @@ class in_game_date(cvsmgmt.scene_object):
 
 class in_game_date_pause(base_button):
     def __init__(self):
-        base_button.__init__(self,[20,50], "in_game_menu_date_pause", "in_game_menu_date_pause_c")
+        base_button.__init__(self,[20,40], "in_game_menu_date_pause_c", "in_game_menu_date_pause")
+        self.state = False
 
-class in_game_date_speed(cvsmgmt.scene_object):
+    def handler_leftclick(self, x,y):
+        self.toggle_sprite()
+        self.state = not self.state
+
+        if(self.state):
+            config.time_entry.speed = config.menus["in_game_menu"].elements[2].setting
+        else:
+            config.time_entry.speed = 0
+
+class in_game_date_speed(base_button):
     def __init__(self):
-        pass
+        base_button.__init__(self, [130, 40], "in_game_menu_date_speed", "in_game_menu_date_speed_c")
+        self.setting = 1
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.toggle_sprite()
+
+        if(self.setting <= 8):
+            self.setting *= 2
+        else:
+            self.setting = 0.25
+
+        if(config.menus["in_game_menu"].elements[1].state):
+            config.time_entry.speed = self.setting
+
+        print(self.setting)
 
 class in_game_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name=None)
 
-        self.elements = [in_game_date()]
+        self.elements = [in_game_date(),in_game_date_pause(),in_game_date_speed()]
