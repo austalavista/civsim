@@ -21,11 +21,14 @@ month = "January"
 year = 1444
 
 #---BIG DATA---
-num_province_attributes = 3
+num_province_attributes = 4
 province_data = None
 
-num_nation_attributes = 3
+num_nation_attributes = 5
 nation_data = None
+owner_mask = None
+
+universal_data = None
 
 #---MISC GRAPHICS---
 

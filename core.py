@@ -3,6 +3,7 @@ import time
 import cvsmr, cvsmgmt
 import config
 import numpy as np
+import calculations
 
 class scenario:
     def __init__(self):
@@ -60,8 +61,6 @@ class nation:
 
         self.border = None
         self.id = None
-
-        self.owner_mask = None
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -284,9 +283,6 @@ def init_provinces(group):
                     elif(temp[j] == 'False'):
                         config.provinces[i].adjacents_border.append(-1)
 
-    #province data
-    config.province_data = np.zeros((config.num_provinces, config.num_province_attributes))
-
 def init_nations():
     file = open("resources/map/nationdata.txt", "r")
     data = file.read().split("\n")
@@ -303,12 +299,6 @@ def init_nations():
         tempnation.id = i
 
         config.nations[tempnation.name] = tempnation
-
-        #owner mask
-        tempnation.owner_mask  = np.zeros((config.num_provinces,1))
-
-    #nation data
-    config.nation_data = np.zeros((config.num_nations, config.num_nation_attributes))
 
 def init_scenarios():
     for root, dirs, files in os.walk("./scenarios"):
@@ -357,6 +347,23 @@ def init_saves():
             temp_save.day = int(file[3])
             temp_save.nation= file[4]
 
+def init_datastructures():
+
+    fileone = open("resources/universal_data.txt", "r")
+    file = fileone.read().split("\n")
+    fileone.close()
+
+    config.universal_data = np.zeros((len(file), 1))
+    for i in range(0, len(file)):
+        config.universal_data[i] = float(file[i])
+
+    config.province_data = np.zeros((config.num_provinces,config.num_province_attributes))
+
+    config.owner_mask = np.zeros((config.num_provinces,config.num_nations))
+
+    config.nation_data = np.zeros((config.num_nations,config.num_nation_attributes))
+
+    print(config.province_data.flags)
 #-----------------------------------------------------------------------------------------------------------------------
 
 def time_update():
@@ -408,6 +415,11 @@ def time_update():
                 year_transition = True
 
         config.menus["in_game_menu"].elements[0].render_objects[0][0].label.text = str(config.day) + "/" + config.month + "/" + str(config.year)
+
+    s = time.time()
+    calculations.agriculture()
+    e = time.time()
+    print(e-s)
 
 def draw_nation_borders():
     # nation borders

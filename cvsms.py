@@ -5,6 +5,7 @@ import pyglet
 import cvsmr, cvsmm, cvsmgmt
 import time
 import core
+import numpy as np
 
 def apply_settings():
     #fullscreen
@@ -149,3 +150,5 @@ def start():
 
     config.menus["in_game_menu"] = cvsmm.in_game_menu()
     config.menus["in_game_menu"].add_to_scene()
+
+    core.init_datastructures()
