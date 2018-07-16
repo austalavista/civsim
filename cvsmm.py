@@ -549,6 +549,14 @@ class in_game_date(cvsmgmt.scene_object):
 
         self.render_objects = [[cvsmr.label_object(str(config.day) + "/" + config.month + "/" + str(config.year), [20,100], self.group_num)]]
 
+class in_game_date_pause(base_button):
+    def __init__(self):
+        base_button.__init__(self,[20,50], "in_game_menu_date_pause", "in_game_menu_date_pause_c")
+
+class in_game_date_speed(cvsmgmt.scene_object):
+    def __init__(self):
+        pass
+
 class in_game_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name=None)

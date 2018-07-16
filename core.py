@@ -2,6 +2,7 @@ import os
 import time
 import cvsmr, cvsmgmt
 import config
+import numpy as np
 
 class scenario:
     def __init__(self):
@@ -57,9 +58,10 @@ class nation:
         self.name = None
         self.adjective = None
 
-        self.provinces = []
         self.border = None
         self.id = None
+
+        self.owner_mask = None
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -201,12 +203,16 @@ def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
 def init_provinces(group):
     mysize = 10
 
-    file = open("resources/map/num.txt", "r").read()
+    fileone = open("resources/map/num.txt", "r")
+    file = fileone.read()
+    fileone.close()
     config.num_provinces = int(file)
     config.provinces = [None] * config.num_provinces
 
     #polygon
-    file = open("resources/map/mapt.txt", "r").read()
+    fileone = open("resources/map/mapt.txt", "r")
+    file = fileone.read()
+    fileone.close()
     map = file.split("\n")
     for i in range(0,int(len(map)/2)):
         file = map[i*2+1].split("\t")
@@ -236,7 +242,9 @@ def init_provinces(group):
     #province borders
     config.province_borders = cvsmgmt.scene_object()
     config.province_borders.render_objects = [[None]*int(len(map)/2)]
-    file = open("resources/map/mapl.txt", "r").read()
+    fileone = open("resources/map/mapl.txt", "r")
+    file = fileone.read()
+    fileone.close()
     map = file.split("\n")
     for i in range(0,int(len(map)/2)):#int(len(map)/2)
         file = map[i*2+1].split("\t")
@@ -257,7 +265,9 @@ def init_provinces(group):
         config.province_borders.render_objects[0][i] = temp_poly
 
     #setting adjacents
-    file = open("resources/map/mapa.txt", "r").read()
+    fileone = open("resources/map/mapa.txt", "r")
+    file = fileone.read()
+    fileone.close()
     adj = file.split("\n")
     for i in range(0,int(len(map)/2)):
         if(config.provinces[i] != None):
@@ -274,10 +284,15 @@ def init_provinces(group):
                     elif(temp[j] == 'False'):
                         config.provinces[i].adjacents_border.append(-1)
 
-def init_nations():
-    file = open("resources/map/nationdata.txt", "r").read()
-    data = file.split("\n")
+    #province data
+    config.province_data = np.zeros((config.num_provinces, config.num_province_attributes))
 
+def init_nations():
+    file = open("resources/map/nationdata.txt", "r")
+    data = file.read().split("\n")
+    file.close()
+
+    config.num_nations = len(data)
     for i in range(0,len(data)):
         temp = data[i].split("\t")
 
@@ -289,6 +304,12 @@ def init_nations():
 
         config.nations[tempnation.name] = tempnation
 
+        #owner mask
+        tempnation.owner_mask  = np.zeros((config.num_provinces,1))
+
+    #nation data
+    config.nation_data = np.zeros((config.num_nations, config.num_nation_attributes))
+
 def init_scenarios():
     for root, dirs, files in os.walk("./scenarios"):
         for name in dirs:
@@ -296,12 +317,17 @@ def init_scenarios():
             config.scenarios.append(temp_scenario)
 
             #scenario map
-            file = open("scenarios/" + name + "/map.txt","r").read().split("\n")
+            fileone = open("scenarios/" + name + "/map.txt","r")
+            file = fileone.read().split("\n")
+            fileone.close()
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
                 temp_scenario.map[i] = (int(temp[0]),temp[1])
 
-            file = open("scenarios/" + name + "/info.txt", "r").read().split("\n")
+            #scenario info
+            fileone = open("scenarios/" + name + "/info.txt", "r")
+            file = fileone.read().split("\n")
+            fileone.close()
             temp_scenario.name = file[0]
             temp_scenario.year = int(file[1])
             temp_scenario.month = file[2]
@@ -315,12 +341,16 @@ def init_saves():
             config.saves.append(temp_save)
 
             #scenario map
-            file = open("saves/" + name + "/map.txt","r").read().split("\n")
+            fileone = open("saves/" + name + "/map.txt","r")
+            file = fileone.read().split("\n")
+            fileone.close()
             for i in range(0,len(file)):
                 temp = file[i].split("\t")
                 temp_save.map[i] = (int(temp[0]),temp[1])
 
-            file = open("saves/" + name + "/info.txt", "r").read().split("\n")
+            fileone = open("saves/" + name + "/info.txt", "r")
+            file = fileone.read().split("\n")
+            fileone.close()
             temp_save.name = file[0]
             temp_save.year = int(file[1])
             temp_save.month = file[2]
