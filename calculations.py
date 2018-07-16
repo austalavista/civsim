@@ -31,5 +31,8 @@ def population():
     nation_data = config.nation_data
     province_data = config.province_data
     owner_mask = config.owner_mask
+    universal_data = config.universal_data
 
     #pop_food
+    province_data[:,7] = universal_data[0] * ((province_data[:,5] + province_data[:,4]) / province_data[:,2] - 1)
+

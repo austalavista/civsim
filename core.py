@@ -415,14 +415,10 @@ def time_update():
 
         config.menus["in_game_menu"].elements[0].render_objects[0][0].label.text = str(config.day) + "/" + config.month + "/" + str(config.year)
 
-    s = time.time()
-
     calculations.demographics()
     calculations.agriculture()
+    calculations.population()
 
-
-    e = time.time()
-    print(e-s)
 
 def draw_nation_borders():
     # nation borders

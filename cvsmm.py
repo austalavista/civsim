@@ -563,7 +563,7 @@ class in_game_date_pause(base_button):
 
 class in_game_date_speed(base_button):
     def __init__(self):
-        base_button.__init__(self, [220, 40], "in_game_menu_date_speed", "in_game_menu_date_speed_c")
+        base_button.__init__(self, [300, 40], "in_game_menu_date_speed", "in_game_menu_date_speed_c")
         self.setting = 1
 
     def handler_leftclick(self, x,y):
