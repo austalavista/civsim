@@ -424,6 +424,7 @@ def draw_nation_borders():
     # nation borders
     config.nation_borders = cvsmgmt.scene_object()
     config.nation_borders.render_objects = [[None] * config.num_provinces]
+
     index = 0
     for i in range(0, config.num_provinces):
         if(config.provinces[i] != None and config.provinces[i].nation != None):
@@ -444,4 +445,5 @@ def draw_nation_borders():
             temp_line.solid_color_coords(40, 40, 40)
 
             index += 1
+
 
