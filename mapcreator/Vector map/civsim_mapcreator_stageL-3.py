@@ -113,11 +113,11 @@ for r in range(0, len(provinces)):
                 vector_lists[r].pop((i + 1) % len(vector_lists[r]))
                 vector_adjacent_provinces[r].pop((i + 1) % len(vector_lists[r]))
 
-    print("Done unwrinkling")
+    print("WRINKLES: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
 
 #removing holes
 for r in range(0, len(vector_lists)):
-    #Removing 3-point holes
+    #3-point holes
     for i in range(0, len(vector_lists[r])):
 
         if(vector_adjacent_provinces[r][i] != False and vector_adjacent_provinces[r][(i+1)%len(vector_adjacent_provinces[r])] != False and vector_adjacent_provinces[r][i] != vector_adjacent_provinces[r][(i+1)%len(vector_adjacent_provinces[r])]):
@@ -180,7 +180,91 @@ for r in range(0, len(vector_lists)):
                                                 vector_lists[u][p][1] = temp_2
                                                 #print("mm")
 
-    print("[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
+    #4-point holes
+    for i in range(0, len(vector_lists[r])):
+        if (vector_adjacent_provinces[r][i] != False and vector_adjacent_provinces[r][(i + 1) % len(vector_adjacent_provinces[r])] != False and vector_adjacent_provinces[r][i] != vector_adjacent_provinces[r][(i + 1) % len(vector_adjacent_provinces[r])]):
+
+            prov_0 = r
+            prov_1 = vector_adjacent_provinces[r][i]
+            prov_2 = vector_adjacent_provinces[r][(i + 1) % len(vector_adjacent_provinces[r])]
+
+            vec_1 = vector_lists[r][i]
+            vec_2 = vector_lists[r][(i + 1) % len(vector_adjacent_provinces[r])]
+            found = False
+
+            if (abs(vec_1[0] - vec_2[0]) >= 0.1 or abs(vec_1[1] - vec_2[1]) >= 0.1):
+                #Prov_1 and Prov_2 should have a vector of Prov_3 adjacent to Vec1/Vec2
+                #Prov_3 should have those vectors (vec3/vec4 adjacent to eachother)
+
+                for p in range(0, len(vector_lists[prov_1])):
+                    if (abs(vector_lists[prov_1][p][0] - vec_1[0]) <= 0.1 and abs(vector_lists[prov_1][p][1] - vec_1[1]) <= 0.1):
+
+                        for u in range(0, len(vector_lists[prov_2])):
+                            if (abs(vector_lists[prov_2][u][0] - vec_2[0]) <= 0.1 and abs(vector_lists[prov_2][u][1] - vec_2[1]) <= 0.1):
+
+                                pot_p3_1 = vector_adjacent_provinces[prov_2][(u + 1) % len(vector_adjacent_provinces[prov_2])]
+                                pot_p3_2 = vector_adjacent_provinces[prov_2][(u - 1) % len(vector_adjacent_provinces[prov_2])]
+
+                                pot_p3_3 = vector_adjacent_provinces[prov_1][(p + 1) % len(vector_adjacent_provinces[prov_1])]
+                                pot_p3_4 = vector_adjacent_provinces[prov_1][(p - 1) % len(vector_adjacent_provinces[prov_1])]
+
+                                if(pot_p3_1 == pot_p3_3 and pot_p3_1 != prov_0):
+                                    found = True
+                                    prov_3 = pot_p3_3
+                                    vec_3 = vector_lists[prov_1][(p + 1) % len(vector_adjacent_provinces[prov_1])]
+                                    vec_4 = vector_lists[prov_2][(u + 1) % len(vector_adjacent_provinces[prov_2])]
+
+                                elif(pot_p3_2 == pot_p3_3 and pot_p3_2 != prov_0):
+                                    found = True
+                                    prov_3 = pot_p3_3
+                                    vec_3 = vector_lists[prov_1][(p + 1) % len(vector_adjacent_provinces[prov_1])]
+                                    vec_4 = vector_lists[prov_2][(u - 1) % len(vector_adjacent_provinces[prov_2])]
+
+                                elif(pot_p3_1 == pot_p3_4 and pot_p3_1 != prov_0):
+                                    found = True
+                                    prov_3 = pot_p3_4
+                                    vec_3 = vector_lists[prov_1][(p - 1) % len(vector_adjacent_provinces[prov_1])]
+                                    vec_4 = vector_lists[prov_2][(u + 1) % len(vector_adjacent_provinces[prov_2])]
+
+                                elif(pot_p3_2 == pot_p3_4 and pot_p3_2 != prov_0):
+                                    found = True
+                                    prov_3 = pot_p3_4
+                                    vec_3 = vector_lists[prov_1][(p - 1) % len(vector_adjacent_provinces[prov_1])]
+                                    vec_4 = vector_lists[prov_2][(u - 1) % len(vector_adjacent_provinces[prov_2])]
+
+                if(found):
+                    found = False
+
+                    for u in range(0,len(vector_lists[prov_3])):
+                        if(abs(vector_lists[prov_3][u][0] - vec_3[0]) <= 0.1 and abs(vector_lists[prov_3][u][1] - vec_3[1]) <= 0.1):
+                            temp_1 = vector_lists[prov_3][(u + 1) % len(vector_lists[prov_3])]
+                            temp_2 = vector_lists[prov_3][(u - 1) % len(vector_lists[prov_3])]
+
+                            if(abs(temp_1[0] - vec_4[0]) <= 0.1 and abs(temp_1[0] - vec_4[1]) or abs(temp_2[0] - vec_4[0]) <= 0.1 and abs(temp_2[0] - vec_4[1])):
+                                found = True
+                                break
+
+                if (found):
+                    temp_1 = (vec_1[0] + vec_2[0] + vec_3[0] + vec_4[0]) / 4
+                    temp_2 = (vec_1[1] + vec_2[1] + vec_3[1] + vec_4[1]) / 4
+
+                    for w in (vec_1, vec_2, vec_3,vec_4):
+                        temp_vec_1 = w[0] * 2 / 2
+                        temp_vec_2 = w[1] * 2 / 2
+
+                        for u in range(0, len(vector_lists)):
+                            for p in range(0, len(vector_lists[u])):
+
+                                if (abs(vector_lists[u][p][0] - temp_vec_1) <= 1 and abs(vector_lists[u][p][1] - temp_vec_2) <= 1):
+                                    vector_lists[u][p][0] = temp_1
+                                    vector_lists[u][p][1] = temp_2
+                                    print("mm")
+
+
+
+
+    print("HOLES: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
+    
 # write to file
 for r in range(0, len(vector_lists)):
     if (True):
