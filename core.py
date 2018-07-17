@@ -269,19 +269,33 @@ def init_provinces(group):
     fileone.close()
     adj = file.split("\n")
     for i in range(0,int(len(map)/2)):
-        if(config.provinces[i] != None):
-            if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
-                temp = adj[1+i*2].split('\t')
 
-                for j in range(0,len(temp)):
-                    if(temp[j] != '' and temp[j] != 'False'):
-                        config.provinces[i].adjacents_border.append(int(temp[j]))
+        #if(config.provinces[i] != None):
+        #if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
+        temp1 = adj[1+i*2].split('\t')
 
-                        if(int(temp[j]) not in config.provinces[i].adjacents):
-                            config.provinces[i].adjacents.append(int(temp[j]))
+        for p in range(0,len(temp1)):
+            config.provinces[i].adjacents_border.append([])
+            temp = temp1[p].split(',')
+            falsed = False
 
-                    elif(temp[j] == 'False'):
-                        config.provinces[i].adjacents_border.append(-1)
+            for j in range(0, len(temp)):
+
+                if(temp[j] != '' and temp[j] != 'False'):
+                    config.provinces[i].adjacents_border[p].append(int(temp[j]))
+
+                    if(int(temp[j]) not in config.provinces[i].adjacents):
+                        config.provinces[i].adjacents.append(int(temp[j]))
+
+                elif(temp[j] == 'False' and not falsed):
+                    config.provinces[i].adjacents_border[p].append(-1)
+                    falsed = True
+                elif(temp[(j + 1)%len(temp)] == 'False' and not falsed):
+                    config.provinces[i].adjacents_border[p].append(-1)
+                    falsed = True
+                elif (temp[(j - 1) % len(temp)] == 'False' and not falsed):
+                    config.provinces[i].adjacents_border[p].append(-1)
+                    falsed = True
 
 def init_nations():
     file = open("resources/map/nationdata.txt", "r")
@@ -419,7 +433,6 @@ def time_update():
     calculations.agriculture()
     calculations.population()
 
-
 def draw_nation_borders():
     # nation borders
     config.nation_borders = cvsmgmt.scene_object()
@@ -427,20 +440,29 @@ def draw_nation_borders():
 
     index = 0
     for i in range(0, config.num_provinces):
-        if(config.provinces[i] != None and config.provinces[i].nation != None):
+        me = config.provinces[i]
+        if(me != None and me.nation != None):
             temp_line = cvsmr.line_object(config.line_groups["2/3"])
             config.nation_borders.render_objects[0][index] = temp_line
-            #config.provinces[i].nation.border = temp_line
 
-            for j in range(0, len(config.provinces[i].adjacents_border)):
+            for j in range(0, len(me.adjacents_border)):
+                flag = False
 
-                if (config.provinces[i].adjacents_border[j] == -1 or config.provinces[(config.provinces[i].adjacents_border[j])].nation == None or config.provinces[(config.provinces[i].adjacents_border[j])].nation.id != config.provinces[i].nation.id):
-                    if(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)] == -1 or config.provinces[(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)])].nation == None or config.provinces[(config.provinces[i].adjacents_border[(j+1)%len(config.provinces[i].adjacents_border)])].nation.id != config.provinces[i].nation.id):
+                for p in range(0, len(me.adjacents_border[j])):
+                    tempadj = me.adjacents_border[j][p]
+                    tempadjprov = config.provinces[tempadj]
 
-                        temp_line.vertices.append(config.provinces[i].border.vertices[j*4])
-                        temp_line.vertices.append(config.provinces[i].border.vertices[j * 4 + 1])
-                        temp_line.vertices.append(config.provinces[i].border.vertices[(j*4 + 2) % len(config.provinces[i].border.vertices)])
-                        temp_line.vertices.append(config.provinces[i].border.vertices[(j * 4 + 3) % len(config.provinces[i].border.vertices)])
+                    if(tempadj == -1 or
+                       tempadjprov.nation == None or
+                       tempadjprov.nation.id != me.nation.id):
+                        flag = True
+                        break
+
+                if(flag):
+                    temp_line.vertices.append(me.border.vertices[j*4])
+                    temp_line.vertices.append(me.border.vertices[j * 4 + 1])
+                    temp_line.vertices.append(me.border.vertices[(j*4 + 2) % len(config.provinces[i].border.vertices)])
+                    temp_line.vertices.append(me.border.vertices[(j * 4 + 3) % len(config.provinces[i].border.vertices)])
 
             temp_line.solid_color_coords(40, 40, 40)
 

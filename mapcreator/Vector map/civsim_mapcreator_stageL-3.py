@@ -1,5 +1,7 @@
 #Removing "wrinkles"
 
+import numpy as np
+
 #open files/initialize
 if(True):
     temp = open("maps.txt","r")
@@ -273,17 +275,41 @@ for r in range(0,len(vector_lists)):
 
     print("SMOOTHING LONELIES: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
 
+#Ccomprehensive adjacents
+for r in range(0, len(vector_lists)):
+    for i in range(0, len(vector_lists[r])):
+
+        if(vector_adjacent_provinces[r][i] == False):
+            vector_adjacent_provinces[r][i] = [False]
+        else:
+            vector_adjacent_provinces[r][i] = []
+
+        for u in range(0, len(vector_lists)):
+
+            if(np.sqrt((provinces[u][2] - provinces[r][2]) ** 2 + abs(provinces[u][3] - provinces[r][3]) ** 2) <= 100):
+
+                for p in range(0, len(vector_lists[u])):
+
+                    if(abs(vector_lists[r][i][0] - vector_lists[u][p][0]) <= 0.1 and abs(vector_lists[r][i][1] - vector_lists[u][p][1]) <= 0.1):
+                        vector_adjacent_provinces[r][i].append(u)
+
+    print("Comprehensive Adjacents: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
+
 # write to file
 for r in range(0, len(vector_lists)):
     if (True):
         mapl.write(
             "[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1] + "\t" + str(provinces[r][2]) + "," + str(
                 provinces[r][3]) + "\n")
+
         mapa.write("[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1] + "\n")
 
         for i in range(0, len(vector_lists[r])):
             mapl.write(str(vector_lists[r][i][0]) + "," + str(vector_lists[r][i][1]) + "\t")
-            mapa.write(str(vector_adjacent_provinces[r][i]) + "\t")
+
+            for p in range(0, len(vector_adjacent_provinces[r][i])):
+                mapa.write(str(vector_adjacent_provinces[r][i][p]) + ",")
+            mapa.write("\t")
 
         mapl.write("\n")
         mapa.write("\n")
