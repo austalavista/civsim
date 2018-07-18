@@ -263,6 +263,17 @@ for r in range(0, len(vector_lists)):
 
     print("HOLES: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
 
+#Smoothing the lonelys
+for r in range(0,len(vector_lists)):
+    for i in range(0, len(vector_lists[r])):
+
+        if(vector_adjacent_provinces[r][i] == False):
+
+            vector_lists[r][i][0] = (vector_lists[r][i][0] * 2 + vector_lists[r][(i - 1 )% len(vector_lists[r])][0] + vector_lists[r][(i + 1) % len(vector_lists[r])][0]) / 4
+            vector_lists[r][i][1] = (vector_lists[r][i][1] * 2 + vector_lists[r][(i - 1) % len(vector_lists[r])][1] + vector_lists[r][(i + 1) % len(vector_lists[r])][1]) / 4
+
+    print("SMOOTHING LONELIES: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
+
 # write to file
 for r in range(0, len(vector_lists)):
     if (True):
