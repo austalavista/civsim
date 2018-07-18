@@ -126,7 +126,8 @@ for r in range(0,len(provinces)):
                     vector_adjacent_provinces[r][j] = candidate_partner[0]
                     vector_lists[r][j][0] = vector_lists[candidate_partner[0]][candidate_partner[1]][0]
                     vector_lists[r][j][1] = vector_lists[candidate_partner[0]][candidate_partner[1]][1]
-
+    if(r == 0):
+        print(vector_adjacent_provinces[0])
     # write to file
     if (True):
         mapl.write("[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1] + "\t" + str(provinces[r][2]) + "," + str(provinces[r][3]) + "\n")
