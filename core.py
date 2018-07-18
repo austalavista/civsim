@@ -429,31 +429,38 @@ def time_update():
     calculations.population()
 
 def draw_nation_borders_province(province):
-    config.nation_borders.render_objects[0][province.index] = None
+
 
     me = province
-    if (me != None and me.nation != None):
+    if (me.nation != None):
         temp_line = cvsmr.line_object(config.line_groups["2/3"])
-        config.nation_borders.render_objects[0][me.index] = temp_line
+        config.nation_borders.render_objects[0][index] = temp_line
+
+        counter = 0
 
         for j in range(0, len(me.adjacents_border)):
             flag = False
-
             for p in range(0, len(me.adjacents_border[j])):
                 tempadj = me.adjacents_border[j][p]
-                tempadjprov = config.provinces[tempadj]
 
-                if (tempadj == -1 or
-                            tempadjprov.nation == None or
-                            tempadjprov.nation.id != me.nation.id):
-                    flag = True
-                    break
+                if (tempadj != -1):
+                    tempadjprov = config.provinces[tempadj]
 
-            if (flag):
-                temp_line.vertices.append(me.border.vertices[j * 4])
-                temp_line.vertices.append(me.border.vertices[j * 4 + 1])
-                temp_line.vertices.append(me.border.vertices[(j * 4 + 2) % len(config.provinces[i].border.vertices)])
-                temp_line.vertices.append(me.border.vertices[(j * 4 + 3) % len(config.provinces[i].border.vertices)])
+                    if (
+                                        tempadjprov != False and tempadjprov.nation == None or
+                                        tempadjprov != False and tempadjprov.nation.id != me.nation.id
+                    ):
+                        flag = True
+                        counter += 1
+                        break
+            if (not flag):
+                counter = 0
+
+            if (counter > 1):
+                temp_line.vertices.append(me.border.vertices[(j - 1) * 4])
+                temp_line.vertices.append(me.border.vertices[(j - 1) * 4 + 1])
+                temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 2) % len(me.border.vertices)])
+                temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
 
         temp_line.solid_color_coords(40, 40, 40)
 
@@ -466,9 +473,11 @@ def draw_nation_borders():
     index = 0
     for i in range(0, config.num_provinces):
         me = config.provinces[i]
+
+        temp_line = cvsmr.line_object(config.line_groups["2/3"])
+        config.nation_borders.render_objects[0][index] = temp_line
         if(me.nation != None):
-            temp_line = cvsmr.line_object(config.line_groups["2/3"])
-            config.nation_borders.render_objects[0][index] = temp_line
+
 
             counter = 0
 
@@ -498,9 +507,9 @@ def draw_nation_borders():
                     temp_line.vertices.append(me.border.vertices[((j-1)*4 + 2) % len(me.border.vertices)])
                     temp_line.vertices.append(me.border.vertices[((j-1) * 4 + 3) % len(me.border.vertices)])
 
-            temp_line.solid_color_coords(40, 40, 40)
+        temp_line.solid_color_coords(40, 40, 40)
 
-            index += 1
+        index += 1
 
     #lonely border, always a nation border, stored as a single line_object in render_objects[1][0]
     config.nation_borders.render_objects[1][0] = cvsmr.line_object(config.line_groups["2/3"])
