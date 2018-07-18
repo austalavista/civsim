@@ -79,6 +79,11 @@ def on_key_press(symbol,modifiers):
 config.window.on_key_press = on_key_press
 
 @config.window.event
+def on_text(text):
+    if(config.selected!= None and config.selected.handlers[7]):
+        config.selected.handler_text(text)
+
+@config.window.event
 def on_draw():
     config.window.clear()
     config.batch.draw()
@@ -164,6 +169,9 @@ def coordinate_box_check_1(args):
 
     #call handlers
     if(object != None):
+        if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
+            config.scelected.handler_deselect()
+
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0]):
                 relevance = config.selected.handler_leftclick(args[0], args[1], object = object)
@@ -184,6 +192,8 @@ def coordinate_box_check_1(args):
             elif(args[2] == 3 and object.handlers[3]):
                 object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
+        if (args[2] == 0 and config.selected != None and config.selected.handlers[8]):
+            config.scelected.handler_deselect()
         config.selected = None
 
 coordinate_box_check_entry = cvsmgmt.update_entry(coordinate_box_check_1,["x", "y", "event_type", "scroll_x", "scroll_y"] )

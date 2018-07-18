@@ -227,6 +227,40 @@ class scroll_menu(base_window):
         for i in range(0, len(self.list)):
                 self.list[i].toggle(False)
 
+#-------------------------------------------
+
+class text_entry_box(cvsmgmt.scene_object):
+    def __init__(self, anchor, group_num, char_width):
+        cvsmgmt.scene_object.__init__(self,group_num)
+
+        self.anchor = anchor
+        self.width = width * 10 #pixel width, experiment with the constant
+        self.broad_checkbox(self.anchor[0],self.anchor[1], self.anchor[0] + width, self.anchor[1] + 14)
+
+        self.char_width = char_width
+        self.display_string = "█"
+        self.string = ""
+
+        self.render_objects = [[
+                                cvsmr.label_object("█", anchor, group_num)
+                                ]]
+
+        self.handlers[0] = True
+        self.handlers[7] = True
+        self.handlers[8] = True
+
+    def handler_leftclick(self, x, y):
+        pass
+
+    def handler_text(self,text):
+        self.string += text
+        self.display_string = self.string[(width-1) * -1 :] + "█"
+
+        self.render_objects[0][0].label.text = self.display_string
+
+    def handler_deselect(self):
+        pass
+
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):

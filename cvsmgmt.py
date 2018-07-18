@@ -6,10 +6,23 @@ import time
 class scene_object:
     def __init__(self, group_num = 0):
         self.group_num = group_num
+
         self.checkbox = checkbox(group_num)
+
         self.render_objects = [] #should be a 2d array
+
         self.scene_index = None
-        self.handlers = [False,False,False,False,False,False,False]
+
+        self.handlers = [False,
+                         False,
+                         False,
+                         False,
+                         False,
+                         False,
+                         False,
+                         False, #text
+                         False, #deselection
+                         ]
 
         self.min_limit_x = 0
         self.max_limit_x = 19200
@@ -18,6 +31,9 @@ class scene_object:
 
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
+
+    def broad_checkbox(self,x0,y0,x1,y1):
+        self.checkbox.broad_checkbox = [x0,y0,x1,y1]
 
     def add_to_scene(self):
         for i in range(0, config.scene_objects_size):
