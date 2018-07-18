@@ -9,7 +9,9 @@ Algeria	395150	Algerian
 Algiers	DDE8BF	Algerian
 Andalusia	6BA543	Andalusian
 Angevin Empire	910000	Angevin
+Anhalt	4EB5B7	Anhalt
 Anjou	9CD6D8	Angevin
+Ansbach	322D4F	Ansbacher
 Antioch	EAEAB6	Antiochian
 Aosta	510C13	Aostan
 Aq Qoyunlu	EDFFF6	Aq Qoyunlu
@@ -28,8 +30,10 @@ Auvergne	D88450	Auvergnese
 Avignon	70755F	Avignonese
 Aydin	772334	Aydinid
 Baden	73A03B	Badenese
+Bamberg	937D6E	Bambergish
 Bar	2C4277	Barroisian
 Bavaria	0A78CC	Bavarian
+Bayreuth	F67051	Bayreuthish
 Belarus	3D3F21	Belarusian
 Belgium	635151	Belgian
 Berg	3C5560	Bergish
@@ -38,10 +42,10 @@ Bornholm	7A820E	Bornholmian
 Bosnia	7AAFDD	Bosnian
 Bosnia-Herzegovina	B6A3A7	Bosnian
 Brabant	6BAF76	Brabantian
-Brandenburg	706262	Brandenburgian
-Bremen	AA4520	Bremenese
+Brandenburg	6C6D6D	Brandenburgian
+Bremen	A85435	Bremenese
 Brittany	6B5A89	Breton
-Brunswick	685E49	Brunswickian
+Brunswick	37639E	Brunswickian
 Bulgaria	6DA089	Bulgarian
 Burgundy	8E153F	Burgundian
 Byzantium	932461	Byzantine
@@ -70,9 +74,9 @@ Czechia	275D82	Czech
 Czechoslovakia	3E51AA	Czechoslovak
 Dalmatia	54A8CC	Dalmatian
 Damascus	556A6B	Damascene
-Darmstadt	4A4751	Darmstadter
+Darmstadt	C6AE57	Darmstadter
 Denmark	CC4F41	Danish
-Dithmarschen	7CAD83	Dithmarschener
+Dithmarschen	7CAD83	Dithmarsian
 Djerid	350F4C	Djeridi
 Dobruja	6F5784	Dobrujan
 Dulkadir	5BA023	Dulkadirid
@@ -88,7 +92,7 @@ Estonia	7F1F67	Estonian
 European Union	0F2D8F	European
 Euskadi	486338	Basque
 Fadl	6C8960	Fadl
-Faroe Islands	B5C6FF	Faroese
+Faroe	B5C6FF	Faroese
 Ferrara	4E8000	Ferraran
 Fezzan	B56172	Fezzani
 Finland	D6E4FF	Finnish
@@ -110,7 +114,9 @@ Germany	546B7F	German
 Germiyan	D1D34C	Germiyanid
 Gibraltar	91586E	Gibraltan
 Golden Horde	FFBF00	Golden Horde
+Gotha	54356B	Gothan
 Gotland	4E5E93	Gutnish
+Gottingen	685E49	Gottingen
 Granada	78859E	Granadan
 Great Britain	932D2D	British
 Great Horde	BFB699	Great Horde
@@ -121,7 +127,7 @@ Hainaut	2B8DAC	Hainautian
 Halberstadt	4F8E36	Halberstadter
 Halych	6D6436	Halych
 Hamburg	886B99	Hamburgish
-Hanover	BC6E5C	Hanoverian
+Hanover	DBD2A4	Hanoverian
 Herzegovina	ABC0CC	Herzegovinan
 Hesse	E5BC16	Hessian
 Holland	C48050	Hollandish
@@ -130,11 +136,13 @@ Holy Roman Empire	A6A6BF	Imperial
 Hungary	96424C	Hungarian
 Iceland	386899	Icelandic
 Illyria	575FB2	Illyrian
+Ingolstadt	CCA600	Ingolstadter
 Ireland	4A685C	Irish
 Isfendiyar	592C5B	Isfendiyarid
 Israel	7AD0FF	Israeli
 Italy	456628	Italian
 Jordan	C67F85	Jordanian
+Julich	6BDBB9	Julicher
 Kalenberg	8CC2B2	Kalenbergish
 Karaman	4B9ABC	Karamanid
 Karelia	86C7ED	Karelian
@@ -144,7 +152,9 @@ Kildare	536889	Kildarish
 Kosovo	D8B171	Kosovar
 Krakow	639ED8	Krakowian
 Kurdistan	7EC960	Kurdish
+Landshut	992D3C	Landshut
 Latvia	B3ACBF	Latvian
+Lauenburg	547991	Lauenburgish
 Lebanon	C8EA85	Lebanese
 Leinster	36B595	Leinsterish
 Leon	87206B	Leonese
@@ -152,7 +162,7 @@ Libya	1A352D	Libyan
 Liege	4A6356	Liegian
 Limburg	2D558E	Limburgish
 Limousin	C5C5DB	Limousiner
-Lippe	AD5E71	Lippish
+Lippe	8C0034	Lippish
 Lithuania	93386C	Lithuanian
 Livonian Order	72245F	Livonian
 Lombardy	74BF75	Lombard
@@ -172,13 +182,16 @@ Malta	C1227D	Maltese
 Mamluks	D3B550	Mamlukean
 Mann	644751	Mann
 Mantua	BF4C5F	Mantuan
+Mark	8B999E	Markish
 Mazovia	D3CFBA	Mazovian
 Mecklenburg	31898C	Mecklenburgish
 Memmingen	C13243	Memmingenian
 Menteshe	55912F	Menteshid
 Mercia	385487	Mercian
+Metz	E0A1B3	Metzian
 Milan	672F65	Milanese
-Modena	4E8000	Modenese
+Minden	39CC9B	Mindenese
+Modena	3D6399	Modenese
 Moldavia	8C911F	Moldavian
 Moldova	A9BC9A	Moldovan
 Montenegro	65B2B2	Montenegrin
@@ -186,6 +199,7 @@ Montferrat	74B72C	Montferratian
 Moravia	412C56	Moravian
 Morea	4E5B99	Morean
 Morocco	934333	Moroccan
+Munich	0099D5	Munchner
 Munster	23698C	Munsterish
 Murcia	8E795F	Murcian
 Muscovy	CCAB3F	Muscovite
@@ -210,6 +224,7 @@ Padania	3AB77F	Padanian
 Paderborn	BF50C9	Paderbornish
 Palestine	9B814D	Palestinian
 Parma	FFFF00	Parmesan
+Passau	9BAADB	Passauer
 Pergamon	DBDBED	Pergamonese
 Picardy	C1B5C1	Picard
 Pisa	2EDBA1	Pisan
@@ -243,6 +258,7 @@ Sardinia	1E3D4B	Sardinian
 Sardinia-Piedmont	44CEE7	Sardinian
 Savoy	E5CEDC	Savoyard
 Saxony	8990B2	Saxon
+Schleswig	DC8885	Schleswiger
 Scotland	F7D200	Scottish
 Semigallia	527277	Semigallian
 Serbia	755353	Serbian
@@ -257,6 +273,7 @@ Smolensk	8ABC47	Somlenskian
 Spain	F1C232	Spanish
 Sparta	9E850B	Spartan
 Strassburg	96880A	Strassburgish
+Strelitz	879D9E	Strelitzer
 Styria	006600	Styrian
 Suzdal	933C50	Suzdalian
 Swabia	A7B79C	Swabian
@@ -290,7 +307,7 @@ Tyrconnel	26AACC	Tyrconnelish
 Tyrol	7474AF	Tyrolean
 Tyrone	826D62	Tyronish
 Ukraine	3C87D1	Ukrainian
-Ulm	A0A0A0	Ulmer
+Ulm	848484	Ulmer
 Ulster	F2DDAB	Ulsterish
 United Baltic States	478691	Baltic
 United Carpathian States	7F6E0E	Union
@@ -308,6 +325,7 @@ Volhynia	4D5B26	Volhynian
 Wales	16A02B	Welsh
 Wallachia	548275	Wallachian
 Wallonia	2B2112	Walloon
+Weimar	C9C4C1	Weimar
 Wessex	C16154	Wessex
 Westphalia	E8CBA9	Westphalian
 Wurttemberg	34824E	Wurttembergish
@@ -316,3 +334,5 @@ Yaroslav	6D3E2B	Yaroslavian
 Yugoslavia	6B7899	Yugoslav
 Zeeland	564E48	Zeelandish
 Zeta	B75065	Zetan
+Zollern	2E3F63	Zollern
+Zweibrucken	B6D8B3	Zweibrucken
