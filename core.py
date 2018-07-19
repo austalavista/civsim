@@ -181,6 +181,7 @@ class time_entry(cvsmgmt.update_entry):
         cvsmgmt.update_entry.__init__(self, args=args)
         self.speed = 0
         self.timer = 60
+
     def run(self):
         if (self.timer <= 0):
 

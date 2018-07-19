@@ -227,6 +227,70 @@ class scroll_menu(base_window):
         for i in range(0, len(self.list)):
                 self.list[i].toggle(False)
 
+#-------------------------------------------
+
+class text_entry(cvsmgmt.scene_object):
+    def __init__(self, anchor, group_num, char_width, sprite_name):
+        cvsmgmt.scene_object.__init__(self,group_num)
+
+        self.anchor = anchor
+        self.width = char_width * 20 #pixel width, experiment with the constant
+
+        self.broad_checkbox(self.anchor[0],self.anchor[1], self.anchor[0] + self.width, self.anchor[1] + 60)
+
+        self.char_width = char_width
+        self.string = ""
+
+        self.render_objects = [[
+                                cvsmr.label_object("", anchor, group_num+1),
+                                cvsmr.sprite_object(sprite_name, anchor, group_num)
+                                ]]
+        self.render_objects[0][0].set_style(20,color = (255,255,255,255))
+
+        self.handlers[0] = True
+        self.handlers[7] = True
+        self.handlers[8] = True
+        self.handlers[9] = True
+
+        self.flash_state = False
+        self.flash_update_entry = cvsmgmt.persistent_update_entry(30, self.flash)
+
+    def handler_leftclick(self, x, y):
+        config.selected = self
+
+        self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
+
+        self.flash_update_entry.add()
+
+    def handler_text(self,text):
+        if(len(self.string) < self.char_width or True):
+            self.string += text
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
+
+    def handler_deselect(self):
+        config.selected = None
+        self.display_string = self.string[(self.char_width - 1) * -1:]
+        self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
+
+        self.flash_update_entry.remove()
+
+    def handler_key(self, symbol):
+        if(symbol == pyglet.window.key.BACKSPACE):
+            self.string = self.string[:-1]
+
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
+
+    def flash(self):
+        if(self.flash_state):
+            self.flash_state = False
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
+
+        else:
+            self.flash_state = True
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
+
+
+
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
 class main_menu_play(base_button):
     def __init__(self):
@@ -277,6 +341,10 @@ class main_menu(base_window):
         self.elements_index = [None,None,None]
 
 #-----------------------------------------
+
+class test_text(text_entry):
+    def __init__(self):
+        text_entry.__init__(self,[100,100], config.num_scene_groups+1, 10, "textbg")
 
 class settings_menu_back(base_button):
     def __init__(self):
@@ -343,7 +411,7 @@ class settings_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name="settings_menu")
 
-        self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution()]
+        self.elements = [settings_menu_back(),settings_menu_fullscreen(),settings_menu_resolution(), test_text()]
 
 #-----------------------------------------
 

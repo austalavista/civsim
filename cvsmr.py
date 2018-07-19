@@ -446,6 +446,8 @@ def sprite_texture_init():
     image_init("in_game_menu_date_pause", "b")
     image_init("in_game_menu_date_speed", "b")
 
+    image_init("textbg")
+
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")
     if(tag == "b"):

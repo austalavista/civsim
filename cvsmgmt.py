@@ -6,10 +6,30 @@ import time
 class scene_object:
     def __init__(self, group_num = 0):
         self.group_num = group_num
+
         self.checkbox = checkbox(group_num)
+
         self.render_objects = [] #should be a 2d array
+
         self.scene_index = None
-        self.handlers = [False,False,False,False,False,False,False]
+
+        self.handlers = [False, #0 leftclick
+                         False, #1 middleclick
+                         False, #2 rightclick
+                         False, #3 scroll
+                         False, #4 release
+                         False, #5 leftdrag
+                         False, #6 rightdrag
+                         False, #7 text
+                         False, #8 deselection
+                         False, #9 keys
+                         ]
+
+        self.relevancy = [False, #leftclick
+                          False, #middleclick
+                          False, #rightclick
+                          False  #scroll
+                          ]
 
         self.min_limit_x = 0
         self.max_limit_x = 19200
@@ -18,6 +38,9 @@ class scene_object:
 
     def default_checkbox(self,source):
         self.checkbox.set_source(source)
+
+    def broad_checkbox(self,x0,y0,x1,y1):
+        self.checkbox.broad_checkbox = [x0,y0,x1,y1]
 
     def add_to_scene(self):
         for i in range(0, config.scene_objects_size):
@@ -219,6 +242,25 @@ class update_entry:
 
                     config.update_queue[i] = self
                     break
+
+class persistent_update_entry(update_entry):
+    def __init__(self, timer, function = None, args=None):
+        update_entry.__init__(self, function = function, args=args)
+
+        self.timer = timer
+        self.timer_max = timer
+
+    def run(self):
+        if (self.timer <= 0):
+
+            self.timer = self.timer_max
+            if(self.args == None):
+                self.function()
+            else:
+                self.function(self.args)
+
+        else:
+            self.timer -= 1
 
 class release_handler_entry(update_entry):
     def __init__(self, args = None):
