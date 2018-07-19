@@ -75,8 +75,8 @@ def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
 
 @config.window.event
 def on_key_press(symbol,modifiers):
-    pass
-config.window.on_key_press = on_key_press
+    if(config.selected != None and config.selected.handlers[9]):
+        config.selected.handler_key(symbol)
 
 @config.window.event
 def on_text(text):
@@ -170,16 +170,16 @@ def coordinate_box_check_1(args):
     #call handlers
     if(object != None):
         if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
-            config.scelected.handler_deselect()
+            config.selected.handler_deselect()
 
         if (config.selected != None):
-            if (args[2] == 0 and object.handlers[0]):
+            if (args[2] == 0 and object.handlers[0] and config.selected.relevancy[0]):
                 relevance = config.selected.handler_leftclick(args[0], args[1], object = object)
-            elif (args[2] == 1 and object.handlers[1]):
+            elif (args[2] == 1 and object.handlers[1] and config.selected.relevancy[1]):
                 relevance = config.selected.handler_rightclick(args[0], args[1], object = object)
-            elif (args[2] == 2 and object.handlers[2]):
+            elif (args[2] == 2 and object.handlers[2] and config.selected.relevancy[2]):
                 relevance = config.selected.handler_middleclick(args[0], args[1], object = object)
-            elif (args[2] == 3 and object.handlers[3]):
+            elif (args[2] == 3 and object.handlers[3] and config.selected.relevancy[3]):
                 relevance = config.selected.handler_scroll(args[0], args[1], args[3], args[4], object = object)
 
         if(not relevance):
@@ -193,7 +193,7 @@ def coordinate_box_check_1(args):
                 object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
         if (args[2] == 0 and config.selected != None and config.selected.handlers[8]):
-            config.scelected.handler_deselect()
+            config.selected.handler_deselect()
         config.selected = None
 
 coordinate_box_check_entry = cvsmgmt.update_entry(coordinate_box_check_1,["x", "y", "event_type", "scroll_x", "scroll_y"] )
