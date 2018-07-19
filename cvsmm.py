@@ -234,7 +234,7 @@ class text_entry(cvsmgmt.scene_object):
         cvsmgmt.scene_object.__init__(self,group_num)
 
         self.anchor = anchor
-        self.width = char_width * 15 #pixel width, experiment with the constant
+        self.width = char_width * 20 #pixel width, experiment with the constant
 
         self.broad_checkbox(self.anchor[0],self.anchor[1], self.anchor[0] + self.width, self.anchor[1] + 60)
 
@@ -258,20 +258,19 @@ class text_entry(cvsmgmt.scene_object):
     def handler_leftclick(self, x, y):
         config.selected = self
 
-        self.render_objects[0][0].label.text = self.string + "█"
+        self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
 
         self.flash_update_entry.add()
 
     def handler_text(self,text):
-        if(len(self.string) < self.char_width):
+        if(len(self.string) < self.char_width or True):
             self.string += text
-
-            self.render_objects[0][0].label.text = self.string + "█"
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
 
     def handler_deselect(self):
         config.selected = None
         self.display_string = self.string[(self.char_width - 1) * -1:]
-        self.render_objects[0][0].label.text = self.string
+        self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
 
         self.flash_update_entry.remove()
 
@@ -279,16 +278,17 @@ class text_entry(cvsmgmt.scene_object):
         if(symbol == pyglet.window.key.BACKSPACE):
             self.string = self.string[:-1]
 
-            self.render_objects[0][0].label.text = self.string + "█"
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
 
     def flash(self):
         if(self.flash_state):
             self.flash_state = False
-            self.render_objects[0][0].label.text = self.string + "█"
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:] + "█"
 
         else:
             self.flash_state = True
-            self.render_objects[0][0].label.text = self.string
+            self.render_objects[0][0].label.text = self.string[-1 * self.char_width:]
+
 
 
 #---CUSTOM-------------------------------------------------------------------------------------------------------------
