@@ -1,10 +1,11 @@
 from PIL import Image
+import math
 
 #open files/initialize
 if(True):
     mapl = open("mapl.txt", "r").read().split("\n")
 
-    label_map = open("./labels/map_label.txt", "w+")
+    label_map = open("map_label.txt", "w+")
 
     #letters
     letters = {}
@@ -26,8 +27,8 @@ if(True):
         for i in range(0,len(vector_lists[r])):
             if(temp[i] != ''):
                 vector_lists[r][i] = [0,0]
-                vector_lists[r][i][0] = int(float(temp[i].split(",")[0])*10)
-                vector_lists[r][i][1] = int(float(temp[i].split(",")[1])*10)
+                vector_lists[r][i][0] = int(float(temp[i].split(",")[0]))
+                vector_lists[r][i][1] = int(float(temp[i].split(",")[1]))
 
 #Label Making
 for r in range(0,len(provinces)):
@@ -50,15 +51,14 @@ for r in range(0,len(provinces)):
                 point2_index = p
 
     #take the average of each points surroudning points
-    if(True):
-        point1 = [(vector_lists[r][point1_index][0] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][0]) / 3,
-                  (vector_lists[r][point1_index][1] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][1]) / 3]
+    point1 = [(vector_lists[r][point1_index][0] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][0]) / 3,
+              (vector_lists[r][point1_index][1] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][1]) / 3]
 
-        point2 = [(vector_lists[r][point2_index][0] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][0]) / 3,
-                  (vector_lists[r][point2_index][1] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][1]) / 3]
+    point2 = [(vector_lists[r][point2_index][0] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][0]) / 3,
+              (vector_lists[r][point2_index][1] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][1]) / 3]
 
     #order the points; point1 is the left point, point2 is the right point
-    if(point1[0] < point2[0]):
+    if(point1[0] > point2[0]):
         temp = point2
         point2 = point1
         point1 = temp
@@ -88,7 +88,7 @@ for r in range(0,len(provinces)):
     #create label
     if(True):
         #bounding size
-        length = distance**0.5 * 0.8
+        length = (distance**0.5) * 0.8
         height = height * 0.6
 
         #find raw name size
@@ -143,5 +143,17 @@ for r in range(0,len(provinces)):
 
         label_image.save("labels/" + provinces[r] + ".png")
 
+    #write txt
+    perpindicular = [length_vector[1] / distance**0.5 * height, length_vector[0] / distance**0.5 * height ]
 
-        print(r,"\t", provinces[r])
+    if(perpindicular[1] > 0):
+        perpindicular[1] *= -1
+    else:
+        perpindicular[0] *= -1
+
+    label_map.write(str(r) + " " + provinces[r] + "\t" +
+                    str(point1[0] + length_vector[0] * 0.1 + perpindicular[0]) + "," +
+                    str(point1[1] + length_vector[1] * 0.1 + perpindicular[1]) + "\t" +
+                    str(math.tan(length_vector[1]/(length_vector[0] + 0.0012))) + "\n")
+
+    print(r,"\t", provinces[r])

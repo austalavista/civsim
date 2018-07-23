@@ -4,6 +4,7 @@ import cvsmr, cvsmgmt
 import config
 import numpy as np
 import calculations
+import math
 
 class scenario:
     def __init__(self):
@@ -236,11 +237,7 @@ def init_provinces(group):
         config.provinces[i].set_id(int(map[i*2].split("]")[0][1:]))
         config.provinces[i].index = i
 
-        config.provinces[i].name = map[i*2].split("\t")[1]
-
         config.provinces[i].inside_coord = [(int(map[i * 2].split("\t")[2].split(",")[0]) + 820)*mysize, (11000 - int(map[i * 2].split("\t")[2].split(",")[1]) * 10) *mysize/10 ]
-        config.provinces[i].label = (cvsmr.label_object(config.provinces[i].name,config.provinces[i].inside_coord,3 ))
-        config.provinces[i].label.set_style(font_size = 11)
 
     #province borders
     config.province_borders = cvsmgmt.scene_object()
@@ -264,6 +261,7 @@ def init_provinces(group):
 
         temp_poly.convert_loop()
         config.provinces[i].border = temp_poly
+        config.provinces[i].name = map[i * 2].split("\t")[1]
 
         config.province_borders.render_objects[0][i] = temp_poly
 
@@ -292,6 +290,22 @@ def init_provinces(group):
 
                 elif(temp[j] == 'False'):
                     config.provinces[i].adjacents_border[p].append(-1)
+
+    #labels
+    fileone = open("resources/map/map_label.txt", "r")
+    file = fileone.read().split("\n")
+    fileone.close()
+
+    for i in range(0,len(config.provinces)):
+        me = config.provinces[i]
+        temp = file[i].split("\t")
+
+        cvsmr.image_init(me.name)
+        temp_sprite = cvsmr.sprite_object(me.name, [((float(temp[1].split(",")[0])) / 10.0 + 820.0) * mysize,
+                                                    ((11000- (float(temp[1].split(",")[1]))) / 10.0) * mysize],
+                                          group + 1)
+        temp_sprite.sprite.update(rotation = math.degrees(float(temp[2])))
+        me.label = temp_sprite
 
 def init_nations():
     file = open("resources/map/nationdata.txt", "r")
