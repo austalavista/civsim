@@ -134,10 +134,12 @@ for r in range(0,len(provinces)):
 
         length_progress = 0
         for i in range(0, len(name_letters)):
+            size = name_letters[i].size
+            temp = name_letters[i].resize((int(size[0]*final_scale),
+                                          int(size[1]*final_scale)))
+            label_image.paste(im = temp, box = (int(length_progress),0))
 
-            label_image.paste(im = name_letters[i], box = (int(length_progress),0))
-            
-            length_progress += name_letters[i].size[0] + spacing
+            length_progress += int(name_letters[i].size[0] * final_scale) + spacing
 
         label_image.save("labels/" + provinces[r] + ".png")
 
