@@ -1,10 +1,16 @@
-import pyglet
+from PIL import Image
 
 #open files/initialize
 if(True):
     mapl = open("mapl.txt", "r").read().split("\n")
 
     label_map = open("./labels/map_label.txt", "w+")
+
+    #letters
+    letters = {}
+
+    for letter in ("A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","space","-","."):
+        letters[letter] = Image.open("letters/" + letter + ".png")
 
 #Load all vector data
 if(True):
@@ -78,3 +84,62 @@ for r in range(0,len(provinces)):
             sum += (temp_distance)**0.5
 
         height = sum / 9
+
+    #create label
+    if(True):
+        #bounding size
+        length = distance**0.5 * 0.8
+        height = height * 0.6
+
+        #find raw name size
+        raw_length = 0
+        raw_height = 0
+        name_letters = [None] * len(provinces[r])
+
+        for i in range(0,len(provinces[r])):
+            if(provinces[r][i] != ' ' or i != len(provinces[r])-1):
+                if(provinces[r][i] != ' '):
+                    name_letters[i] = letters[provinces[r][i].upper()]
+                    temp1, temp2 = letters[provinces[r][i].upper()].size
+                else:
+                    name_letters[i] = letters['space']
+                    temp1, temp2 = letters['space'].size
+
+                raw_length += temp1
+                if(temp2 > raw_height):
+                    raw_height = temp2
+
+
+            else:
+                name_letters.pop()
+
+        #determine scaling factor and word spacing
+        length_scale = length / raw_length
+        height_scale = height / raw_height
+
+        final_scale = None
+        spacing = None
+
+        if(length_scale <= height_scale):
+            #length limit hit, no letter spacing
+            spacing = 1
+            final_scale = length_scale
+        else:
+            #height limit hit, add letter spacing
+            spacing = (length - raw_length * height_scale) / (len(name_letters) - 1)
+            final_scale = height_scale
+
+        #actually create the image now
+        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)), int(height)), None)
+
+        length_progress = 0
+        for i in range(0, len(name_letters)):
+
+            label_image.paste(im = name_letters[i], box = (int(length_progress),0))
+            
+            length_progress += name_letters[i].size[0] + spacing
+
+        label_image.save("labels/" + provinces[r] + ".png")
+
+
+        print(r,"\t", provinces[r])
