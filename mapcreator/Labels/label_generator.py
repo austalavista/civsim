@@ -9,6 +9,8 @@ if(True):
 #Load all vector data
 if(True):
     provinces = [None]*int((len(mapl)/2))
+    for i in range(0, len(provinces)):
+        provinces[i] = mapl[i*2].split("\t")[1]
 
     vector_lists = [None] * len(provinces)
     for r in range(0,len(provinces)):
@@ -42,11 +44,12 @@ for r in range(0,len(provinces)):
                 point2_index = p
 
     #take the average of each points surroudning points
-    point1 = [(vector_lists[r][point1_index][0] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][0]) / 3,
-              (vector_lists[r][point1_index][1] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][1]) / 3]
+    if(True):
+        point1 = [(vector_lists[r][point1_index][0] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][0]) / 3,
+                  (vector_lists[r][point1_index][1] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][1]) / 3]
 
-    point2 = [(vector_lists[r][point2_index][0] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][0]) / 3,
-              (vector_lists[r][point2_index][1] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][1]) / 3]
+        point2 = [(vector_lists[r][point2_index][0] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][0]) / 3,
+                  (vector_lists[r][point2_index][1] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][1]) / 3]
 
     #order the points; point1 is the left point, point2 is the right point
     if(point1[0] < point2[0]):
@@ -55,22 +58,23 @@ for r in range(0,len(provinces)):
         point1 = temp
 
     #find average height
-    length_vector = [point2[0] - point1[0],
-                     point2[1] - point1[1]]
-    sum = 0
+    if(True):
+        length_vector = [point2[0] - point1[0],
+                         point2[1] - point1[1]]
+        sum = 0
 
-    for i in range(1, 10):
-        temp_point = [point1[0] + length_vector[0] / 10 * i,
-                      point1[1] + length_vector[1] / 10 * i]
+        for i in range(1, 10):
+            temp_point = [point1[0] + length_vector[0] / 10 * i,
+                          point1[1] + length_vector[1] / 10 * i]
 
-        temp_distance = 90000
+            temp_distance = 90000
 
-        for j in range(0,len(vector_lists[r])):
-            temp = (temp_point[0] - vector_lists[r][j][0])**2 + (temp_point[1] - vector_lists[r][j][1])**2
+            for j in range(0,len(vector_lists[r])):
+                temp = (temp_point[0] - vector_lists[r][j][0])**2 + (temp_point[1] - vector_lists[r][j][1])**2
 
-            if(temp < temp_distance):
-                temp_distance = temp
+                if(temp < temp_distance):
+                    temp_distance = temp
 
-        sum += (temp_distance)**0.5
+            sum += (temp_distance)**0.5
 
-    height = sum / 9
+        height = sum / 9
