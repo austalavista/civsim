@@ -88,7 +88,7 @@ for r in range(0,len(provinces)):
     #create label
     if(True):
         #bounding size
-        length = (distance**0.5) * 0.8
+        length = (distance**0.5) * 0.7
         height = height * 0.6
 
         #find raw name size
@@ -129,31 +129,32 @@ for r in range(0,len(provinces)):
             spacing = (length - raw_length * height_scale) / (len(name_letters) - 1)
             final_scale = height_scale
 
-        #actually create the image now
-        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)), int(height)), None)
+        #actually create the image now #scaling everything up by 2 for better resolution
+        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(height) * 2 + 4), None)
 
         length_progress = 0
         for i in range(0, len(name_letters)):
             size = name_letters[i].size
-            temp = name_letters[i].resize((int(size[0]*final_scale),
-                                          int(size[1]*final_scale)))
-            label_image.paste(im = temp, box = (int(length_progress),0))
+            temp = name_letters[i].resize((int(size[0]*final_scale) * 2,
+                                          int(size[1]*final_scale) * 2), resample = Image.ANTIALIAS)
+            label_image.paste(im = temp, box = (int(length_progress),2))
 
-            length_progress += int(name_letters[i].size[0] * final_scale) + spacing
+            length_progress += (int(name_letters[i].size[0] * final_scale) + spacing) * 2
 
         label_image.save("labels/" + provinces[r] + ".png")
 
     #write txt
-    perpindicular = [length_vector[1] / distance**0.5 * height, length_vector[0] / distance**0.5 * height ]
+    mag = (length_vector[0]**2 + length_vector[1]**2)**0.5
+    perpindicular = [length_vector[1] / mag * height/2, length_vector[0] / mag * height/2 ]
 
-    if(perpindicular[1] > 0):
+    if(perpindicular[1] < 0):
         perpindicular[1] *= -1
     else:
         perpindicular[0] *= -1
 
     label_map.write(str(r) + " " + provinces[r] + "\t" +
-                    str(point1[0] + length_vector[0] * 0.1 + perpindicular[0]) + "," +
-                    str(point1[1] + length_vector[1] * 0.1 + perpindicular[1]) + "\t" +
-                    str(math.tan(length_vector[1]/(length_vector[0] + 0.0012))) + "\n")
+                    str(point1[0] + length_vector[0] * 0.15 + perpindicular[0]) + "," +
+                    str(point1[1] + length_vector[1] * 0.15 + perpindicular[1]) + "\t" +
+                    str(math.asin(length_vector[1]/mag)) + "\n")
 
     print(r,"\t", provinces[r])

@@ -304,6 +304,8 @@ def init_provinces(group):
         temp_sprite = cvsmr.sprite_object(me.name, [((float(temp[1].split(",")[0])) / 10.0 + 820.0) * mysize,
                                                     ((11000- (float(temp[1].split(",")[1]))) / 10.0) * mysize],
                                           group + 1)
+
+        temp_sprite.sprite.update(scale_x = 0.5, scale_y = 0.5)
         temp_sprite.sprite.update(rotation = math.degrees(float(temp[2])))
         me.label = temp_sprite
 
