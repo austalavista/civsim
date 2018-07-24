@@ -57,7 +57,7 @@ for r in range(0,len(provinces)):
         for i in range(0 , len(vector_lists[r])):
             temp1 = vector_lists[r][i]
 
-            for p in range(0, len(vector_lists[r])):
+            for p in range(0, int(len(vector_lists[r])/2)):
 
                 temp2 = vector_lists[r][p]
                 if (temp2[0] != temp1[0] and temp1[1] != temp2[1]):
@@ -70,8 +70,18 @@ for r in range(0,len(provinces)):
 
                     COM_distance = ((temp1[1] - COM[1]) * line_vec[0] + line_vec[1] * (COM[0] - temp1[0])) / (perpindicular[1] * line_vec[0] - line_vec[1] * perpindicular[0]) * (perpindicular[0] ** 2 + perpindicular[1] ** 2)
 
-                    temp_score = temp_distance / (abs(COM_distance) + 0.01 + line_vec[1]**2)
+                    temp_height = 90000
+                    locyea = [temp1[0]+line_vec[0]/2,temp1[1] + line_vec[1]/2]
+                    for j in range(0, int(len(vector_lists[r])/3)):
+                        hui = vector_lists[r][j*3]
 
+                        temp_temp = (hui[0] - locyea[0])**2 + (hui[1] - locyea[1])**2
+                        if(temp_temp < temp_height):
+                            temp_height = temp_temp
+
+
+
+                    temp_score = (temp_distance * temp_height) / (abs(COM_distance) + abs(line_vec[1])**1.2)
 
                     if(temp_score > hscore):
                         hscore = temp_score
@@ -174,7 +184,7 @@ for r in range(0,len(provinces)):
 
 
         #actually create the image now #scaling everything up by 2 for better resolution
-        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(raw_height * final_scale) * 2 + 6), None)
+        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(raw_height * final_scale) * 2 + 8), None)
 
         length_progress = 0
         for i in range(0, len(name_letters)):
@@ -183,7 +193,7 @@ for r in range(0,len(provinces)):
             #print(size, final_scale)
             temp = name_letters[i].resize((int(size[0]*final_scale*2 + 0.5),
                                           int(size[1]*final_scale*2 + 0.5)), resample = Image.ANTIALIAS)
-            label_image.paste(im = temp, box = (int(length_progress),3))
+            label_image.paste(im = temp, box = (int(length_progress),4))
 
             length_progress += (int(name_letters[i].size[0] * final_scale) + spacing) * 2
 
@@ -191,7 +201,7 @@ for r in range(0,len(provinces)):
 
     #write txt
     mag = (length_vector[0]**2 + length_vector[1]**2)**0.5
-    perpindicular = [length_vector[1] / mag * raw_height * final_scale, length_vector[0] / mag * raw_height * final_scale ]
+    perpindicular = [length_vector[1] / mag * (raw_height + 8) * final_scale / 2, length_vector[0] / mag * (raw_height+8) * final_scale / 2 ]
 
     if(perpindicular[1] < 0):
         perpindicular[1] *= -1
