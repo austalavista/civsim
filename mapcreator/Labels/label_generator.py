@@ -33,90 +33,136 @@ if(True):
 #Label Making
 for r in range(0,len(provinces)):
 
-    distance = 0
-    point1_index = 0
-    point2_index = 0
-
     if(True):
-        scores = [None] * len(vector_lists[r])
-        indices = [None] * len(vector_lists[r]) #index of point the path is shared with
-        distances = [None] * len(vector_lists[r])
-        heights = [None] * len(vector_lists[r])
+        sumx = 0
+        sumy = 0
 
+        minx = 900000
+        miny = 900000
+
+        maxx = 0
+        maxy = 0
         for i in range(0, len(vector_lists[r])):
-            temp1 = vector_lists[r][i]
-            distances[i] = 0
+            sumx += vector_lists[r][i][0]
+            sumy += vector_lists[r][i][1]
 
-            #f
-            for p in range(0, int(len(vector_lists[r]) / 2 + 0.5)):
-                temp2 = vector_lists[r][p]
-                temp_distance = (temp1[0] - temp2[0]) ** 2 + (temp1[1] - temp2[1]) ** 2
+            if(minx > vector_lists[r][i][0]):
+                minx = vector_lists[r][i][0]
+            elif(maxx < vector_lists[r][i][0]):
+                maxx = vector_lists[r][i][0]
 
-                if (temp_distance > distances[i]):
-                    distances[i] = temp_distance
-                    indices[i] = p
+            if (miny > vector_lists[r][i][1]):
+                miny = vector_lists[r][i][1]
+            elif (maxy < vector_lists[r][i][1]):
+                maxy = vector_lists[r][i][1]
 
-            #score the path
-            loc_point1 = [vector_lists[r][i][0],
-                      vector_lists[r][i][1]]
+        avgx = sumx / i
+        avgy = sumy / i
 
-            loc_point2 = [vector_lists[r][indices[i]][0],
-                      vector_lists[r][indices[i]][1]]
+        #determine boundaries
+        xindex = 0
+        yindex = 0
 
-            loc_length_vector = [loc_point2[0] - loc_point1[0],
-                                 loc_point2[1] - loc_point1[1]]
-            sum = 0
+        xbound = []
+        ybound = []
 
-            #height
-            min_height = 90000
-            for c in range(4, 17):
-                temp_point = [loc_point1[0] + loc_length_vector[0] / 20 * i,
-                              loc_point1[1] + loc_length_vector[1] / 20 * i]
+            #solve for intersections
+        for i in range(0, len(vector_lists)):
+            now = vector_lists[r][i]
+            next = vector_lists[r][(i+1)%len(vector_lists[r])]
 
-                temp_distance = 90000
+            if(now[1] > avgy and next[1] < avgy or
+               now[1] < avgy and next[1] > avgy):
 
-                for j in range(0, len(vector_lists[r])):
-                    temp = (temp_point[0] - vector_lists[r][j][0]) ** 2 + (temp_point[1] - vector_lists[r][j][1]) ** 2
+                xbound.append((now[0] + next[0]) / 2)
 
-                    if (temp < temp_distance):
-                        temp_distance = temp
+            if (now[0] > avgx and next[0] < avgx or
+                now[0] < avgx and next[0] > avgx):
 
-                if(temp_distance < min_height):
-                    min_height = temp_distance
+                ybound.append((now[1] + next[1]) / 2)
 
-                sum += (temp_distance) ** 0.5
+            #order the boundary lists, small to large
+        for i in range(0, len(xbound) - 1):
+            for p in range(i+1,len(xbound)):
+                if(xbound[p] < xbound[i]):
+                    temp = xbound[i]
+                    xbound[i] = xbound[p]
+                    xbound[p] = temp
 
-            heights[i] = sum / 9
+        for i in range(0, len(ybound) - 1):
+            for p in range(i+1,len(ybound)):
+                if(ybound[p] < ybound[i]):
+                    temp = ybound[i]
+                    ybound[i] = ybound[p]
+                    ybound[p] = temp
 
-            scores[i] = distances[i] * (min_height**4) * heights[i]
+            #determine segments that will be searched for COM
+        length_x = xbound[1] - xbound[0]
+        start_x = ybound[0]
+        if(len(xbound) > 2):
+            for i in range(0,len(xbound)/2):
+                temp_distance = xbound[i*2+1] - xbound[i*2]
+                if(length_x < temp_distance):
+                    length_x = temp_distance
+                    start_x = xbound[i*2]
 
-    #pick the path with the highest score
-    hscore = 0
-    chosen = None
-    for i in range(0,len(vector_lists[r])):
-        if(scores[i] > hscore):
-            point1_index = i
-            point2_index = indices[i]
-            distance = distances[i]
-            hscore = scores[i]
-            height = heights[i]
+        length_y = ybound[1] - ybound[0]
+        start_y = ybound[0]
+        if (len(ybound) > 2):
+            for i in range(0, len(ybound) / 2):
+                temp_distance = ybound[i * 2 + 1] - ybound[i * 2]
+                if (length_y < temp_distance):
+                    length_y = temp_distance
+                    start_y = xbound[i * 2]
 
-    #points
-    point1 = [vector_lists[r][point1_index][0],
-              vector_lists[r][point1_index][1]]
 
-    point2 = [vector_lists[r][point2_index][0],
-              vector_lists[r][point2_index][1]]
+            #find most appropriaet almost-COM within the segments
+        min_distance_x = 0
+        min_distance_y = 0
+        almostcomx = None
+        almostcomy = None
 
-    #order the points; point1 is the left point, point2 is the right point
-    if(point1[0] > point2[0]):
-        temp = point2
-        point2 = point1
-        point1 = temp
+        for x in range(1,5):
+            temp_point_x = [start_x + length_x / 5 * i,avgy]
+            temp_point_y = [avgx, start_y + length_y / 5 * i]
 
-    #length vector
-    length_vector = [point2[0] - point1[0],
-                     point2[1] - point1[1]]
+            for i in range(0,len(vector_lists[r])):
+                temp_distance_x = (temp_point_x[0] - vector_lists[r][i][0])**2 + (temp_point_x[1] - vector_lists[r][i][1])**2
+
+                if(min_distance_x > temp_distance_x):
+                    min_distance_x = temp_distance_x
+                    almostcomx = temp_point_x[0]
+
+                temp_distance_y = (temp_point_y[0] - vector_lists[r][i][0]) ** 2 + (temp_point_y[1] - vector_lists[r][i][1]) ** 2
+
+                if (min_distance_y > temp_distance_y):
+                    min_distance_y = temp_distance_y
+                    almostcomy = temp_point_y[0]
+
+            #determien the COM as the average of those two points
+        COM = [(almostcomx + avgx) / 2,
+               (almostcomy + avgy) / 2]
+
+        
+
+    #points and vectors
+    if(True):
+        #points
+        point1 = [vector_lists[r][point1_index][0],
+                  vector_lists[r][point1_index][1]]
+
+        point2 = [vector_lists[r][point2_index][0],
+                  vector_lists[r][point2_index][1]]
+
+        #order the points; point1 is the left point, point2 is the right point
+        if(point1[0] > point2[0]):
+            temp = point2
+            point2 = point1
+            point1 = temp
+
+        #length vector
+        length_vector = [point2[0] - point1[0],
+                         point2[1] - point1[1]]
 
     #create label
     if(True):
