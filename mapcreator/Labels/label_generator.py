@@ -37,25 +37,70 @@ for r in range(0,len(provinces)):
     point1_index = 0
     point2_index = 0
 
-    #find 2 farthest points
+    #score the longest path of each point
+    scores = [None] * len(vector_lists[r])
+    indices = [None] * len(vector_lists[r]) #index of point the path is shared with
+    distances = [None] * len(vector_lists[r])
+    heights = [None] * len(vector_lists[r])
+
     for i in range(0, len(vector_lists[r])):
         temp1 = vector_lists[r][i]
+        distances[i]
 
-        for p in range(0, int(len(vector_lists[r])/2 + 0.5)):
+        #find longest path for this point
+        for p in range(0, int(len(vector_lists[r]) / 2 + 0.5)):
             temp2 = vector_lists[r][p]
-            temp_distance = (temp1[0] - temp2[0])**2 + (temp1[1] - temp2[1])**2
+            temp_distance = (temp1[0] - temp2[0]) ** 2 + (temp1[1] - temp2[1]) ** 2
 
-            if(temp_distance > distance):
-                distance = temp_distance
-                point1_index = i
-                point2_index = p
+            if (temp_distance > distance):
+                distances[i] = temp_distance
+                indices[i] = p
 
-    #take the average of each points surroudning points
-    point1 = [(vector_lists[r][point1_index][0] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][0]) / 3,
-              (vector_lists[r][point1_index][1] + vector_lists[r][(point1_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point1_index - 1) % len(vector_lists[r])][1]) / 3]
+        #score the path
+        loc_point1 = [vector_lists[r][i][0],
+                  vector_lists[r][i][1]]
 
-    point2 = [(vector_lists[r][point2_index][0] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][0] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][0]) / 3,
-              (vector_lists[r][point2_index][1] + vector_lists[r][(point2_index + 1) % len(vector_lists[r])][1] + vector_lists[r][(point2_index - 1) % len(vector_lists[r])][1]) / 3]
+        loc_point2 = [vector_lists[r][indices[i]][0],
+                  vector_lists[r][indices[i]][1]]
+
+        loc_length_vector = [loc_point2[0] - loc_point1[0],
+                             loc_point2[1] - loc_point1[1]]
+        sum = 0
+
+        for c in range(1, 10):
+            temp_point = [loc_point1[0] + loc_length_vector[0] / 10 * i,
+                          loc_point1[1] + loc_length_vector[1] / 10 * i]
+
+            temp_distance = 90000
+
+            for j in range(0, len(vector_lists[r])):
+                temp = (temp_point[0] - vector_lists[r][j][0]) ** 2 + (temp_point[1] - vector_lists[r][j][1]) ** 2
+
+                if (temp < temp_distance):
+                    temp_distance = temp
+
+            sum += (temp_distance) ** 0.5
+
+        heights[i] = sum / 9
+
+        scores[i] = distances[i] * heights[i]
+
+    #pick the path with the highest score
+    hscore = 0
+    chosen = None
+    for i in range(0,len(vector_lists[r])):
+        if(scores[i] > hscore):
+            point1_index = i
+            point2_index = indices[i]
+            distance = distances[i]
+            hscore = scores[i]
+            height = heights[i]
+
+    point1 = [vector_lists[r][point1_index][0],
+              vector_lists[r][point1_index][1]]
+
+    point2 = [vector_lists[r][point2_index][0],
+              vector_lists[r][point2_index][1]]
 
     #order the points; point1 is the left point, point2 is the right point
     if(point1[0] > point2[0]):
@@ -63,27 +108,9 @@ for r in range(0,len(provinces)):
         point2 = point1
         point1 = temp
 
-    #find average height
-    if(True):
-        length_vector = [point2[0] - point1[0],
-                         point2[1] - point1[1]]
-        sum = 0
-
-        for i in range(1, 10):
-            temp_point = [point1[0] + length_vector[0] / 10 * i,
-                          point1[1] + length_vector[1] / 10 * i]
-
-            temp_distance = 90000
-
-            for j in range(0,len(vector_lists[r])):
-                temp = (temp_point[0] - vector_lists[r][j][0])**2 + (temp_point[1] - vector_lists[r][j][1])**2
-
-                if(temp < temp_distance):
-                    temp_distance = temp
-
-            sum += (temp_distance)**0.5
-
-        height = sum / 9
+    #length vector
+    length_vector = [point2[0] - point1[0],
+                     point2[1] - point1[1]]
 
     #create label
     if(True):
@@ -128,9 +155,9 @@ for r in range(0,len(provinces)):
             #height limit hit, add letter spacing
             spacing = (length - raw_length * height_scale) / (len(name_letters) - 1)
             final_scale = height_scale
-
+        height = raw_height * final_scale
         #actually create the image now #scaling everything up by 2 for better resolution
-        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(height) * 2 + 4), None)
+        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(raw_height * final_scale) * 2), None)
 
         length_progress = 0
         for i in range(0, len(name_letters)):
