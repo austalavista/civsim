@@ -37,53 +37,58 @@ for r in range(0,len(provinces)):
     point1_index = 0
     point2_index = 0
 
-    #score the longest path of each point
-    scores = [None] * len(vector_lists[r])
-    indices = [None] * len(vector_lists[r]) #index of point the path is shared with
-    distances = [None] * len(vector_lists[r])
-    heights = [None] * len(vector_lists[r])
+    if(True):
+        scores = [None] * len(vector_lists[r])
+        indices = [None] * len(vector_lists[r]) #index of point the path is shared with
+        distances = [None] * len(vector_lists[r])
+        heights = [None] * len(vector_lists[r])
 
-    for i in range(0, len(vector_lists[r])):
-        temp1 = vector_lists[r][i]
-        distances[i]
+        for i in range(0, len(vector_lists[r])):
+            temp1 = vector_lists[r][i]
+            distances[i] = 0
 
-        #find longest path for this point
-        for p in range(0, int(len(vector_lists[r]) / 2 + 0.5)):
-            temp2 = vector_lists[r][p]
-            temp_distance = (temp1[0] - temp2[0]) ** 2 + (temp1[1] - temp2[1]) ** 2
+            #f
+            for p in range(0, int(len(vector_lists[r]) / 2 + 0.5)):
+                temp2 = vector_lists[r][p]
+                temp_distance = (temp1[0] - temp2[0]) ** 2 + (temp1[1] - temp2[1]) ** 2
 
-            if (temp_distance > distance):
-                distances[i] = temp_distance
-                indices[i] = p
+                if (temp_distance > distances[i]):
+                    distances[i] = temp_distance
+                    indices[i] = p
 
-        #score the path
-        loc_point1 = [vector_lists[r][i][0],
-                  vector_lists[r][i][1]]
+            #score the path
+            loc_point1 = [vector_lists[r][i][0],
+                      vector_lists[r][i][1]]
 
-        loc_point2 = [vector_lists[r][indices[i]][0],
-                  vector_lists[r][indices[i]][1]]
+            loc_point2 = [vector_lists[r][indices[i]][0],
+                      vector_lists[r][indices[i]][1]]
 
-        loc_length_vector = [loc_point2[0] - loc_point1[0],
-                             loc_point2[1] - loc_point1[1]]
-        sum = 0
+            loc_length_vector = [loc_point2[0] - loc_point1[0],
+                                 loc_point2[1] - loc_point1[1]]
+            sum = 0
 
-        for c in range(1, 10):
-            temp_point = [loc_point1[0] + loc_length_vector[0] / 10 * i,
-                          loc_point1[1] + loc_length_vector[1] / 10 * i]
+            #height
+            min_height = 90000
+            for c in range(4, 17):
+                temp_point = [loc_point1[0] + loc_length_vector[0] / 20 * i,
+                              loc_point1[1] + loc_length_vector[1] / 20 * i]
 
-            temp_distance = 90000
+                temp_distance = 90000
 
-            for j in range(0, len(vector_lists[r])):
-                temp = (temp_point[0] - vector_lists[r][j][0]) ** 2 + (temp_point[1] - vector_lists[r][j][1]) ** 2
+                for j in range(0, len(vector_lists[r])):
+                    temp = (temp_point[0] - vector_lists[r][j][0]) ** 2 + (temp_point[1] - vector_lists[r][j][1]) ** 2
 
-                if (temp < temp_distance):
-                    temp_distance = temp
+                    if (temp < temp_distance):
+                        temp_distance = temp
 
-            sum += (temp_distance) ** 0.5
+                if(temp_distance < min_height):
+                    min_height = temp_distance
 
-        heights[i] = sum / 9
+                sum += (temp_distance) ** 0.5
 
-        scores[i] = distances[i] * heights[i]
+            heights[i] = sum / 9
+
+            scores[i] = distances[i] * (min_height**4) * heights[i]
 
     #pick the path with the highest score
     hscore = 0
@@ -96,6 +101,7 @@ for r in range(0,len(provinces)):
             hscore = scores[i]
             height = heights[i]
 
+    #points
     point1 = [vector_lists[r][point1_index][0],
               vector_lists[r][point1_index][1]]
 
@@ -116,7 +122,7 @@ for r in range(0,len(provinces)):
     if(True):
         #bounding size
         length = (distance**0.5) * 0.7
-        height = height * 0.6
+        height = height * 0.5
 
         #find raw name size
         raw_length = 0
@@ -140,6 +146,8 @@ for r in range(0,len(provinces)):
             else:
                 name_letters.pop()
 
+
+
         #determine scaling factor and word spacing
         length_scale = length / raw_length
         height_scale = height / raw_height
@@ -156,15 +164,19 @@ for r in range(0,len(provinces)):
             spacing = (length - raw_length * height_scale) / (len(name_letters) - 1)
             final_scale = height_scale
         height = raw_height * final_scale
+
+
+
+
         #actually create the image now #scaling everything up by 2 for better resolution
-        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(raw_height * final_scale) * 2), None)
+        label_image = Image.new('RGBA', (int(raw_length*final_scale + spacing*(len(name_letters)-1)) * 2, int(raw_height * final_scale) * 2 + 6), None)
 
         length_progress = 0
         for i in range(0, len(name_letters)):
             size = name_letters[i].size
             temp = name_letters[i].resize((int(size[0]*final_scale) * 2,
                                           int(size[1]*final_scale) * 2), resample = Image.ANTIALIAS)
-            label_image.paste(im = temp, box = (int(length_progress),2))
+            label_image.paste(im = temp, box = (int(length_progress),3))
 
             length_progress += (int(name_letters[i].size[0] * final_scale) + spacing) * 2
 
@@ -172,7 +184,7 @@ for r in range(0,len(provinces)):
 
     #write txt
     mag = (length_vector[0]**2 + length_vector[1]**2)**0.5
-    perpindicular = [length_vector[1] / mag * height/2, length_vector[0] / mag * height/2 ]
+    perpindicular = [length_vector[1] / mag * raw_height * final_scale, length_vector[0] / mag * raw_height * final_scale ]
 
     if(perpindicular[1] < 0):
         perpindicular[1] *= -1

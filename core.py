@@ -305,7 +305,7 @@ def init_provinces(group):
                                                     ((11000- (float(temp[1].split(",")[1]))) / 10.0) * mysize],
                                           group + 1)
 
-        temp_sprite.sprite.update(scale_x = 0.5, scale_y = 0.5)
+        temp_sprite.sprite.update(scale_x = 0.4, scale_y = 0.4)
         temp_sprite.sprite.update(rotation = math.degrees(float(temp[2])))
         me.label = temp_sprite
 
