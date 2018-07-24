@@ -46,18 +46,9 @@ for r in range(0,len(provinces)):
             sumx += vector_lists[r][i][0]
             sumy += vector_lists[r][i][1]
 
-            if(minx > vector_lists[r][i][0]):
-                minx = vector_lists[r][i][0]
-            elif(maxx < vector_lists[r][i][0]):
-                maxx = vector_lists[r][i][0]
 
-            if (miny > vector_lists[r][i][1]):
-                miny = vector_lists[r][i][1]
-            elif (maxy < vector_lists[r][i][1]):
-                maxy = vector_lists[r][i][1]
-
-        avgx = sumx / i
-        avgy = sumy / i
+        avgx = sumx / len(vector_lists[r])
+        avgy = sumy / len(vector_lists[r])
 
         #determine boundaries
         xindex = 0
@@ -67,17 +58,16 @@ for r in range(0,len(provinces)):
         ybound = []
 
             #solve for intersections
-        for i in range(0, len(vector_lists)):
+        for i in range(0, len(vector_lists[r])):
             now = vector_lists[r][i]
             next = vector_lists[r][(i+1)%len(vector_lists[r])]
-
-            if(now[1] > avgy and next[1] < avgy or
-               now[1] < avgy and next[1] > avgy):
+            if(now[1] >= avgy and next[1] <= avgy or
+               now[1] <= avgy and next[1] >= avgy):
 
                 xbound.append((now[0] + next[0]) / 2)
 
-            if (now[0] > avgx and next[0] < avgx or
-                now[0] < avgx and next[0] > avgx):
+            if (now[0] >= avgx and next[0] <= avgx or
+                now[0] <= avgx and next[0] >= avgx):
 
                 ybound.append((now[1] + next[1]) / 2)
 
@@ -98,9 +88,9 @@ for r in range(0,len(provinces)):
 
             #determine segments that will be searched for COM
         length_x = xbound[1] - xbound[0]
-        start_x = ybound[0]
+        start_x = xbound[0]
         if(len(xbound) > 2):
-            for i in range(0,len(xbound)/2):
+            for i in range(0,int(len(xbound)/2)):
                 temp_distance = xbound[i*2+1] - xbound[i*2]
                 if(length_x < temp_distance):
                     length_x = temp_distance
@@ -108,42 +98,87 @@ for r in range(0,len(provinces)):
 
         length_y = ybound[1] - ybound[0]
         start_y = ybound[0]
-        if (len(ybound) > 2):
-            for i in range(0, len(ybound) / 2):
+        if (len(ybound) == 4):
+            for i in range(0, 2):
                 temp_distance = ybound[i * 2 + 1] - ybound[i * 2]
                 if (length_y < temp_distance):
                     length_y = temp_distance
-                    start_y = xbound[i * 2]
+                    start_y = ybound[i * 2]
 
 
             #find most appropriaet almost-COM within the segments
-        min_distance_x = 0
-        min_distance_y = 0
+        min_distanceyy = 0
+        min_distancexx = 0
+
+        min_distance_x = 9000000
+        min_distance_y = 9000000
+
         almostcomx = None
         almostcomy = None
+        comx = None
+        comy = None
 
-        for x in range(1,5):
-            temp_point_x = [start_x + length_x / 5 * i,avgy]
-            temp_point_y = [avgx, start_y + length_y / 5 * i]
+        for x in range(1,10):
+            temp_point_x = [start_x + length_x / 9 * i,avgy]
+            temp_point_y = [avgx, start_y + length_y / 9 * i]
 
             for i in range(0,len(vector_lists[r])):
                 temp_distance_x = (temp_point_x[0] - vector_lists[r][i][0])**2 + (temp_point_x[1] - vector_lists[r][i][1])**2
 
-                if(min_distance_x > temp_distance_x):
+                if(min_distance_x > temp_distance_x ** 0.5):
                     min_distance_x = temp_distance_x
                     almostcomx = temp_point_x[0]
 
                 temp_distance_y = (temp_point_y[0] - vector_lists[r][i][0]) ** 2 + (temp_point_y[1] - vector_lists[r][i][1]) ** 2
 
-                if (min_distance_y > temp_distance_y):
+                if (min_distance_y > temp_distance_y ** 0.5):
                     min_distance_y = temp_distance_y
                     almostcomy = temp_point_y[0]
 
-            #determien the COM as the average of those two points
-        COM = [(almostcomx + avgx) / 2,
-               (almostcomy + avgy) / 2]
+            if(min_distancexx < min_distance_x):
+                min_distancexx = min_distance_x
+                comx = almostcomx
 
-        
+            if(min_distanceyy < min_distance_y):
+                min_distanceyy = min_distance_y
+                comy = almostcomy
+
+            #determien the COM as the average of those two points
+
+        COM = [(comx + avgx) / 2,
+               (comy + avgy) / 2]
+
+        COM = [avgx,avgy]
+
+        #Determine Length vector
+        hscore = 0
+        for i in range(0 , len(vector_lists[r])):
+            temp1 = vector_lists[r][i]
+
+            for p in range(0, len(vector_lists[r])):
+
+                temp2 = vector_lists[r][p]
+                if (temp2[0] != temp1[0] and temp1[1] != temp2[1]):
+
+                    temp_distance = (temp1[0] - temp2[0])**2 + (temp1[1] - temp2[1])**2
+
+                    line_vec = [temp2[0] - temp1[0], temp2[1] - temp1[1]]
+                    perpindicular = [line_vec[1],-1 * line_vec[0]]
+                    perpindicular_mag = perpindicular[0] ** 2 + perpindicular[1] ** 2
+
+                    COM_distance = ((temp1[1] - COM[1]) * line_vec[0] + line_vec[1] * (COM[0] - temp1[0])) / (perpindicular[1] * line_vec[0] - line_vec[1] * perpindicular[0]) * (perpindicular[0] ** 2 + perpindicular[1] ** 2)
+
+                    temp_score = temp_distance / (abs(COM_distance) + 0.01 + line_vec[1])
+
+
+                    if(temp_score > hscore):
+                        hscore = temp_score
+
+                        point1_index = i
+                        point2_index = p
+
+
+
 
     #points and vectors
     if(True):
@@ -163,6 +198,28 @@ for r in range(0,len(provinces)):
         #length vector
         length_vector = [point2[0] - point1[0],
                          point2[1] - point1[1]]
+
+        distance = length_vector[0] **2 + length_vector[1] **2
+
+    # find average height
+    if (True):
+        sum = 0
+
+        for i in range(1, 10):
+            temp_point = [point1[0] + length_vector[0] / 10 * i,
+                          point1[1] + length_vector[1] / 10 * i]
+
+            temp_distance = 90000
+
+            for j in range(0, len(vector_lists[r])):
+                temp = (temp_point[0] - vector_lists[r][j][0]) ** 2 + (temp_point[1] - vector_lists[r][j][1]) ** 2
+
+                if (temp < temp_distance):
+                    temp_distance = temp
+
+            sum += (temp_distance) ** 0.5
+
+        height = sum / 9
 
     #create label
     if(True):
@@ -220,8 +277,10 @@ for r in range(0,len(provinces)):
         length_progress = 0
         for i in range(0, len(name_letters)):
             size = name_letters[i].size
-            temp = name_letters[i].resize((int(size[0]*final_scale) * 2,
-                                          int(size[1]*final_scale) * 2), resample = Image.ANTIALIAS)
+
+            #print(size, final_scale)
+            temp = name_letters[i].resize((int(size[0]*final_scale*2 + 0.5),
+                                          int(size[1]*final_scale*2 + 0.5)), resample = Image.ANTIALIAS)
             label_image.paste(im = temp, box = (int(length_progress),3))
 
             length_progress += (int(name_letters[i].size[0] * final_scale) + spacing) * 2
