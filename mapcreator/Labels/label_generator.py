@@ -50,104 +50,6 @@ for r in range(0,len(provinces)):
         avgx = sumx / len(vector_lists[r])
         avgy = sumy / len(vector_lists[r])
 
-        #determine boundaries
-        xindex = 0
-        yindex = 0
-
-        xbound = []
-        ybound = []
-
-            #solve for intersections
-        for i in range(0, len(vector_lists[r])):
-            now = vector_lists[r][i]
-            next = vector_lists[r][(i+1)%len(vector_lists[r])]
-            if(now[1] >= avgy and next[1] <= avgy or
-               now[1] <= avgy and next[1] >= avgy):
-
-                xbound.append((now[0] + next[0]) / 2)
-
-            if (now[0] >= avgx and next[0] <= avgx or
-                now[0] <= avgx and next[0] >= avgx):
-
-                ybound.append((now[1] + next[1]) / 2)
-
-            #order the boundary lists, small to large
-        for i in range(0, len(xbound) - 1):
-            for p in range(i+1,len(xbound)):
-                if(xbound[p] < xbound[i]):
-                    temp = xbound[i]
-                    xbound[i] = xbound[p]
-                    xbound[p] = temp
-
-        for i in range(0, len(ybound) - 1):
-            for p in range(i+1,len(ybound)):
-                if(ybound[p] < ybound[i]):
-                    temp = ybound[i]
-                    ybound[i] = ybound[p]
-                    ybound[p] = temp
-
-            #determine segments that will be searched for COM
-        length_x = xbound[1] - xbound[0]
-        start_x = xbound[0]
-        if(len(xbound) > 2):
-            for i in range(0,int(len(xbound)/2)):
-                temp_distance = xbound[i*2+1] - xbound[i*2]
-                if(length_x < temp_distance):
-                    length_x = temp_distance
-                    start_x = xbound[i*2]
-
-        length_y = ybound[1] - ybound[0]
-        start_y = ybound[0]
-        if (len(ybound) == 4):
-            for i in range(0, 2):
-                temp_distance = ybound[i * 2 + 1] - ybound[i * 2]
-                if (length_y < temp_distance):
-                    length_y = temp_distance
-                    start_y = ybound[i * 2]
-
-
-            #find most appropriaet almost-COM within the segments
-        min_distanceyy = 0
-        min_distancexx = 0
-
-        min_distance_x = 9000000
-        min_distance_y = 9000000
-
-        almostcomx = None
-        almostcomy = None
-        comx = None
-        comy = None
-
-        for x in range(1,10):
-            temp_point_x = [start_x + length_x / 9 * i,avgy]
-            temp_point_y = [avgx, start_y + length_y / 9 * i]
-
-            for i in range(0,len(vector_lists[r])):
-                temp_distance_x = (temp_point_x[0] - vector_lists[r][i][0])**2 + (temp_point_x[1] - vector_lists[r][i][1])**2
-
-                if(min_distance_x > temp_distance_x ** 0.5):
-                    min_distance_x = temp_distance_x
-                    almostcomx = temp_point_x[0]
-
-                temp_distance_y = (temp_point_y[0] - vector_lists[r][i][0]) ** 2 + (temp_point_y[1] - vector_lists[r][i][1]) ** 2
-
-                if (min_distance_y > temp_distance_y ** 0.5):
-                    min_distance_y = temp_distance_y
-                    almostcomy = temp_point_y[0]
-
-            if(min_distancexx < min_distance_x):
-                min_distancexx = min_distance_x
-                comx = almostcomx
-
-            if(min_distanceyy < min_distance_y):
-                min_distanceyy = min_distance_y
-                comy = almostcomy
-
-            #determien the COM as the average of those two points
-
-        COM = [(comx + avgx) / 2,
-               (comy + avgy) / 2]
-
         COM = [avgx,avgy]
 
         #Determine Length vector
@@ -168,7 +70,7 @@ for r in range(0,len(provinces)):
 
                     COM_distance = ((temp1[1] - COM[1]) * line_vec[0] + line_vec[1] * (COM[0] - temp1[0])) / (perpindicular[1] * line_vec[0] - line_vec[1] * perpindicular[0]) * (perpindicular[0] ** 2 + perpindicular[1] ** 2)
 
-                    temp_score = temp_distance / (abs(COM_distance) + 0.01 + line_vec[1])
+                    temp_score = temp_distance / (abs(COM_distance) + 0.01 + line_vec[1]**2)
 
 
                     if(temp_score > hscore):
