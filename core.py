@@ -30,6 +30,9 @@ class scenario:
         config.month = self.month
         config.year = self.year
 
+        for i in range(0, config.num_nations):
+            config.nations[i].add_provinces()
+
 class save:
     def __init__(self):
         self.map = [None]*config.num_provinces
@@ -44,15 +47,17 @@ class save:
     def set(self):
         self.index = 0
         for i in range(0,len(config.provinces)):
-            if(config.provinces[i] != None):
-                while(self.map[self.index][0] < config.provinces[i].id):
-                    self.index += 1
-                if(self.map[self.index][0] == config.provinces[i].id):
-                    config.provinces[i].set_nation(self.map[self.index][1])
+            while(self.map[self.index][0] < config.provinces[i].id):
+                self.index += 1
+            if(self.map[self.index][0] == config.provinces[i].id):
+                config.provinces[i].set_nation(self.map[self.index][1])
 
         config.day = self.day
         config.month = self.month
         config.year = self.year
+
+        for i in range(0, config.num_nations):
+            config.nations[i].add_provinces()
 
 class nation:
     def __init__(self):
@@ -60,8 +65,23 @@ class nation:
         self.name = None
         self.adjective = None
 
-        self.border = None
-        self.id = None
+        self.id = None #same as index
+
+        self.border = []
+        self.provinces = []
+
+    def add_provinces(self):
+        #populates / refreshes list of provinces and their borders
+
+        self.borders = []
+        self.provinces = []
+
+        for i in range(config.num_provinces):
+            if(config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
+                self.provinces.append(config.provinces[i])
+
+                self.borders.append(config.nation_borders.render_objects[0][i].vertices)
+
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -88,9 +108,11 @@ class province(cvsmgmt.scene_object):
 
     def set_nation(self, nation):
         if(nation != None):
-            self.nation = config.nations[nation]
+            self.nation = config.nations_dict[nation]
             self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
             self.render_objects[0][0].update_color()
+
+
         else:
             self.nation = None
             self.render_objects[0][0].solid_color_coords(255,255,255)
@@ -324,7 +346,8 @@ def init_nations():
         tempnation.color = (int(temp[1][0:2],16),int(temp[1][2:4],16),int(temp[1][4:6],16))
         tempnation.id = i
 
-        config.nations[tempnation.name] = tempnation
+        config.nations.append(tempnation)
+        config.nations_dict[tempnation.name] = tempnation
 
 def init_scenarios():
     for root, dirs, files in os.walk("./scenarios"):
@@ -444,42 +467,6 @@ def time_update():
     calculations.demographics()
     calculations.agriculture()
     calculations.population()
-
-def draw_nation_borders_province(province):
-
-
-    me = province
-    if (me.nation != None):
-        temp_line = cvsmr.line_object(config.line_groups["2/3"])
-        config.nation_borders.render_objects[0][index] = temp_line
-
-        counter = 0
-
-        for j in range(0, len(me.adjacents_border)):
-            flag = False
-            for p in range(0, len(me.adjacents_border[j])):
-                tempadj = me.adjacents_border[j][p]
-
-                if (tempadj != -1):
-                    tempadjprov = config.provinces[tempadj]
-
-                    if (
-                                        tempadjprov != False and tempadjprov.nation == None or
-                                        tempadjprov != False and tempadjprov.nation.id != me.nation.id
-                    ):
-                        flag = True
-                        counter += 1
-                        break
-            if (not flag):
-                counter = 0
-
-            if (counter > 1):
-                temp_line.vertices.append(me.border.vertices[(j - 1) * 4])
-                temp_line.vertices.append(me.border.vertices[(j - 1) * 4 + 1])
-                temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 2) % len(me.border.vertices)])
-                temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
-
-        temp_line.solid_color_coords(40, 40, 40)
 
 def draw_nation_borders():
     # nation borders

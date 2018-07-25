@@ -7,7 +7,8 @@ provinces = None
 provinces_id = {}
 
 num_nations = -1
-nations = {}
+nations = []
+nations_dict = {}
 
 scenarios = []
 saves = []
