@@ -30,8 +30,12 @@ class scenario:
         config.month = self.month
         config.year = self.year
 
-        for i in range(0, config.num_nations):
-            config.nations[i].add_provinces()
+        for i in range(0, config.num_provinces):
+            if(config.provinces[i].nation != None):
+                for j in range(0, config.num_nations):
+                    if(config.provinces[i].nation.id == j):
+                        config.nations[j].provinces.append(config.provinces[i])
+                        break
 
 class save:
     def __init__(self):
@@ -56,8 +60,12 @@ class save:
         config.month = self.month
         config.year = self.year
 
-        for i in range(0, config.num_nations):
-            config.nations[i].add_provinces()
+        for i in range(0, config.num_provinces):
+            if(config.provinces[i].nation != None):
+                for j in range(0, config.num_nations):
+                    if(config.provinces[i].nation.id == j):
+                        config.nations[j].provinces.append(config.provinces[i])
+                        break
 
 class nation:
     def __init__(self):
@@ -81,7 +89,6 @@ class nation:
                 self.provinces.append(config.provinces[i])
 
                 self.borders.append(config.nation_borders.render_objects[0][i].vertices)
-
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -108,15 +115,57 @@ class province(cvsmgmt.scene_object):
 
     def set_nation(self, nation):
         if(nation != None):
+            self.prev_nation = self.nation
             self.nation = config.nations_dict[nation]
+
             self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1], self.nation.color[2])
             self.render_objects[0][0].update_color()
 
+            if(config.state == "in_game_menu"):
+                self.draw_nation_borders()
+
+                self.nation.add_provinces()
+                if(self.prev_nation != None):
+                    self.prev_nation.add_provinces()
 
         else:
-            self.nation = None
             self.render_objects[0][0].solid_color_coords(255,255,255)
             self.render_objects[0][0].update_color()
+
+    def draw_nation_border(self):
+
+        self.temp_line = cvsmr.line_object(config.line_groups["2/3"])
+        config.nation_borders.render_objects[0][self.index] = temp_line
+        if (self.nation != None):
+
+            self.counter = 0
+
+            for j in range(0, len(self.adjacents_border)):
+                self.flag = False
+                for p in range(0, len(self.adjacents_border[j])):
+                    self.tempadj = me.adjacents_border[j][p]
+
+                    if (self.tempadj != -1):
+                        self.tempadjprov = config.provinces[tempadj]
+
+                        if (
+                                            self.tempadjprov != False and self.tempadjprov.nation == None or
+                                            self.tempadjprov != False and self.tempadjprov.nation.id != self.nation.id
+                        ):
+                            self.flag = True
+                            self.counter += 1
+                            break
+                if (not self.flag):
+                    self.counter = 0
+
+                if (self.counter > 1):
+                    self.temp_line.vertices.append(me.border.vertices[(j - 1) * 4])
+                    self.temp_line.vertices.append(me.border.vertices[(j - 1) * 4 + 1])
+                    self.temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 2) % len(me.border.vertices)])
+                    self.temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
+
+            self.temp_line.solid_color_coords(40, 40, 40)
+
 
     def set_id(self, id):
         self.id = id
@@ -194,10 +243,33 @@ class ocean(cvsmgmt.scene_object):
         self.nodrag_click_scene(x,y)
 
     def handler_leftdrag(self,x,y,dx,dy):
-        self.nodrag_leftdrag_scene(x,y)
+        self.nodrag_leftdrag_scene(x, y)
+
+        if (config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
+            for i in range(0, config.num_provinces):
+                if (config.provinces[i].on_screen()):
+                    config.provinces[i].label.add()
+                    config.provinces[i].on_screened = True
+
+                elif (config.provinces[i].on_screened):
+                    config.provinces[i].label.remove()
+                    config.provinces[i].on_screened = False
 
     def handler_scroll(self, x, y, scroll_x, scroll_y):
         self.zoom(x, y, scroll_y)
+
+        if (config.scene_transformation_group.scale_x > 0.7):
+            calc_screen_bounds()
+            for i in range(0, config.num_provinces):
+                if (config.provinces[i].on_screen()):
+                    config.provinces[i].label.add()
+
+        elif (config.scene_transformation_group.scale_x > 0.3):
+            for i in range(0, config.num_provinces):
+                if (config.provinces[i].on_screened):
+                    config.provinces[i].label.remove()
+                    config.provinces[i].on_screened = False
 
 class time_entry(cvsmgmt.update_entry):
     def __init__(self, args=None):
