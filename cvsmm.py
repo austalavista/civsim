@@ -480,9 +480,6 @@ class play_saves_element(scroll_menu_element):
 
     def handler_leftclick(self, x, y):
         self.save.set()
-        config.nation_borders.remove_from_scene()
-        core.draw_nation_borders()
-        config.nation_borders.add_to_scene()
 
         self.scroll_menu.toggle()
 
@@ -526,9 +523,6 @@ class play_scenarios_element(scroll_menu_element):
 
     def handler_leftclick(self, x, y):
         self.scenario.set()
-        config.nation_borders.remove_from_scene()
-        core.draw_nation_borders()
-        config.nation_borders.add_to_scene()
 
         self.scroll_menu.toggle()
         self.toggle(True)

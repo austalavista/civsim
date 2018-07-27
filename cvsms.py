@@ -79,7 +79,7 @@ def initialize():
     apply_settings()
 
     # resources
-    pyglet.resource.path = ['resources', 'resources/UI/main_menu','resources/UI/in_game_menu', 'resources/UI/settings_menu','resources/UI/play_menu', 'resources/UI', 'resources/map', 'resources/map/labels']
+    pyglet.resource.path = ['resources', 'resources/UI/main_menu','resources/UI/in_game_menu', 'resources/UI/settings_menu','resources/UI/play_menu', 'resources/UI', 'resources/map', 'resources/map/labels', 'resources/map/letters']
 
     config.gs_entries[0].function = pyglet.resource.reindex
     config.gs_entries[0].add(0)

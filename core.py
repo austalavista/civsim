@@ -37,6 +37,15 @@ class scenario:
                         config.nations[j].provinces.append(config.provinces[i])
                         break
 
+        config.nation_borders.remove_from_scene()
+        draw_nation_borders()
+        config.nation_borders.add_to_scene()
+
+        for i in range(0, config.num_nations):
+            config.nations[i].add_provinces()
+            config.nations[i].draw_label()
+            print(i)
+
 class save:
     def __init__(self):
         self.map = [None]*config.num_provinces
@@ -67,6 +76,14 @@ class save:
                         config.nations[j].provinces.append(config.provinces[i])
                         break
 
+        config.nation_borders.remove_from_scene()
+        draw_nation_borders()
+        config.nation_borders.add_to_scene()
+
+        for i in range(0, config.num_nations):
+            config.nations[i].add_provinces()
+            config.nations[i].draw_label()
+
 class nation:
     def __init__(self):
         self.color = None
@@ -78,17 +95,144 @@ class nation:
         self.border = []
         self.provinces = []
 
+        self.label = []
+
     def add_provinces(self):
         #populates / refreshes list of provinces and their borders
 
-        self.borders = []
+        self.border = []
         self.provinces = []
 
         for i in range(config.num_provinces):
             if(config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
                 self.provinces.append(config.provinces[i])
 
-                self.borders.append(config.nation_borders.render_objects[0][i].vertices)
+                for j in range(0, len(config.nation_borders.render_objects[0][i].vertices)):
+                    self.border.append(config.nation_borders.render_objects[0][i].vertices[j])
+
+    def init_label(self):
+        self.raw_length = 0
+        self.raw_height = 0
+
+        for i in range(0,len(self.name)):
+            if(self.name[i] != ' '):
+                self.label.append(cvsmr.sprite_object(self.name[i].upper(), [0,0], 5))
+            else:
+                self.label.append(cvsmr.sprite_object('space', [0,0], 5))
+            if(self.label[i].sprite.height > self.raw_height):
+                self.raw_height = self.label[i].sprite.height
+
+            self.raw_length += self.label[i].sprite.width
+
+    def draw_label(self):
+        if(len(self.provinces) > 0):
+            self.hscore = 0
+            #print(len(self.border), len(self.provinces))
+            for i in range(0, int(len(self.border) / 6)):
+                self.me = [self.border[i*6], self.border[i*6+1]]
+
+                for j in range(0, int(len(self.border) / 6)):
+                    if(j != i):
+                        self.pair = [self.border[j*6], self.border[j*6+1]]
+
+                        self.line_vec = [self.pair[0] - self.me[0], self.pair[1] - self.me[1]]
+
+                        #DISTANCE---
+                        self.temp_distance = self.line_vec[0] ** 2 + self.line_vec[1] ** 2
+
+                        #HEIHGT----
+                        self.temp_height = 90000
+                        for tt in range(0, 3):
+                            self.temp_point = [self.me[0] + self.line_vec[0] / 3 * tt, self.me[1] + self.line_vec[1] / 3 * tt]
+                            self.perpindicular = [self.line_vec[1], -1 * self.line_vec[0]]
+
+                            if(self.perpindicular [0] != 0):
+
+                                for kk in range(0, int(len(self.border) / 4)):
+                                    self.temp1 = [self.border[kk*4],self.border[kk*4+1]]
+                                    self.temp2 = [self.border[kk*4+2],self.border[kk*4+3]]
+
+                                    self.temp_y1 = self.temp_point[1] + self.perpindicular[1] * (self.temp1[0] - self.temp_point[0]) / self.perpindicular[0]
+                                    self.temp_y2 = self.temp_point[1] + self.perpindicular[1] * (self.temp2[0] - self.temp_point[0]) / self.perpindicular[0]
+
+                                    if(self.temp1[1] >= self.temp_y1 and self.temp2[1] <= self.temp_y2 or
+                                       self.temp1[1] <= self.temp_y1 and self.temp2[1] >= self.temp_y2):
+
+                                        self.temp_factor = ((self.temp1[0] + self.temp2[0])/2 - self.temp_point[0]) / self.perpindicular[0]
+                                        self.temp_temp = (self.perpindicular[0] * self.temp_factor) ** 2 + (self.perpindicular[1] * self.temp_factor) ** 2
+
+                                        if(self.temp_height > self.temp_temp):
+                                            self.temp_height = self.temp_temp
+
+                            else:
+                                for kk in range(0,int(len(self.border)/4)):
+                                    self.temp1 = [self.border[kk * 4], self.border[kk * 4 + 1]]
+                                    self.temp2 = [self.border[kk * 4 + 2], self.border[kk * 4 + 3]]
+
+                                    if(self.temp1[0] <= self.temp_point[0] and self.temp2[0] >= self.temp_point[1] or
+                                       self.temp1[0] >= self.temp_point[0] and self.temp2[0] <= self.temp_point[1]):
+
+                                        self.temp_temp = (self.temp1[1] + self.temp2[1])/2 - self.temp_point[1]
+
+                                        if (self.temp_height > self.temp_temp):
+                                            self.temp_height = self.temp_temp
+
+
+
+                        #SCORE
+                        self.temp_score = abs(self.temp_height * self.temp_distance / (self.line_vec[1] + 0.13))
+                        if(self.temp_score > self.hscore):
+
+                            self.hscore = self.temp_score
+                            self.point1 = self.me
+                            self.point2 = self.pair
+                            self.distance = self.temp_distance
+                            self.height = self.temp_height
+
+            if(self.point1[0] > self.point2[0]):
+                self.temp = self.point1
+                self.point1 = self.point2
+                self.point2 = self.temp
+
+            #make label now
+            self.distance = abs(self.distance) ** 0.5
+            self.line_vec = [(self.point2[0] - self.point1[0]) / self.distance,
+                             (self.point2[1] - self.point1[0]) / self.distance]
+
+            self.angle = math.degrees(math.asin(self.line_vec[1]/self.distance))
+            self.distance = self.distance * 0.7
+            self.height = abs(self.height) ** 0.5 * 0.6
+
+            self.length_scale = self.distance / self.raw_length
+            self.height_scale = self.height  / self.raw_height
+
+            if (self.length_scale <= self.height_scale):
+                # length limit hit, no letter spacing
+                self.spacing = 1
+                self.final_scale = self.length_scale
+            else:
+                # height limit hit, add letter spacing
+                self.spacing = (self.distance - self.raw_length * self.height_scale) / (len(self.label) - 1)
+                self.final_scale = self.height_scale
+
+            self.height = self.raw_height * self.final_scale
+
+            self.distance_progress = 0
+            for i in range(0, len(self.label)):
+                self.label[i].sprite.update(rotation = 0)
+                self.label[i].sprite.update(x = self.point1[0] + self.line_vec[0] * self.distance_progress,
+                                            y = self.point1[1] + self.line_vec[1] * self.distance_progress,
+                                            scale_x = self.final_scale,
+                                            scale_y = self.final_scale)
+
+                self.distance_progress += self.label[i].sprite.width
+                self.label[i].sprite.update(rotation = self.angle)
+                self.label[i].add()
+
+
+
+
+
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -165,7 +309,6 @@ class province(cvsmgmt.scene_object):
                     self.temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
 
             self.temp_line.solid_color_coords(40, 40, 40)
-
 
     def set_id(self, id):
         self.id = id
@@ -417,6 +560,7 @@ def init_nations():
         tempnation.adjective = temp[2]
         tempnation.color = (int(temp[1][0:2],16),int(temp[1][2:4],16),int(temp[1][4:6],16))
         tempnation.id = i
+        tempnation.init_label()
 
         config.nations.append(tempnation)
         config.nations_dict[tempnation.name] = tempnation
