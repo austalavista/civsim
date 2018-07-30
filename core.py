@@ -37,7 +37,6 @@ class scenario:
         for i in range(0,config.num_nations):
             config.nations[i].add_provinces()
             config.nations[i].draw_label()
-            print(i)
 
 class save:
     def __init__(self):
@@ -101,7 +100,7 @@ class nation:
         self.temp_bodies = [[None] * config.num_provinces,  # secondary body
                             [None] * config.num_provinces]  # whether a province has been seen
         self.bodies = []
-        self.bodies_count = 0
+        self.bodies_count = [0]
 
         #make bodies
         for i in range(0, config.num_provinces):
@@ -110,9 +109,9 @@ class nation:
 
                 recursive_add_prov(config.provinces[i],self.temp_bodies, self.id, self.bodies_count)
 
-                if(self.bodies_count > 6):
-
-                    self.bodies_count = 0
+                if(self.bodies_count[0] > 6):
+                    print("yuh")
+                    self.bodies_count[0] = 0
 
                     self.bodies.append(self.temp_bodies[0])
                     self.temp_bodies[0] = [None] * config.num_provinces
@@ -140,7 +139,148 @@ class nation:
             self.raw_length += self.label[i].sprite.width
 
     def draw_label(self):
-        pass
+
+        #Make a label for each body
+        for r in range(0, len(self.bodies)):
+
+            #Make grid
+            self.grid = [None] * 8
+            for i in range(0,8):
+                self.grid[i] = [None]*8
+
+            self.dev_grid = [None] * 8
+            for i in range(0,8):
+                self.dev_grid[i] = [None]*8
+
+            self.y_coords = [None] * 8
+
+            #Find bounds for the body
+            self.maxx = self.borders[r][0]
+            self.minx = self.borders[r][0]
+            self.maxy = self.borders[r][1]
+            self.miny = self.borders[r][1]
+            for i in range(1, int(len(self.borders[r])/2)):
+                if(self.maxx < self.borders[r][i*2]):
+                    maxx = self.borders[r][i*2]
+                elif(self.minx > self.borders[r][i*2]):
+                    minx = self.borders[r][i*2]
+
+                if (self.maxy < self.borders[r][i * 2 + 1]):
+                    maxy = self.borders[r][i * 2 + 1]
+                elif (self.miny > self.borders[r][i * 2 + 1]):
+                    miny = self.borders[r][i * 2 + 1]
+
+            #Each "recursive" step
+            for factor in (2,4,8):
+                self.x_interval = (self.maxx - self.minx) / factor
+                self.y_interval = (self.maxy - self.miny) / factor
+
+                #score each box
+                self.avg = 0
+                self.num_cells = 0
+                for x in range(0, factor):
+                    for y in range(0, factor):
+                        #if not disabled
+                        if(self.grid[int(x * 8 / factor)][int(y * 8 / factor)] != False):
+                            self.temp = 0
+
+                            #each centroid/province
+                            for j in range(0, len(self.bodies[r])):
+                                self.temp_centroid = self.bodies[r][j].centroid
+
+                                if(self.temp_centroid[0] >= x * self.x_interval and self.temp_centroid[0] <= (x + 1) * self.x_interval and
+                                   self.temp_centroid[1] >= y * self.y_interval and self.temp_centroid[1] <= (y + 1) * self.y_interval):
+
+                                    self.temp += self.bodies[r][j].centroid_score
+
+                            #broadcast
+                            for xx in range(int(x * 8 / factor), int((x + 1) * 8 / factor)):
+                                for yy in range(int(y * 8 / factor), int((y + 1) * 8 / factor)):
+
+                                    self.grid[xx][yy] = self.temp
+                                    self.avg += self.temp
+                                    self.num_cells += 1
+                self.avg /= self.num_cells
+
+                #find std_dev
+                self.std_dev = 0
+                for x in range(0, 8):
+                    for y in range(0, 8):
+
+                        # if not disabled
+                        if(self.grid[x][y] != False):
+                            self.dev_grid[x][y] = self.avg - self.grid[x][y]
+                            self.std_dev += abs(self.dev_grid[x][y])
+                self.std_dev /= self.num_cells
+
+                #elimnate cells
+                for x in range(0, 8):
+                    for y in range(0, 8):
+
+                        if(self.grid[x][y] != False):
+
+                            if(self.dev_grid[x][y] > self.std_dev * 0.7):
+                                self.grid_[x][y] = False
+
+            #Find the y_coords of each vertical section
+            for i in range(0, 8):
+                self.y_coords[i] = 0
+                self.num_cells = 0
+                self.score_sum = 0
+
+                for j in range(0,8):
+
+                    if(self.grid[i][j] != False):
+                        self.score_sum += self.grid[i][j]
+                        self.y_coords[i] += self.grid[i][j] * j * self.y_interval
+                        self.num_cells += 1
+
+                if(self.num_cells > 0):
+                    self.y_coords /= self.num_cells * self.score_sum
+
+            #Find the two points of the line for the label
+            self.num_y = 0
+            for i in range(0, 8):
+                if(self.y_coords[i] != 0):
+                    self.num_y += 1
+
+            if(self.num_y > 1):
+                print(self.id)
+                self.point1 = [0,0]
+                self.point2 = [0,0]
+
+                #left half
+                self.index = 0
+                self.num_y_half = int(self.num_y / 2)
+                for i in range(0,self.num_y_half):
+                    while(self.y_coords[self.index] == 0):
+                        self.index += 1
+
+                    self.point1[0] += self.index * self.x_interval
+                    self.point1[1] += self.y_coords[self.index]
+                    self.index += 1
+                self.point1[0] /= self.num_y_half
+                self.point1[1] /= self.num_y_half
+
+                #right half
+                for i in range(self.num_y_half, self.num_y):
+                    while (self.y_coords[self.index] == 0):
+                        self.index += 1
+
+                    self.point2[0] += self.index * self.x_interval
+                    self.point2[1] += self.y_coords[self.index]
+
+                    self.index += 1
+                self.num_y_half = self.num_y - self.num_y_half
+                self.point2[0] /= self.num_y_half
+                self.point2[1] /= self.num_y_half
+
+                self.test_line = cvsmr.line_object(config.line_groups["2/3"])
+                self.test_line.vertices = [self.point1[0],self.point1[1],
+                                           self.point2[0], self.point2[1]]
+                self.test_line.solid_color_coords(255,255,255)
+                self.test_line.add()
+
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -162,6 +302,9 @@ class province(cvsmgmt.scene_object):
         self.id = None
         self.index = None
         self.inside_coord = None
+
+        self.centroid = None
+        self.centroid_score = None
 
         self.on_screened = False
 
@@ -359,7 +502,7 @@ def recursive_add_prov(province, bodies, nation_id, bodies_count):
             bodies[0][province.adjacents[rr].index] = province.adjacents[rr]
             bodies[1][province.adjacents[rr].index] = True
 
-            bodies_count += 1
+            bodies_count[0] += 1
 
             recursive_add_prov(province.adjacents[rr], bodies, nation_id, bodies_count)
 
@@ -433,10 +576,12 @@ def init_provinces(group):
     fileone.close()
     adj = file.split("\n")
     for i in range(0,int(len(map)/2)):
-
-        #if(config.provinces[i] != None):
-        #if(config.provinces[i].id < 1400 or config.provinces[i].id >= 1600):
+        tempc = adj[i*2].split('\t')
         temp1 = adj[1+i*2].split('\t')
+
+        config.provinces[i].centroid = [int(float(tempc[2].split(',')[0])),
+                                        int(float(tempc[2].split(',')[1]))]
+        config.provinces[i].centroid_score = int(tempc[3])
 
         for p in range(0,len(temp1)-1):
             config.provinces[i].adjacents_border.append([])
@@ -457,6 +602,8 @@ def init_provinces(group):
     fileone = open("resources/map/map_label.txt", "r")
     file = fileone.read().split("\n")
     fileone.close()
+
+
 
     for i in range(0,len(config.provinces)):
         me = config.provinces[i]

@@ -42,6 +42,8 @@ if(True):
             if(temp[i] != "False"):
                 vector_adjacent_provinces[r][i] = int(temp[i])
 
+    centroid = [None] * len(provinces)
+
 #Comprehensive adjacents
 for r in range(0, len(vector_lists)):
     for i in range(0, len(vector_lists[r])):
@@ -66,10 +68,23 @@ for r in range(0, len(vector_lists)):
 
     print("Comprehensive Adjacents: [" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1])
 
+#compute centroid
+for r in range(0,len(vector_lists)):
+    sumx = 0
+    sumy = 0
+
+    for i in range(0, len(vector_lists[r])):
+        sumx += vector_lists[r][i][0]
+        sumy += vector_lists[r][i][1]
+
+    centroid[r] = [sumx / len(vector_lists[r]),
+                   sumy / len(vector_lists[r])]
+
+
 # write to file
 for r in range(0, len(vector_lists)):
     if (True):
-        mapa.write("[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1] + "\n")
+        mapa.write("[" + str(provinces[r][0]) + "]" + "\t" + provinces[r][1] + "\t" + str(centroid[r][0]) + "," + str(centroid[r][1]) + "\t" + str(len(vector_lists[r])) + "\n")
 
         for i in range(0, len(vector_lists[r])):
 
