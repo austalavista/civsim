@@ -100,15 +100,64 @@ class nation:
     def add_provinces(self):
         #populates / refreshes list of provinces and their borders
 
+        self.bodies = [[]]
         self.border = []
         self.provinces = []
 
+        #add to province list
         for i in range(config.num_provinces):
             if(config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
                 self.provinces.append(config.provinces[i])
 
-                for j in range(0, len(config.nation_borders.render_objects[0][i].vertices)):
-                    self.border.append(config.nation_borders.render_objects[0][i].vertices[j])
+        #make bodies
+        for i in range(0, config.num_provinces):
+
+            for k in range(0, len(self.bodies)):
+                if(len(self.bodies[k]) == 0):
+                    self.bodies[k].append(config.provinces[i])
+
+                    #Add shit
+                    for rr in range(0, len(config.provinces[i].adjacents)):
+                        #see if this adjacents is already in
+                        self.found = False
+                        for j in range(0, len(self.bodies[k])):
+
+                            if (self.bodies[k][j].index == config.provinces[i].adjacents[rr].index):
+                                self.found = True
+                                break
+
+                        if(self.found):
+                            break
+
+                        self.bodies[k].append(config.provinces[i].adjacents[rr])
+
+
+                    break
+                else:
+                    self.found = False
+                    for j in range(0, len(self.bodies[k])):
+                        if(self.bodies[k][j].index == i):
+                            self.found = True
+                            break
+
+                    if(self.found):
+                        break
+
+
+
+
+
+        #determine largest body
+        self.hlen = 0
+        for i in range(0, len(self.bodies)):
+            if(len(self.bodies[i]) > self.hlen):
+                self.hlen = len(self.bodies[i])
+                self.body = self.bodies[i]
+
+        #add borders of largest body
+        for i in range(0, len(self.body)):
+            for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
+                self.border.append(config.nation_borders.render_objects[0][i].vertices[j])
 
     def init_label(self):
         self.raw_length = 0
@@ -126,112 +175,146 @@ class nation:
 
     def draw_label(self):
         if(len(self.provinces) > 0):
-            self.hscore = 0
-            #print(len(self.border), len(self.provinces))
-            for i in range(0, int(len(self.border) / 6)):
-                self.me = [self.border[i*6], self.border[i*6+1]]
 
-                for j in range(0, int(len(self.border) / 6)):
-                    if(j != i):
-                        self.pair = [self.border[j*6], self.border[j*6+1]]
+            self.max_x = 0
+            self.min_x = 9999999
+            self.max_y = 0
+            self.min_y = 9999999
 
-                        self.line_vec = [self.pair[0] - self.me[0], self.pair[1] - self.me[1]]
+            #Find bounds
+            for i in range(0, int(len(self.border)/2)):
+                if(self.border[i*2] > self.max_x):
+                    self.max_x = self.border[i*2]
+                elif(self.border[i*2] < self.min_x):
+                    self.min_x = self.border[i*2]
 
-                        #DISTANCE---
-                        self.temp_distance = self.line_vec[0] ** 2 + self.line_vec[1] ** 2
-
-                        #HEIHGT----
-                        self.temp_height = 90000
-                        for tt in range(0, 3):
-                            self.temp_point = [self.me[0] + self.line_vec[0] / 3 * tt, self.me[1] + self.line_vec[1] / 3 * tt]
-                            self.perpindicular = [self.line_vec[1], -1 * self.line_vec[0]]
-
-                            if(self.perpindicular [0] != 0):
-
-                                for kk in range(0, int(len(self.border) / 4)):
-                                    self.temp1 = [self.border[kk*4],self.border[kk*4+1]]
-                                    self.temp2 = [self.border[kk*4+2],self.border[kk*4+3]]
-
-                                    self.temp_y1 = self.temp_point[1] + self.perpindicular[1] * (self.temp1[0] - self.temp_point[0]) / self.perpindicular[0]
-                                    self.temp_y2 = self.temp_point[1] + self.perpindicular[1] * (self.temp2[0] - self.temp_point[0]) / self.perpindicular[0]
-
-                                    if(self.temp1[1] >= self.temp_y1 and self.temp2[1] <= self.temp_y2 or
-                                       self.temp1[1] <= self.temp_y1 and self.temp2[1] >= self.temp_y2):
-
-                                        self.temp_factor = ((self.temp1[0] + self.temp2[0])/2 - self.temp_point[0]) / self.perpindicular[0]
-                                        self.temp_temp = (self.perpindicular[0] * self.temp_factor) ** 2 + (self.perpindicular[1] * self.temp_factor) ** 2
-
-                                        if(self.temp_height > self.temp_temp):
-                                            self.temp_height = self.temp_temp
-
-                            else:
-                                for kk in range(0,int(len(self.border)/4)):
-                                    self.temp1 = [self.border[kk * 4], self.border[kk * 4 + 1]]
-                                    self.temp2 = [self.border[kk * 4 + 2], self.border[kk * 4 + 3]]
-
-                                    if(self.temp1[0] <= self.temp_point[0] and self.temp2[0] >= self.temp_point[1] or
-                                       self.temp1[0] >= self.temp_point[0] and self.temp2[0] <= self.temp_point[1]):
-
-                                        self.temp_temp = (self.temp1[1] + self.temp2[1])/2 - self.temp_point[1]
-
-                                        if (self.temp_height > self.temp_temp):
-                                            self.temp_height = self.temp_temp
+                if (self.border[i * 2 + 1] > self.max_y):
+                    self.max_y = self.border[i * 2 + 1]
+                elif (self.border[i * 2 + 1] < self.min_y):
+                    self.min_y = self.border[i * 2 + 1]
 
 
+            #aspect ratio X
+            if(abs(self.max_x - self.min_x) > abs(self.max_y - self.min_y) * 0.7 or True):
+                self.x_interval = (self.max_x - self.min_x) / 10
 
-                        #SCORE
-                        self.temp_score = abs(self.temp_height * self.temp_distance / (self.line_vec[1] + 0.13))
-                        if(self.temp_score > self.hscore):
+                self.points = [None] * 8
 
-                            self.hscore = self.temp_score
-                            self.point1 = self.me
-                            self.point2 = self.pair
-                            self.distance = self.temp_distance
-                            self.height = self.temp_height
+                for i in range(1,9):
 
-            if(self.point1[0] > self.point2[0]):
-                self.temp = self.point1
-                self.point1 = self.point2
-                self.point2 = self.temp
+                    self.sample_x = self.min_x + self.x_interval * i
 
-            #make label now
-            self.distance = abs(self.distance) ** 0.5
-            self.line_vec = [(self.point2[0] - self.point1[0]) / self.distance,
-                             (self.point2[1] - self.point1[0]) / self.distance]
+                    self.intersects = []
 
-            self.angle = math.degrees(math.asin(self.line_vec[1]/self.distance))
-            self.distance = self.distance * 0.7
-            self.height = abs(self.height) ** 0.5 * 0.6
+                    #look for intersects
+                    for j in range(0, int(len(self.border)/4)):
+                        self.temp1 = [self.border[j*2], self.border[j*2 + 1]]
+                        self.temp2 = [self.border[j*2+2], self.border[j*2+3]]
 
+                        if(self.temp1[0] <= self.sample_x and self.temp2[0] >= self.sample_x or
+                           self.temp1[0] >= self.sample_x and self.temp2[0] <= self.sample_x):
+
+                            self.intersects.append([(self.temp1[1] + self.temp2[1])/2, abs(self.temp1[1] - self.temp2[1])]) #y
+
+                    #order_intersects
+                    for j in range(0, len(self.intersects)):
+                        for tt in range(j+1,len(self.intersects)):
+                            if(self.intersects[tt] < self.intersects[j]):
+                                self.temp = self.intersects[j]
+                                self.intersects[j] = self.intersects[tt]
+                                self.intersects[tt] = self.temp
+
+                #choose which segments to add to path
+                print(len(self.intersects))
+                if(len(self.intersects) == 2):
+                    self.points[i-1] = [self.sample_x,
+                                        (self.intersects[0] + self.intersects[1])/2,
+                                        abs(self.intersects[0] - self.intersects[1])]
+
+                elif(len(self.intersects) >= 4 and i > 1):
+                    #take the closest to the previous point
+                    self.min_d = 1000000
+
+                    for j in range(0, int(len(self.intersects)/2)):
+                        self.temp = (self.intersects[j+1] + self.intersects[j*2+1]) /2
+
+                        if(abs(self.temp - self.points[i-2][1]) < self.min_d):
+                            self.min_d = abs(self.temp - self.points[i-2][1])
+                            self.best = j
+                            print("yuh")
+
+                    self.points[i-1] = [self.sample_x,
+                                        (self.intersects[self.best*2] + self.intersects[self.best*2+1])/2,
+                                        abs(self.intersects[0] - self.intersects[1])
+                                        ]
+
+                else:
+                    #take the widest point (heightiest)
+                    self.max_d = 0
+
+                    for j in range(0, int(len(self.intersects)/2)):
+                        self.temp = abs(self.intersects[j*2] - self.intersects[j*2 + 1])
+                        if(self.temp > self.max_d):
+                            self.max_d = self.temp
+                            self.best = j
+
+                    self.points[i - 1] = [self.sample_x,
+                                          (self.intersects[self.best * 2] + self.intersects[self.best * 2 + 1]) / 2,
+                                          abs(self.intersects[0] - self.intersects[1])
+                                          ]
+
+            # determine distance, height
+            self.distance = 0
+            self.height = 100000
+            for i in range(1, len(self.points)):
+                self.distance += (self.points[i][0] - self.points[i-1][0])**2 + (self.points[i][1] - self.points[i-1][1])**2
+
+                if(self.points[i][2] < self.height):
+                    self.height = self.points[i][2]
+
+            #determine_scale
             self.length_scale = self.distance / self.raw_length
-            self.height_scale = self.height  / self.raw_height
-
-            if (self.length_scale <= self.height_scale):
-                # length limit hit, no letter spacing
-                self.spacing = 1
+            self.height_scale = self.height / self.raw_height
+            if(self.length_scale < self.height_scale):
                 self.final_scale = self.length_scale
             else:
-                # height limit hit, add letter spacing
-                self.spacing = (self.distance - self.raw_length * self.height_scale) / (len(self.label) - 1)
                 self.final_scale = self.height_scale
 
-            self.height = self.raw_height * self.final_scale
+            #determine spacing
+            self.spacing = (self.distance - self.raw_length * self.final_scale) / (len(self.label) - 1)
 
-            self.distance_progress = 0
+            #make the label
+            self.length_progress = 0
+            self.current_point_index = 0
             for i in range(0, len(self.label)):
+                self.point1 = self.points[self.current_point_index]
+                self.point2 = self.points[self.current_point_index + 1]
+
+                self.point_d = (self.point1[0] - self.point2[0])**2 + (self.point1[1] - self.point2[1])**2
+
+                if(self.length_progress > self.point_d):
+                    self.current_point_index += 1
+                    self.point1 = self.points[self.current_point_index]
+                    self.point2 = self.points[self.current_point_index + 1]
+
+                    self.length_progress -= self.point_d
+
+                self.line_vec = [(self.point2[0] - self.point1[0]) / self.point_d,
+                                 (self.point2[1] - self.point1[1]) / self.point_d]
+
+                self.perp = [self.line_vec[1] / self.point_d,
+                             self.line_vec[0] / self.point_d * -1]
+
+                if(self.perp[1] > 0):
+                    self.perp[0] *= -1
+                    self.perp[1] *= -1
+
                 self.label[i].sprite.update(rotation = 0)
-                self.label[i].sprite.update(x = self.point1[0] + self.line_vec[0] * self.distance_progress,
-                                            y = self.point1[1] + self.line_vec[1] * self.distance_progress,
-                                            scale_x = self.final_scale,
-                                            scale_y = self.final_scale)
-
-                self.distance_progress += self.label[i].sprite.width
-                self.label[i].sprite.update(rotation = self.angle)
+                self.label[i].sprite.update(scale_x = self.final_scale, scale_y = self.final_scale,
+                                            x = self.point1[0] + self.line_vec[0] * self.length_progress + self.perp[0] * self.raw_height * self.final_scale / 2,
+                                            y = self.point1[1] + self.line_vec[1] * self.length_progress + self.perp[0] * self.raw_height * self.final_scale / 2)
+                self.label[i].sprite.update(rotation = math.degrees(math.asin(self.line_vec[1])))
                 self.label[i].add()
-
-
-
-
 
 
 class province(cvsmgmt.scene_object):
@@ -523,7 +606,7 @@ def init_provinces(group):
                     config.provinces[i].adjacents_border[p].append(int(temp[j]))
 
                     if(int(temp[j]) not in config.provinces[i].adjacents):
-                        config.provinces[i].adjacents.append(int(temp[j]))
+                        config.provinces[i].adjacents.append(config.provinces[int(temp[j])])
 
                 elif(temp[j] == 'False'):
                     config.provinces[i].adjacents_border[p].append(-1)
