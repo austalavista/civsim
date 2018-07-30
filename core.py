@@ -90,13 +90,13 @@ class nation:
 
         self.border = []
         self.provinces = []
+        self.num_provinces = 0
 
         self.label = []
 
     def add_provinces(self):
         #populates / refreshes list of provinces and their borders
 
-        self.bodies = [[]]
         self.border = []
         self.provinces = []
 
@@ -105,43 +105,31 @@ class nation:
             if(config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
                 self.provinces.append(config.provinces[i])
 
+        self.num_provinces = len(self.provinces)
+
+        self.bodies = [[None] * config.num_provinces,  # primary
+                       [None] * config.num_provinces,  # secondary body
+                       [None] * config.num_provinces]  # whether a province has been seen
+        self.bodies_count = [0, 0]
+
         #make bodies
         for i in range(0, config.num_provinces):
+            if(self.bodies[2][i] == None):
+                recursive_add_prov(config.provinces[i],self.bodies, self.id, self.bodies_count)
 
-            for k in range(0, len(self.bodies)):
+                if(self.bodies_count[0] < self.bodies_count[1]):
 
-                if(len(self.bodies[k]) == 0):
-                    self.bodies[k].append(config.provinces[i])
+                    self.bodies_count[0] = self.bodies_count[1]
+                    self.bodies_count[1] = 0
 
-                    #Add its adjacents and its adjacents etc
-                    recursive_add_prov(config.provinces[i], k, self.bodies, self.id)
-
-                    self.found = True
-                    break
-                else:
-                    self.found = False
-                    for j in range(0, len(self.bodies[k])):
-                        if(self.bodies[k][j].index == i):
-                            self.found = True
-                            break
-
-                    if(self.found):
-                        break
-
-            if(not self.found):
-                self.bodies.append([])
-
-        #determine largest body
-        self.hlen = 0
-        for i in range(0, len(self.bodies)):
-            if(len(self.bodies[i]) > self.hlen):
-                self.hlen = len(self.bodies[i])
-                self.body = self.bodies[i]
+                    self.bodies[0] = self.bodies[1]
+                    self.bodies[1] = [None] * config.num_provinces
 
         #add borders of largest body
-        for i in range(0, len(self.body)):
-            for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
-                self.border.append(config.nation_borders.render_objects[0][i].vertices[j])
+        for i in range(0, config.num_provinces):
+            if(self.bodies[0][i] != None):
+                for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
+                    self.border.append(config.nation_borders.render_objects[0][i].vertices[j])
 
     def init_label(self):
         self.raw_length = 0
@@ -245,7 +233,7 @@ class nation:
                                               abs(self.intersects[0] - self.intersects[1])
                                               ]
 
-                    elif(len(self.intersects) == 0):
+                    elif(len(self.intersects) == 0 and i > 1):
                         self.points[i - 1] = [self.sample_x,
                                               self.points[i-2][1],
                                               self.points[i-2][2]
@@ -306,7 +294,6 @@ class nation:
                                             y = self.point1[1] + self.line_vec[1] * self.length_progress + self.perp[0] * self.raw_height * self.final_scale / 2)
                 self.label[i].sprite.update(rotation = math.degrees(math.asin(self.line_vec[1])))
                 self.label[i].add()
-
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -514,21 +501,20 @@ def calc_screen_bounds(threshold_x = 100, threshold_y = 100):
     config.screen_bound_top = abs(config.scene_transformation_group.y) + 1080 / config.scene_transformation_group.scale_x + threshold_y
     config.screen_bound_bottom =  -1 * config.scene_transformation_group.y - threshold_y
 
-def recursive_add_prov(province, k, bodies, nation_id):
+def recursive_add_prov(province, bodies, nation_id, bodies_count):
 
     for rr in range(0, len(province.adjacents)):
         # see if this adjacents is already in
-        if(province. adjacents[rr].nation != None and province.adjacents[rr].nation.id == nation_id):
-            found = False
-            for j in range(0, len(bodies[k])):
+        if(bodies[2][province.adjacents[rr].index] == None and
+            province. adjacents[rr].nation != None and
+            province.adjacents[rr].nation.id == nation_id):
 
-                if (bodies[k][j].index == province.adjacents[rr].index):
-                    found = True
-                    break
+            bodies[1][province.adjacents[rr].index] = province.adjacents[rr]
+            bodies[2][province.adjacents[rr].index] = True
 
-            if(not found):
-                bodies[k].append(province.adjacents[rr])
-                recursive_add_prov(province.adjacents[rr], k, bodies, nation_id)
+            bodies_count[1] += 1
+
+            recursive_add_prov(province.adjacents[rr], bodies, nation_id, bodies_count)
 
     return
 
