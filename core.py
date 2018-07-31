@@ -78,7 +78,7 @@ class nation:
 
         self.id = None #same as index
 
-        self.border = []
+        self.borders = []
         self.provinces = []
         self.num_provinces = 0
 
@@ -110,7 +110,6 @@ class nation:
                 recursive_add_prov(config.provinces[i],self.temp_bodies, self.id, self.bodies_count)
 
                 if(self.bodies_count[0] > 6):
-                    print("yuh")
                     self.bodies_count[0] = 0
 
                     self.bodies.append(self.temp_bodies[0])
@@ -123,6 +122,8 @@ class nation:
                 if(self.bodies[tt][i] != None):
                     for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
                         self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
+
+        self.temp_bodies = None
 
     def init_label(self):
         self.raw_length = 0
@@ -161,14 +162,14 @@ class nation:
             self.miny = self.borders[r][1]
             for i in range(1, int(len(self.borders[r])/2)):
                 if(self.maxx < self.borders[r][i*2]):
-                    maxx = self.borders[r][i*2]
+                    self.maxx = self.borders[r][i*2]
                 elif(self.minx > self.borders[r][i*2]):
-                    minx = self.borders[r][i*2]
+                    self.minx = self.borders[r][i*2]
 
                 if (self.maxy < self.borders[r][i * 2 + 1]):
-                    maxy = self.borders[r][i * 2 + 1]
+                    self.maxy = self.borders[r][i * 2 + 1]
                 elif (self.miny > self.borders[r][i * 2 + 1]):
-                    miny = self.borders[r][i * 2 + 1]
+                    self.miny = self.borders[r][i * 2 + 1]
 
             #Each "recursive" step
             for factor in (2,4,8):
@@ -186,21 +187,22 @@ class nation:
 
                             #each centroid/province
                             for j in range(0, len(self.bodies[r])):
-                                self.temp_centroid = self.bodies[r][j].centroid
+                                if(self.bodies[r][j] != None):
+                                    self.temp_centroid = self.bodies[r][j].centroid
 
-                                if(self.temp_centroid[0] >= x * self.x_interval and self.temp_centroid[0] <= (x + 1) * self.x_interval and
-                                   self.temp_centroid[1] >= y * self.y_interval and self.temp_centroid[1] <= (y + 1) * self.y_interval):
+                                    if(self.temp_centroid[0] >= x * self.x_interval + self.minx and self.temp_centroid[0] <= (x + 1) * self.x_interval + self.minx and
+                                       self.temp_centroid[1] >= y * self.y_interval + self.miny and self.temp_centroid[1] <= (y + 1) * self.y_interval + self.miny):
 
-                                    self.temp += self.bodies[r][j].centroid_score
+                                        self.temp += self.bodies[r][j].centroid_score
 
                             #broadcast
                             for xx in range(int(x * 8 / factor), int((x + 1) * 8 / factor)):
                                 for yy in range(int(y * 8 / factor), int((y + 1) * 8 / factor)):
-
                                     self.grid[xx][yy] = self.temp
                                     self.avg += self.temp
                                     self.num_cells += 1
-                self.avg /= self.num_cells
+
+                self.avg = self.avg / self.num_cells
 
                 #find std_dev
                 self.std_dev = 0
@@ -209,9 +211,10 @@ class nation:
 
                         # if not disabled
                         if(self.grid[x][y] != False):
-                            self.dev_grid[x][y] = self.avg - self.grid[x][y]
+                            self.dev_grid[x][y] = self.grid[x][y] - self.avg
                             self.std_dev += abs(self.dev_grid[x][y])
-                self.std_dev /= self.num_cells
+
+                self.std_dev = self.std_dev /  self.num_cells
 
                 #elimnate cells
                 for x in range(0, 8):
@@ -219,8 +222,8 @@ class nation:
 
                         if(self.grid[x][y] != False):
 
-                            if(self.dev_grid[x][y] > self.std_dev * 0.7):
-                                self.grid_[x][y] = False
+                            if(self.dev_grid[x][y] < self.std_dev * 0.5):
+                                self.grid[x][y] = False
 
             #Find the y_coords of each vertical section
             for i in range(0, 8):
@@ -236,7 +239,7 @@ class nation:
                         self.num_cells += 1
 
                 if(self.num_cells > 0):
-                    self.y_coords /= self.num_cells * self.score_sum
+                    self.y_coords[i] /= self.num_cells * self.score_sum
 
             #Find the two points of the line for the label
             self.num_y = 0
@@ -256,8 +259,8 @@ class nation:
                     while(self.y_coords[self.index] == 0):
                         self.index += 1
 
-                    self.point1[0] += self.index * self.x_interval
-                    self.point1[1] += self.y_coords[self.index]
+                    self.point1[0] += self.index * self.x_interval + self.minx
+                    self.point1[1] += self.y_coords[self.index] + self.miny
                     self.index += 1
                 self.point1[0] /= self.num_y_half
                 self.point1[1] /= self.num_y_half
@@ -267,8 +270,8 @@ class nation:
                     while (self.y_coords[self.index] == 0):
                         self.index += 1
 
-                    self.point2[0] += self.index * self.x_interval
-                    self.point2[1] += self.y_coords[self.index]
+                    self.point2[0] += self.index * self.x_interval + self.minx
+                    self.point2[1] += self.y_coords[self.index] + self.miny
 
                     self.index += 1
                 self.num_y_half = self.num_y - self.num_y_half
@@ -280,7 +283,6 @@ class nation:
                                            self.point2[0], self.point2[1]]
                 self.test_line.solid_color_coords(255,255,255)
                 self.test_line.add()
-
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -579,8 +581,9 @@ def init_provinces(group):
         tempc = adj[i*2].split('\t')
         temp1 = adj[1+i*2].split('\t')
 
-        config.provinces[i].centroid = [int(float(tempc[2].split(',')[0])),
-                                        int(float(tempc[2].split(',')[1]))]
+        config.provinces[i].centroid = [((float(tempc[2].split(',')[0])) / 10 + 820)*mysize,
+                                        ((11000 - (float(tempc[2].split(',')[1])) ) / 10)*mysize]
+
         config.provinces[i].centroid_score = int(tempc[3])
 
         for p in range(0,len(temp1)-1):
