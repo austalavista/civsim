@@ -35,10 +35,7 @@ class scenario:
         config.nation_borders.add_to_scene()
 
         for i in range(0,config.num_nations):
-            s = time.time()
             config.nations[i].add_provinces()
-            e = time.time()
-            print(e-s)
             config.nations[i].draw_label()
 
 class save:
@@ -95,40 +92,44 @@ class nation:
         self.provinces = []
 
         #add to province list
+        self.index = 0
         for i in range(config.num_provinces):
             if(config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
                 self.provinces.append(config.provinces[i])
+                config.provinces[i].nation_index = self.index
+                self.index += 1
 
         self.num_provinces = len(self.provinces)
 
-        self.temp_bodies = [[None] * config.num_provinces,  # secondary body
-                            [None] * config.num_provinces]  # whether a province has been seen
+        self.temp_bodies = [[None] * self.num_provinces,  # secondary body
+                            [None] * self.num_provinces]  # whether a province has been seen
         self.bodies = []
         self.bodies_count = [0]
 
         #make bodies
-        for i in range(0, config.num_provinces):
+        for i in range(0, self.num_provinces):
 
-            if(self.temp_bodies[1][i] == None and config.provinces[i].nation != None and config.provinces[i].nation.id == self.id):
+            if(self.temp_bodies[1][i] == None):
 
-                recursive_add_prov(config.provinces[i],self.temp_bodies, self.id, self.bodies_count)
+                recursive_add_prov(self.provinces[i],self.temp_bodies, self.id, self.bodies_count)
 
                 if(self.bodies_count[0] > 6):
 
                     self.bodies.append(self.temp_bodies[0])
 
                 self.bodies_count[0] = 0
-            self.temp_bodies[0] = [None] * config.num_provinces
+            self.temp_bodies[0] = [None] * self.num_provinces
 
-        #add borders of largest body
+        #add borders
         for tt in range(0, len(self.bodies)):
             self.borders.append([])
-            for i in range(0, config.num_provinces):
-                if(self.bodies[tt][i] != None):
-                    for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
-                        self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
+            for i in range(0, self.num_provinces):
+                for j in range(0,len(config.nation_borders.render_objects[0][i].vertices)):
+                    self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
 
         self.temp_bodies = None
+        if(self.name == 'France'):
+            print("yuh")
 
     def init_label(self):
         self.raw_length = 0
@@ -182,7 +183,7 @@ class nation:
             self.avgy = self.sumy / (self.scoresum)
 
             #determine the two boundaries
-            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.8):
+            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.7):
                 self.leftxsum = 0
                 self.rightxsum = 0
 
@@ -251,7 +252,7 @@ class nation:
                 self.point2 = [self.bottomxsum / self.bottomxscore, self.bottomysum / self.bottomyscore]
 
             # 3line segment
-            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.8):
+            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.7):
                 self.leftx = [0, 0]  # sum score
                 self.lefty = [0, 0]
                 self.midx = [0, 0]
@@ -263,39 +264,24 @@ class nation:
                     if (self.bodies[r][i] != None):
 
                         if (self.bodies[r][i].centroid[0] <= self.point1[0]):
-                            self.leftx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
-                            self.leftx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                            self.leftx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
+                            self.leftx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
 
-                            self.lefty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
-                            self.lefty[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.lefty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
+                            self.lefty[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
 
-                        elif (self.bodies[r][i].centroid[0] > self.point1[0] and self.bodies[r][i].centroid[0] <
-                            self.point2[0]):
-                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
-                            self.midx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                        elif (self.bodies[r][i].centroid[0] > self.point1[0] and self.bodies[r][i].centroid[0] < self.point2[0]):
+                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
+                            self.midx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
 
-                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
-                            self.midy[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
+                            self.midy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
                         else:
-                            self.rightx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][
-                                i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
-                            self.rightx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                            self.rightx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
+                            self.rightx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
 
-                            self.righty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][
-                                i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
-                            self.righty[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.righty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
+                            self.righty[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
 
                 self.point1 = [self.leftx[0] / self.leftx[1],
                                self.lefty[0] / self.lefty[1]]
@@ -317,37 +303,24 @@ class nation:
                     if (self.bodies[r][i] != None):
 
                         if (self.bodies[r][i].centroid[1] > self.point1[1]):
-                            self.topx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
-                            self.topx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                            self.topx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
+                            self.topx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
 
-                            self.topy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
-                            self.topy[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.topy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
+                            self.topy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
 
-                        elif (self.bodies[r][i].centroid[1] < self.point1[1] and self.bodies[r][i].centroid[1] >
-                            self.point2[1]):
-                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
-                            self.midx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                        elif (self.bodies[r][i].centroid[1] < self.point1[1] and self.bodies[r][i].centroid[1] > self.point2[1]):
+                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
+                            self.midx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
 
-                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
-                            self.midy[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
+                            self.midy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
                         else:
-                            self.bottomx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][
-                                i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-                            self.bottomx[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[0] - self.avgx)
+                            self.bottomx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
+                            self.bottomx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
 
-                            self.bottomy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][
-                                i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-                            self.bottomy[1] += self.bodies[r][i].centroid_score * abs(
-                                self.bodies[r][i].centroid[1] - self.avgy)
+                            self.bottomy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
+                            self.bottomy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
 
                 self.point1 = [self.topx[0] / self.topx[1],
                                self.topy[0] / self.topy[1]]
@@ -362,6 +335,9 @@ class nation:
                     self.temp = self.point3
                     self.point3 = self.point1
                     self.point1 = self.temp
+                    
+            self.point2[0] = (self.point2[0]*2 + self.point1[0] + self.point3[0]) / 4
+            self.point2[1] = (self.point2[1]*2 + self.point1[1] + self.point3[1]) / 4
 
             #make_label
             self.test_line.append(cvsmr.line_object(config.line_groups['2/3']))
@@ -395,6 +371,8 @@ class province(cvsmgmt.scene_object):
 
         self.centroid = None
         self.centroid_score = None
+
+        self.nation_index = None
 
         self.on_screened = False
 
@@ -566,12 +544,13 @@ def recursive_add_prov(province, bodies, nation_id, bodies_count):
 
     for rr in range(0, len(province.adjacents)):
         # see if this adjacents is already in
-        if(bodies[1][province.adjacents[rr].index] == None and
-            province.adjacents[rr].nation != None and
-            province.adjacents[rr].nation.id == nation_id):
+        if(province.adjacents[rr].nation_index != None and
+            province.adjacents[rr].nation.id == nation_id and
+            bodies[1][province.adjacents[rr].nation_index] == None
+            ):
 
-            bodies[0][province.adjacents[rr].index] = province.adjacents[rr]
-            bodies[1][province.adjacents[rr].index] = True
+            bodies[0][province.adjacents[rr].nation_index] = province.adjacents[rr]
+            bodies[1][province.adjacents[rr].nation_index] = True
 
             bodies_count[0] += 1
 
