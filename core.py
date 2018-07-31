@@ -83,6 +83,7 @@ class nation:
         self.num_provinces = 0
 
         self.label = []
+        self.test_line = None
 
     def add_provinces(self):
         #populates / refreshes list of provinces and their borders
@@ -124,6 +125,8 @@ class nation:
                         self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
 
         self.temp_bodies = None
+        if(self.name == "France"):
+            print(self.bodies)
 
     def init_label(self):
         self.raw_length = 0
@@ -222,7 +225,7 @@ class nation:
 
                         if(self.grid[x][y] != False):
 
-                            if(self.dev_grid[x][y] < self.std_dev * 0.5):
+                            if(self.dev_grid[x][y] < self.std_dev * 0.3):
                                 self.grid[x][y] = False
 
             #Find the y_coords of each vertical section
@@ -248,7 +251,6 @@ class nation:
                     self.num_y += 1
 
             if(self.num_y > 1):
-                print(self.id)
                 self.point1 = [0,0]
                 self.point2 = [0,0]
 
@@ -259,9 +261,10 @@ class nation:
                     while(self.y_coords[self.index] == 0):
                         self.index += 1
 
-                    self.point1[0] += self.index * self.x_interval + self.minx
+                    self.point1[0] += (self.index * self.x_interval + self.minx)
                     self.point1[1] += self.y_coords[self.index] + self.miny
                     self.index += 1
+
                 self.point1[0] /= self.num_y_half
                 self.point1[1] /= self.num_y_half
 
@@ -270,10 +273,11 @@ class nation:
                     while (self.y_coords[self.index] == 0):
                         self.index += 1
 
-                    self.point2[0] += self.index * self.x_interval + self.minx
+                    self.point2[0] += (self.index * self.x_interval + self.minx)
                     self.point2[1] += self.y_coords[self.index] + self.miny
 
                     self.index += 1
+
                 self.num_y_half = self.num_y - self.num_y_half
                 self.point2[0] /= self.num_y_half
                 self.point2[1] /= self.num_y_half
@@ -283,6 +287,8 @@ class nation:
                                            self.point2[0], self.point2[1]]
                 self.test_line.solid_color_coords(255,255,255)
                 self.test_line.add()
+                if(self.name == "France"):
+                    print(self.point1, self.point2)
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -405,6 +411,12 @@ class province(cvsmgmt.scene_object):
                 if(self.nation != None):
                     config.menus["play_menu"].elements[7].set_province(self.name)
                     config.menus["play_menu"].elements[7].set_nation(self.nation.name)
+
+                    if(self.nation.test_line != None):
+
+                        self.nation.test_line.remove()
+                        self.nation.test_line.solid_color_coords(0, 0, 0)
+                        self.nation.test_line.add()
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
