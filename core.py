@@ -35,10 +35,11 @@ class scenario:
         config.nation_borders.add_to_scene()
 
         for i in range(0,config.num_nations):
+            s = time.time()
             config.nations[i].add_provinces()
+            e = time.time()
+            print(e-s)
             config.nations[i].draw_label()
-
-        zoom_dependant_update()
 
 class save:
     def __init__(self):
@@ -176,61 +177,94 @@ class nation:
                     self.sumy += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
 
                     self.scoresum += self.bodies[r][i].centroid_score
-                    self.body_num += 1
 
             self.avgx = self.sumx / (self.scoresum)
             self.avgy = self.sumy / (self.scoresum)
 
-            self.leftxsum = 0
-            self.rightxsum = 0
+            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.8):
+                self.leftxsum = 0
+                self.rightxsum = 0
 
-            self.leftysum = 0
-            self.rightysum = 0
+                self.leftysum = 0
+                self.rightysum = 0
 
-            self.leftxscore = 0
-            self.rightxscore = 0
+                self.leftxscore = 0
+                self.rightxscore = 0
 
-            self.leftyscore = 0
-            self.rightyscore = 0
+                self.leftyscore = 0
+                self.rightyscore = 0
 
-            self.leftnum = 0
-            self.rightnum = 0
+                for i in range(0, len(self.bodies[r])):
+                    if(self.bodies[r][i] != None):
 
-            for i in range(0, len(self.bodies[r])):
-                if(self.bodies[r][i] != None):
+                        if(self.bodies[r][i].centroid[0] <= self.avgx):
 
-                    if(self.bodies[r][i].centroid[0] <= self.avgx):
+                            self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.leftxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
 
-                        self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
-                        self.leftxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.leftysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+                            self.leftyscore += self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
 
-                        self.leftysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                        self.leftyscore += self.bodies[r][i].centroid_score
+                        else:
+                            self.rightxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.rightxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
 
-                        self.leftnum += 1
-                    else:
-                        self.rightxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
-                        self.rightxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.rightysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+                            self.rightyscore += self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
 
-                        self.rightysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                        self.rightyscore += self.bodies[r][i].centroid_score
+                self.point1 = [self.leftxsum / self.leftxscore, self.leftysum / self.leftyscore]
+                self.point2 = [self.rightxsum / self.rightxscore, self.rightysum / self.rightyscore]
+            else:
+                self.topxsum = 0
+                self.topysum = 0
 
-                        self.rightnum += 1
+                self.bottomxsum = 0
+                self.bottomysum = 0
 
-            self.leftxsum /= self.leftxscore
-            self.leftysum /= self.leftyscore
+                self.topxscore = 0
+                self.topyscore = 0
 
-            self.rightxsum /= self.rightxscore
-            self.rightysum /= self.rightyscore
+                self.bottomxscore = 0
+                self.bottomyscore = 0
+
+                for i in range(0, len(self.bodies[r])):
+                    if (self.bodies[r][i] != None):
+
+                        if (self.bodies[r][i].centroid[1] <= self.avgy):
+
+                            self.bottomxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.bottomxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+
+                            self.bottomysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+                            self.bottomyscore += self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+
+                        else:
+
+                            self.topxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                            self.topxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+
+                            self.topysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+                            self.topyscore += self.bodies[r][i].centroid_score * abs(self.avgy - self.bodies[r][i].centroid[1])
+
+                self.point1 = [self.topxsum / self.topxscore, self.topysum / self.topyscore]
+                self.point2 = [self.bottomxsum / self.bottomxscore, self.bottomysum / self.bottomyscore]
+
+                if(self.point1[0] > self.point2[0]):
+                    self.temp = self.point1
+                    self.point1 = self.point2
+                    self.point2 = self.temp
+
+
+            #make_label
+
 
 
             self.test_line.append(cvsmr.line_object(config.line_groups['2/3']))
-            self.test_line[r].vertices = [self.leftxsum,self.leftysum,
-                                     self.rightxsum, self.rightysum]
+            self.test_line[r].vertices = [self.point1[0],self.point1[1],
+                                     self.point2[0], self.point2[1]]
 
             self.test_line[r].solid_color_coords(255,255,255)
             self.test_line[r].add()
-
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
