@@ -38,6 +38,8 @@ class scenario:
             config.nations[i].add_provinces()
             config.nations[i].draw_label()
 
+        zoom_dependant_update()
+
 class save:
     def __init__(self):
         self.map = [None]*config.num_provinces
@@ -111,10 +113,11 @@ class nation:
                 recursive_add_prov(config.provinces[i],self.temp_bodies, self.id, self.bodies_count)
 
                 if(self.bodies_count[0] > 6):
-                    self.bodies_count[0] = 0
 
                     self.bodies.append(self.temp_bodies[0])
-                    self.temp_bodies[0] = [None] * config.num_provinces
+
+                self.bodies_count[0] = 0
+            self.temp_bodies[0] = [None] * config.num_provinces
 
         #add borders of largest body
         for tt in range(0, len(self.bodies)):
@@ -125,8 +128,6 @@ class nation:
                         self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
 
         self.temp_bodies = None
-        if(self.name == "France"):
-            print(self.bodies)
 
     def init_label(self):
         self.raw_length = 0
@@ -143,20 +144,10 @@ class nation:
             self.raw_length += self.label[i].sprite.width
 
     def draw_label(self):
-
+        self.test_line = []
         #Make a label for each body
         for r in range(0, len(self.bodies)):
 
-            #Make grid
-            self.grid = [None] * 8
-            for i in range(0,8):
-                self.grid[i] = [None]*8
-
-            self.dev_grid = [None] * 8
-            for i in range(0,8):
-                self.dev_grid[i] = [None]*8
-
-            self.y_coords = [None] * 8
 
             #Find bounds for the body
             self.maxx = self.borders[r][0]
@@ -174,121 +165,72 @@ class nation:
                 elif (self.miny > self.borders[r][i * 2 + 1]):
                     self.miny = self.borders[r][i * 2 + 1]
 
-            #Each "recursive" step
-            for factor in (2,4,8):
-                self.x_interval = (self.maxx - self.minx) / factor
-                self.y_interval = (self.maxy - self.miny) / factor
+            self.sumx = 0
+            self.sumy = 0
+            self.scoresum = 0
+            self.body_num = 0
+            for i in range(0, len(self.bodies[r])):
+                if(self.bodies[r][i] != None):
 
-                #score each box
-                self.avg = 0
-                self.num_cells = 0
-                for x in range(0, factor):
-                    for y in range(0, factor):
-                        #if not disabled
-                        if(self.grid[int(x * 8 / factor)][int(y * 8 / factor)] != False):
-                            self.temp = 0
+                    self.sumx += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
+                    self.sumy += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
 
-                            #each centroid/province
-                            for j in range(0, len(self.bodies[r])):
-                                if(self.bodies[r][j] != None):
-                                    self.temp_centroid = self.bodies[r][j].centroid
+                    self.scoresum += self.bodies[r][i].centroid_score
+                    self.body_num += 1
 
-                                    if(self.temp_centroid[0] >= x * self.x_interval + self.minx and self.temp_centroid[0] <= (x + 1) * self.x_interval + self.minx and
-                                       self.temp_centroid[1] >= y * self.y_interval + self.miny and self.temp_centroid[1] <= (y + 1) * self.y_interval + self.miny):
+            self.avgx = self.sumx / (self.scoresum)
+            self.avgy = self.sumy / (self.scoresum)
 
-                                        self.temp += self.bodies[r][j].centroid_score
+            self.leftxsum = 0
+            self.rightxsum = 0
 
-                            #broadcast
-                            for xx in range(int(x * 8 / factor), int((x + 1) * 8 / factor)):
-                                for yy in range(int(y * 8 / factor), int((y + 1) * 8 / factor)):
-                                    self.grid[xx][yy] = self.temp
-                                    self.avg += self.temp
-                                    self.num_cells += 1
+            self.leftysum = 0
+            self.rightysum = 0
 
-                self.avg = self.avg / self.num_cells
+            self.leftxscore = 0
+            self.rightxscore = 0
 
-                #find std_dev
-                self.std_dev = 0
-                for x in range(0, 8):
-                    for y in range(0, 8):
+            self.leftyscore = 0
+            self.rightyscore = 0
 
-                        # if not disabled
-                        if(self.grid[x][y] != False):
-                            self.dev_grid[x][y] = self.grid[x][y] - self.avg
-                            self.std_dev += abs(self.dev_grid[x][y])
+            self.leftnum = 0
+            self.rightnum = 0
 
-                self.std_dev = self.std_dev /  self.num_cells
+            for i in range(0, len(self.bodies[r])):
+                if(self.bodies[r][i] != None):
 
-                #elimnate cells
-                for x in range(0, 8):
-                    for y in range(0, 8):
+                    if(self.bodies[r][i].centroid[0] <= self.avgx):
 
-                        if(self.grid[x][y] != False):
+                        self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                        self.leftxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
 
-                            if(self.dev_grid[x][y] < self.std_dev * 0.3):
-                                self.grid[x][y] = False
+                        self.leftysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
+                        self.leftyscore += self.bodies[r][i].centroid_score
 
-            #Find the y_coords of each vertical section
-            for i in range(0, 8):
-                self.y_coords[i] = 0
-                self.num_cells = 0
-                self.score_sum = 0
+                        self.leftnum += 1
+                    else:
+                        self.rightxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
+                        self.rightxscore += self.bodies[r][i].centroid_score * abs(self.avgx - self.bodies[r][i].centroid[0])
 
-                for j in range(0,8):
+                        self.rightysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
+                        self.rightyscore += self.bodies[r][i].centroid_score
 
-                    if(self.grid[i][j] != False):
-                        self.score_sum += self.grid[i][j]
-                        self.y_coords[i] += self.grid[i][j] * j * self.y_interval
-                        self.num_cells += 1
+                        self.rightnum += 1
 
-                if(self.num_cells > 0):
-                    self.y_coords[i] /= self.num_cells * self.score_sum
+            self.leftxsum /= self.leftxscore
+            self.leftysum /= self.leftyscore
 
-            #Find the two points of the line for the label
-            self.num_y = 0
-            for i in range(0, 8):
-                if(self.y_coords[i] != 0):
-                    self.num_y += 1
+            self.rightxsum /= self.rightxscore
+            self.rightysum /= self.rightyscore
 
-            if(self.num_y > 1):
-                self.point1 = [0,0]
-                self.point2 = [0,0]
 
-                #left half
-                self.index = 0
-                self.num_y_half = int(self.num_y / 2)
-                for i in range(0,self.num_y_half):
-                    while(self.y_coords[self.index] == 0):
-                        self.index += 1
+            self.test_line.append(cvsmr.line_object(config.line_groups['2/3']))
+            self.test_line[r].vertices = [self.leftxsum,self.leftysum,
+                                     self.rightxsum, self.rightysum]
 
-                    self.point1[0] += (self.index * self.x_interval + self.minx)
-                    self.point1[1] += self.y_coords[self.index] + self.miny
-                    self.index += 1
+            self.test_line[r].solid_color_coords(255,255,255)
+            self.test_line[r].add()
 
-                self.point1[0] /= self.num_y_half
-                self.point1[1] /= self.num_y_half
-
-                #right half
-                for i in range(self.num_y_half, self.num_y):
-                    while (self.y_coords[self.index] == 0):
-                        self.index += 1
-
-                    self.point2[0] += (self.index * self.x_interval + self.minx)
-                    self.point2[1] += self.y_coords[self.index] + self.miny
-
-                    self.index += 1
-
-                self.num_y_half = self.num_y - self.num_y_half
-                self.point2[0] /= self.num_y_half
-                self.point2[1] /= self.num_y_half
-
-                self.test_line = cvsmr.line_object(config.line_groups["2/3"])
-                self.test_line.vertices = [self.point1[0],self.point1[1],
-                                           self.point2[0], self.point2[1]]
-                self.test_line.solid_color_coords(255,255,255)
-                self.test_line.add()
-                if(self.name == "France"):
-                    print(self.point1, self.point2)
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -393,16 +335,7 @@ class province(cvsmgmt.scene_object):
     def handler_leftdrag(self,x,y,dx,dy):
         self.nodrag_leftdrag_scene(x,y)
 
-        if (config.scene_transformation_group.scale_x > 0.7):
-            calc_screen_bounds()
-            for i in range(0, config.num_provinces):
-                if (config.provinces[i].on_screen()):
-                    config.provinces[i].label.add()
-                    config.provinces[i].on_screened = True
-
-                elif(config.provinces[i].on_screened):
-                    config.provinces[i].label.remove()
-                    config.provinces[i].on_screened = False
+        zoom_dependant_update()
 
     def handler_release(self,x,y):
         if(self.nodrag):
@@ -412,26 +345,29 @@ class province(cvsmgmt.scene_object):
                     config.menus["play_menu"].elements[7].set_province(self.name)
                     config.menus["play_menu"].elements[7].set_nation(self.nation.name)
 
+                    '''
                     if(self.nation.test_line != None):
 
-                        self.nation.test_line.remove()
-                        self.nation.test_line.solid_color_coords(0, 0, 0)
-                        self.nation.test_line.add()
+                        for i in range(0, len(self.nation.test_line)):
+                            self.nation.test_line[i].remove()
+                            self.nation.test_line[i].solid_color_coords(0, 0, 0)
+                            self.nation.test_line[i].add()
+                        
+                        
+                        #show body
+                        for i in range(0, len(self.nation.bodies)):
+                            if(self.nation.bodies[i][self.index] != None):
+                                for j in range(0, config.num_provinces):
+                                    if(self.nation.bodies[i][j] != None):
+                                        self.nation.bodies[i][j].render_objects[0][0].solid_color_coords(0,0,0)
+                                        self.nation.bodies[i][j].render_objects[0][0].remove()
+                                        self.nation.bodies[i][j].render_objects[0][0].add()
+                        '''
 
     def handler_scroll(self,x,y,scroll_x,scroll_y):
         self.zoom(x,y,scroll_y)
 
-        if(config.scene_transformation_group.scale_x > 0.7):
-            calc_screen_bounds()
-            for i in range(0, config.num_provinces):
-                if(config.provinces[i].on_screen()):
-                    config.provinces[i].label.add()
-
-        elif(config.scene_transformation_group.scale_x > 0.3):
-            for i in range(0, config.num_provinces):
-                if(config.provinces[i].on_screened):
-                    config.provinces[i].label.remove()
-                    config.provinces[i].on_screened = False
+        zoom_dependant_update(True)
 
 class ocean(cvsmgmt.scene_object):
     def __init__(self):
@@ -453,31 +389,12 @@ class ocean(cvsmgmt.scene_object):
     def handler_leftdrag(self,x,y,dx,dy):
         self.nodrag_leftdrag_scene(x, y)
 
-        if (config.scene_transformation_group.scale_x > 0.7):
-            calc_screen_bounds()
-            for i in range(0, config.num_provinces):
-                if (config.provinces[i].on_screen()):
-                    config.provinces[i].label.add()
-                    config.provinces[i].on_screened = True
-
-                elif (config.provinces[i].on_screened):
-                    config.provinces[i].label.remove()
-                    config.provinces[i].on_screened = False
+        zoom_dependant_update()
 
     def handler_scroll(self, x, y, scroll_x, scroll_y):
         self.zoom(x, y, scroll_y)
 
-        if (config.scene_transformation_group.scale_x > 0.7):
-            calc_screen_bounds()
-            for i in range(0, config.num_provinces):
-                if (config.provinces[i].on_screen()):
-                    config.provinces[i].label.add()
-
-        elif (config.scene_transformation_group.scale_x > 0.3):
-            for i in range(0, config.num_provinces):
-                if (config.provinces[i].on_screened):
-                    config.provinces[i].label.remove()
-                    config.provinces[i].on_screened = False
+        zoom_dependant_update(True)
 
 class time_entry(cvsmgmt.update_entry):
     def __init__(self, args=None):
@@ -716,6 +633,21 @@ def init_datastructures():
     config.nation_data = np.ones((config.num_nations,config.num_nation_attributes))
 
 #-----------------------------------------------------------------------------------------------------------------------
+
+def zoom_dependant_update(zoom_changed = False):
+
+    #province labels
+    if (config.scene_transformation_group.scale_x > 1):
+        calc_screen_bounds()
+        for i in range(0, config.num_provinces):
+            if (config.provinces[i].on_screen()):
+                config.provinces[i].label.add()
+
+    else:
+        for i in range(0, config.num_provinces):
+            if (config.provinces[i].on_screened):
+                config.provinces[i].label.remove()
+                config.provinces[i].on_screened = False
 
 def time_update():
     month_transition = False
