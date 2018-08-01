@@ -167,6 +167,7 @@ class nation:
                 elif (self.miny > self.borders[r][i * 2 + 1]):
                     self.miny = self.borders[r][i * 2 + 1]
 
+            #determine average location
             self.sumx = 0
             self.sumy = 0
             self.scoresum = 0
@@ -332,19 +333,145 @@ class nation:
                     self.point3 = self.point1
                     self.point1 = self.temp
 
+            #smooth the middle point a bit
             self.point2[0] = (self.point2[0]*2 + self.point1[0] + self.point3[0]) / 4
             self.point2[1] = (self.point2[1]*2 + self.point1[1] + self.point3[1]) / 4
 
+            #find height
+            self.height = (self.point2[0] - self.borders[r][0])**2 + (self.point2[1] - self.borders[r][1])**2
+            for i in range(1, int(len(self.borders)/4)):
+                self.temp = (self.point2[0] - self.borders[r][i*4])**2 + (self.point2[1] - self.borders[r][i*4+1])**2
+
+                if(self.temp < self.height):
+                    self.height = self.temp
+            self.height *= 2
+
+            #Divide the 2 segment line into a 3 segment equal length line
+            self.line_vec1 = [self.point2[0] - self.point1[0],
+                              self.point2[1] - self.point1[1]]
+            self.line_vec2 = [self.point3[0] - self.point2[0],
+                              self.point3[1] - self.point2[1]]
+            self.length1 = (self.line_vec1[0]**2 + self.line_vec1[1]**2)**0.5
+            self.length2 = (self.line_vec2[0]**2 + self.line_vec2[1]**2)**0.5
+            self.lengtheq = (self.length1 + self.length2) / 3
+
+            self.line_vec1 = [self.line_vec1[0]/self.length1 * self.lengtheq,
+                              self.line_vec1[1]/self.length1 * self.lengtheq]
+            self.point2 = [self.point1[0] + self.line_vec1[0],
+                           self.point1[1] + self.line_vec1[1]]
+            self.line_vec3 = [self.line_vec2[0]/self.length2 * self.lengtheq,
+                              self.line_vec2[1]/self.length2 * self.lengtheq]
+            self.point4 = self.point3
+            self.point3 = [self.point3[0] - self.line_vec3[0],
+                           self.point3[1] - self.line_vec3[1]]
+            self.line_vec2 = [self.point3[0] - self.point2[0],
+                              self.point3[1] - self.point2[1]]
+
+            #determine scale
+            self.length_scale = self.lengtheq / self.raw_length
+            self.height_scale = self.height / self.raw_height
+            if(self.length_scale < self.height_scale):
+                self.final_scale = self.length_scale
+            else:
+                self.final_scale = self.length_scale
+
+            #Determine spacing
+            self.spacing = (self.lengtheq*3 - self.raw_length * self.final_scale) / (len(self.label) - 1)
+
+            #Determine Angles
+            self.length2 = (self.line_vec2[0]**2+self.line_vec2[1]**2)**0.5
+            self.point1_angle = math.degrees(math.asin(self.line_vec1[1]/self.lengtheq))
+            self.point2_angle = math.degrees(math.asin(self.line_vec2[1]/self.length2))
+            self.point3_angle = math.degrees(math.asin(self.line_vec3[1]/self.lengtheq))
+
+            #Determine perpindicular
+            self.perp1 = [-1 * self.line_vec1[1] / self.lengtheq * self.raw_height * self.final_scale/2,
+                          self.line_vec1[0] / self.lengtheq * self.raw_height * self.final_scale/2]
+            self.perp2 = [-1 * self.line_vec2[1] / self.length2 * self.raw_height * self.final_scale/2,
+                          self.line_vec2[0] / self.length2 * self.raw_height * self.final_scale/2]
+            self.perp3 = [-1 * self.line_vec3[1] / self.lengtheq * self.raw_height * self.final_scale/2,
+                          self.line_vec3[0] / self.lengtheq * self.raw_height * self.final_scale/2]
+
+            if(self.point1_angle < - 90 and self.perp1[1] < 0):
+                self.perp1 = [self.perp1[0] * -1, self.perp1[1] * -1]
+            elif(self.perp1[1] > 0):
+                self.perp1 = [self.perp1[0] * -1, self.perp1[1] * -1]
+
+            if (self.point2_angle < - 90 and self.perp2[1] < 0):
+                self.perp2 = [self.perp2[0] * -1, self.perp2[1] * -1]
+            elif (self.perp2[1] > 0):
+                self.perp2 = [self.perp2[0] * -1, self.perp2[1] * -1]
+
+            if (self.point3_angle < - 90 and self.perp3[1] < 0):
+                self.perp3 = [self.perp3[0] * -1, self.perp3[1] * -1]
+            elif (self.perp3[1] > 0):
+                self.perp3 = [self.perp3[0] * -1, self.perp3[1] * -1]
+
+
             #make_label
+            self.length_progress = 0
+            self.angle_progress = self.point1_angle
+            self.stage = 0
+            for i in range(0,len(self.label)):
+                if(self.stage == 0):
+
+                    self.label[i].sprite.update(x = self.point1[0] + self.line_vec1[0]/self.lengtheq * self.length_progress + self.perp1[0],
+                                                y = self.point1[1] + self.line_vec1[1]/self.lengtheq * self.length_progress + self.perp1[1],
+                                                scale_x = self.final_scale,
+                                                scale_y = self.final_scale,
+                                                rotation = self.angle_progress * -1)
+
+                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
+                    self.angle_progress = (self.point1_angle * (self.lengtheq - self.length_progress) + self.point2_angle * (self.length_progress))/self.lengtheq
+
+                    if(self.length_progress >= self.lengtheq):
+                        self.stage = 1
+                        self.length_progress -= self.lengtheq
+                        self.angle_progress = self.point2_angle
+
+                elif(self.stage == 1):
+                    self.label[i].sprite.update(
+                                                x=self.point2[0] + self.line_vec2[0] / self.length2 * self.length_progress + self.perp2[0],
+                                                y=self.point2[1] + self.line_vec2[1] / self.length2 * self.length_progress + self.perp2[1],
+                                                scale_x=self.final_scale,
+                                                scale_y=self.final_scale,
+                                                rotation=self.angle_progress * -1)
+
+                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
+                    self.angle_progress = (self.point2_angle * ((self.length2 + self.lengtheq) - self.length_progress) + self.point3_angle * (self.length_progress)) /(self.length2 + self.lengtheq)
+
+                    if (self.length_progress >= self.length2):
+                        self.stage = 2
+                        self.length_progress -= self.length2
+                        self.angle_progress = self.point3_angle
+
+                elif (self.stage == 2):
+                    self.label[i].sprite.update(
+                                                x=self.point3[0] + self.line_vec3[0] / self.lengtheq * self.length_progress + self.perp3[0],
+                                                y=self.point3[1] + self.line_vec3[1] / self.lengtheq * self.length_progress + self.perp3[1],
+                                                scale_x=self.final_scale,
+                                                scale_y=self.final_scale,
+                                                rotation=self.angle_progress * -1)
+
+                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
+                    self.angle_progress = (self.point2_angle * (self.lengtheq - self.length_progress) + self.point3_angle * (self.length_progress)) / (self.lengtheq)
+
+                self.label[i].add()
+
             self.test_line.append(cvsmr.line_object(config.line_groups['2/3']))
-            self.test_line[r].vertices = [self.point1[0],self.point1[1],
-                                     self.point2[0], self.point2[1],self.point2[0], self.point2[1],
-                                          self.point3[0],self.point3[1]]
+            self.test_line[r].vertices = [self.point1[0], self.point1[1],
+                                          self.point2[0], self.point2[1],
+                                          self.point2[0], self.point2[1],
+                                          self.point3[0], self.point3[1],
+                                          self.point3[0], self.point3[1],
+                                          self.point4[0], self.point4[1]]
 
             self.test_line[r].colors = [0,0,0,
                                         255,255,255,
                                         255,255,255,
-                                        255,0,0]
+                                        255,0,0,
+                                        255,0,0,
+                                        0,255,0]
             self.test_line[r].add()
 
 class province(cvsmgmt.scene_object):
