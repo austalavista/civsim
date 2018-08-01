@@ -183,7 +183,7 @@ class nation:
             self.avgy = self.sumy / (self.scoresum)
 
             #determine the two boundaries
-            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.7):
+            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.6):
                 self.leftxsum = 0
                 self.rightxsum = 0
 
@@ -197,10 +197,8 @@ class nation:
                 self.rightyscore = 0
 
                 for i in range(0, len(self.bodies[r])):
-                    if(self.bodies[r][i] != None):
-
+                    if (self.bodies[r][i] != None):
                         if(self.bodies[r][i].centroid[0] <= self.avgx):
-
                             self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
                             self.leftxscore += self.bodies[r][i].centroid_score
 
@@ -230,8 +228,7 @@ class nation:
                 self.bottomyscore = 0
 
                 for i in range(0, len(self.bodies[r])):
-                    if (self.bodies[r][i] != None):
-
+                    if(self.bodies[r][i] != None):
                         if (self.bodies[r][i].centroid[1] <= self.avgy):
 
                             self.bottomxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
@@ -252,7 +249,7 @@ class nation:
                 self.point2 = [self.bottomxsum / self.bottomxscore, self.bottomysum / self.bottomyscore]
 
             # 3line segment
-            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.7):
+            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.6):
                 self.leftx = [0, 0]  # sum score
                 self.lefty = [0, 0]
                 self.midx = [0, 0]
@@ -262,7 +259,6 @@ class nation:
 
                 for i in range(0, len(self.bodies[r])):
                     if (self.bodies[r][i] != None):
-
                         if (self.bodies[r][i].centroid[0] <= self.point1[0]):
                             self.leftx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
                             self.leftx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
@@ -335,7 +331,7 @@ class nation:
                     self.temp = self.point3
                     self.point3 = self.point1
                     self.point1 = self.temp
-                    
+
             self.point2[0] = (self.point2[0]*2 + self.point1[0] + self.point3[0]) / 4
             self.point2[1] = (self.point2[1]*2 + self.point1[1] + self.point3[1]) / 4
 
@@ -345,7 +341,10 @@ class nation:
                                      self.point2[0], self.point2[1],self.point2[0], self.point2[1],
                                           self.point3[0],self.point3[1]]
 
-            self.test_line[r].solid_color_coords(255,255,255)
+            self.test_line[r].colors = [0,0,0,
+                                        255,255,255,
+                                        255,255,255,
+                                        255,0,0]
             self.test_line[r].add()
 
 class province(cvsmgmt.scene_object):
