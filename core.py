@@ -115,7 +115,7 @@ class nation:
 
                 recursive_add_prov(self.provinces[i],self.temp_bodies, self.id, self.bodies_count)
 
-                if(self.bodies_count[0] > 6):
+                if(self.bodies_count[0] > 5):
 
                     self.bodies.append(self.temp_bodies[0])
 
@@ -125,20 +125,11 @@ class nation:
         self.temp_bodies = None
 
     def init_label(self):
-        self.raw_length = 0
-        self.raw_height = 0
 
-        self.temp = []
-        for i in range(0,len(self.name)):
-            if(self.name[i] != ' '):
-                self.temp.append(cvsmr.sprite_object(self.name[i].upper(), [0,0], 5))
-            else:
-                self.temp.append(cvsmr.sprite_object('space', [0,0], 5))
-            if(self.temp[i].sprite.height > self.raw_height):
-                self.raw_height = self.temp[i].sprite.height
-
-            self.raw_length += self.temp[i].sprite.width
-
+        cvsmr.image_init(self.name)
+        self.temp = cvsmr.sprite_object(self.name, [0,0], 0)
+        self.raw_length = self.temp.sprite.width
+        self.raw_height = self.temp.sprite.height
         self.temp = None
 
     def draw_label(self):
@@ -148,13 +139,7 @@ class nation:
         for r in range(0, len(self.bodies)):
 
             #Make a new label for this body
-            self.body_labels.append([[],None])
-            for i in range(0, len(self.name)):
-                if (self.name[i] != ' '):
-                    self.body_labels[r][0].append(cvsmr.sprite_object(self.name[i].upper(), [0, 0], 5))
-                else:
-                    self.body_labels[r][0].append(cvsmr.sprite_object('space', [0, 0], 5))
-
+            self.body_labels.append([cvsmr.sprite_object(self.name, [0,0], 5),None])
 
             # Find bounds for the body
             self.maxx = 0
@@ -289,13 +274,12 @@ class nation:
 
             # make_label
             self.length_progress = 0
-            for i in range(0, len(self.name)):
-                self.body_labels[r][0][i].sprite.update(x = self.point1[0] + self.line_vec[0] * self.length_progress + self.perp[0],
-                                                        y = self.point1[1] + self.line_vec[1] * self.length_progress + self.perp[1],
-                                                        scale_x = self.final_scale,
-                                                        scale_y = self.final_scale,
-                                                        rotation = -1 * self.angle)
-                self.length_progress += self.body_labels[r][0][i].sprite.width
+
+            self.body_labels[r][0].sprite.update(x = self.point1[0] + self.perp[0],
+                                                    y = self.point1[1] + self.perp[1],
+                                                    scale_x = self.final_scale,
+                                                    scale_y = self.final_scale,
+                                                    rotation = -1 * self.angle)
 
             self.body_labels[r][1] = self.final_scale
 
@@ -311,14 +295,11 @@ class nation:
 
     def add_labels(self, scale_min, scale_max):
         for r in range(0, len(self.body_labels)):
-            #print(self.name, self.body_labels[r][1])
             if(self.body_labels[r][1] > scale_min and self.body_labels[r][1] < scale_max):
 
-                for i in range(0, len(self.body_labels[r][0])):
-                    self.body_labels[r][0][i].add()
+                self.body_labels[r][0].add()
             else:
-                for i in range(0, len(self.body_labels[r][0])):
-                    self.body_labels[r][0][i].remove()
+                self.body_labels[r][0].remove()
 
 class province(cvsmgmt.scene_object):
     def __init__(self):

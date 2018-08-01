@@ -448,8 +448,8 @@ def sprite_texture_init():
 
     image_init("textbg")
 
-    for letter in ("A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","space","-","."):
-        image_init(letter)
+    #for letter in ("A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","space","-","."):
+    #    image_init(letter)
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")
