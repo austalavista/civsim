@@ -128,8 +128,6 @@ class nation:
                     self.borders[tt].append(config.nation_borders.render_objects[0][i].vertices[j])
 
         self.temp_bodies = None
-        if(self.name == 'France'):
-            print("yuh")
 
     def init_label(self):
         self.raw_length = 0
@@ -150,31 +148,29 @@ class nation:
         #Make a label for each body
         for r in range(0, len(self.bodies)):
 
+            # Find bounds for the body
+            self.maxx = 0
+            self.minx = 99999999
+            self.maxy = 0
+            self.miny = 99999999
+            for i in range(1, len(self.bodies[r])):
+                if(self.bodies[r][i] != None):
+                    if (self.maxx < self.bodies[r][i].centroid[0]):
+                        self.maxx = self.bodies[r][i].centroid[0]
+                    elif (self.minx > self.bodies[r][i].centroid[0]):
+                        self.minx = self.bodies[r][i].centroid[0]
 
-            #Find bounds for the body
-            self.maxx = self.borders[r][0]
-            self.minx = self.borders[r][0]
-            self.maxy = self.borders[r][1]
-            self.miny = self.borders[r][1]
-            for i in range(1, int(len(self.borders[r])/2)):
-                if(self.maxx < self.borders[r][i*2]):
-                    self.maxx = self.borders[r][i*2]
-                elif(self.minx > self.borders[r][i*2]):
-                    self.minx = self.borders[r][i*2]
+                    if (self.maxy < self.bodies[r][i].centroid[1]):
+                        self.maxy = self.bodies[r][i].centroid[1]
+                    elif (self.miny > self.bodies[r][i].centroid[1]):
+                        self.miny = self.bodies[r][i].centroid[1]
 
-                if (self.maxy < self.borders[r][i * 2 + 1]):
-                    self.maxy = self.borders[r][i * 2 + 1]
-                elif (self.miny > self.borders[r][i * 2 + 1]):
-                    self.miny = self.borders[r][i * 2 + 1]
-
-            #determine average location
             self.sumx = 0
             self.sumy = 0
             self.scoresum = 0
             self.body_num = 0
             for i in range(0, len(self.bodies[r])):
-                if(self.bodies[r][i] != None):
-
+                if (self.bodies[r][i] != None):
                     self.sumx += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
                     self.sumy += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
 
@@ -183,8 +179,7 @@ class nation:
             self.avgx = self.sumx / (self.scoresum)
             self.avgy = self.sumy / (self.scoresum)
 
-            #determine the two boundaries
-            if(self.maxx - self.minx > (self.maxy - self.miny) * 0.6):
+            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.8):
                 self.leftxsum = 0
                 self.rightxsum = 0
 
@@ -199,19 +194,29 @@ class nation:
 
                 for i in range(0, len(self.bodies[r])):
                     if (self.bodies[r][i] != None):
-                        if(self.bodies[r][i].centroid[0] <= self.avgx):
-                            self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
-                            self.leftxscore += self.bodies[r][i].centroid_score
 
-                            self.leftysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                            self.leftyscore += self.bodies[r][i].centroid_score
+                        if (self.bodies[r][i].centroid[0] <= self.avgx):
+
+                            self.leftxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
+                            self.leftxscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
+
+                            self.leftysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
+                            self.leftyscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
 
                         else:
-                            self.rightxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
-                            self.rightxscore += self.bodies[r][i].centroid_score
+                            self.rightxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
+                            self.rightxscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
 
-                            self.rightysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                            self.rightyscore += self.bodies[r][i].centroid_score
+                            self.rightysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
+                            self.rightyscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
 
                 self.point1 = [self.leftxsum / self.leftxscore, self.leftysum / self.leftyscore]
                 self.point2 = [self.rightxsum / self.rightxscore, self.rightysum / self.rightyscore]
@@ -229,250 +234,69 @@ class nation:
                 self.bottomyscore = 0
 
                 for i in range(0, len(self.bodies[r])):
-                    if(self.bodies[r][i] != None):
+                    if (self.bodies[r][i] != None):
+
                         if (self.bodies[r][i].centroid[1] <= self.avgy):
 
-                            self.bottomxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
-                            self.bottomxscore += self.bodies[r][i].centroid_score
+                            self.bottomxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
+                            self.bottomxscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
 
-                            self.bottomysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                            self.bottomyscore += self.bodies[r][i].centroid_score
+                            self.bottomysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
+                            self.bottomyscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
 
                         else:
 
-                            self.topxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score
-                            self.topxscore += self.bodies[r][i].centroid_score
+                            self.topxsum += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
+                            self.topxscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgx - self.bodies[r][i].centroid[0])
 
-                            self.topysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score
-                            self.topyscore += self.bodies[r][i].centroid_score
+                            self.topysum += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
+                            self.topyscore += self.bodies[r][i].centroid_score * abs(
+                                self.avgy - self.bodies[r][i].centroid[1])
 
                 self.point1 = [self.topxsum / self.topxscore, self.topysum / self.topyscore]
                 self.point2 = [self.bottomxsum / self.bottomxscore, self.bottomysum / self.bottomyscore]
 
-            # 3line segment
-            if (self.maxx - self.minx > (self.maxy - self.miny) * 0.6):
-                self.leftx = [0, 0]  # sum score
-                self.lefty = [0, 0]
-                self.midx = [0, 0]
-                self.midy = [0, 0]
-                self.righty = [0, 0]
-                self.rightx = [0, 0]
+                if (self.point1[0] > self.point2[0]):
+                    self.temp = self.point1
+                    self.point1 = self.point2
+                    self.point2 = self.temp
 
-                for i in range(0, len(self.bodies[r])):
-                    if (self.bodies[r][i] != None):
-                        if (self.bodies[r][i].centroid[0] <= self.point1[0]):
-                            self.leftx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-                            self.leftx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
+            self.length = ((self.point2[0] - self.point1[0]) **2 + (self.point2[1] - self.point1[1]) ** 2 ) ** 0.5
+            self.line_vec = [(self.point2[0] - self.point1[0]) / self.length,
+                             (self.point2[1] - self.point1[1]) / self.length]
 
-                            self.lefty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-                            self.lefty[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-
-                        elif (self.bodies[r][i].centroid[0] > self.point1[0] and self.bodies[r][i].centroid[0] < self.point2[0]):
-                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-                            self.midx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-
-                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-                            self.midy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-                        else:
-                            self.rightx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-                            self.rightx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)
-
-                            self.righty[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-                            self.righty[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)**2
-
-                self.point1 = [self.leftx[0] / self.leftx[1],
-                               self.lefty[0] / self.lefty[1]]
-
-                self.point2 = [self.midx[0] / self.midx[1],
-                               self.midy[0] / self.midy[1]]
-
-                self.point3 = [self.rightx[0] / self.rightx[1],
-                               self.righty[0] / self.righty[1]]
-            else:
-                self.topx = [0, 0]
-                self.topy = [0, 0]
-                self.midx = [0, 0]
-                self.midy = [0, 0]
-                self.bottomx = [0, 0]
-                self.bottomy = [0, 0]
-
-                for i in range(0, len(self.bodies[r])):
-                    if (self.bodies[r][i] != None):
-
-                        if (self.bodies[r][i].centroid[1] > self.point1[1]):
-                            self.topx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-                            self.topx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-
-                            self.topy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-                            self.topy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-
-                        elif (self.bodies[r][i].centroid[1] < self.point1[1] and self.bodies[r][i].centroid[1] > self.point2[1]):
-                            self.midx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-                            self.midx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-
-                            self.midy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-                            self.midy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-                        else:
-                            self.bottomx[0] += self.bodies[r][i].centroid[0] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-                            self.bottomx[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[0] - self.avgx)**2
-
-                            self.bottomy[0] += self.bodies[r][i].centroid[1] * self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-                            self.bottomy[1] += self.bodies[r][i].centroid_score * abs(self.bodies[r][i].centroid[1] - self.avgy)
-
-                self.point1 = [self.topx[0] / self.topx[1],
-                               self.topy[0] / self.topy[1]]
-
-                self.point2 = [self.midx[0] / self.midx[1],
-                               self.midy[0] / self.midy[1]]
-
-                self.point3 = [self.bottomx[0] / self.bottomx[1],
-                               self.bottomy[0] / self.bottomy[1]]
-
-                if (self.point1[0] > self.point3[0]):
-                    self.temp = self.point3
-                    self.point3 = self.point1
-                    self.point1 = self.temp
-
-            #smooth the middle point a bit
-            self.point2[0] = (self.point2[0]*2 + self.point1[0] + self.point3[0]) / 4
-            self.point2[1] = (self.point2[1]*2 + self.point1[1] + self.point3[1]) / 4
-
-            #find height
-            self.height = (self.point2[0] - self.borders[r][0])**2 + (self.point2[1] - self.borders[r][1])**2
-            for i in range(1, int(len(self.borders)/4)):
-                self.temp = (self.point2[0] - self.borders[r][i*4])**2 + (self.point2[1] - self.borders[r][i*4+1])**2
-
-                if(self.temp < self.height):
-                    self.height = self.temp
-            self.height *= 2
-
-            #Divide the 2 segment line into a 3 segment equal length line
-            self.line_vec1 = [self.point2[0] - self.point1[0],
-                              self.point2[1] - self.point1[1]]
-            self.line_vec2 = [self.point3[0] - self.point2[0],
-                              self.point3[1] - self.point2[1]]
-            self.length1 = (self.line_vec1[0]**2 + self.line_vec1[1]**2)**0.5
-            self.length2 = (self.line_vec2[0]**2 + self.line_vec2[1]**2)**0.5
-            self.lengtheq = (self.length1 + self.length2) / 3
-
-            self.line_vec1 = [self.line_vec1[0]/self.length1 * self.lengtheq,
-                              self.line_vec1[1]/self.length1 * self.lengtheq]
-            self.point2 = [self.point1[0] + self.line_vec1[0],
-                           self.point1[1] + self.line_vec1[1]]
-            self.line_vec3 = [self.line_vec2[0]/self.length2 * self.lengtheq,
-                              self.line_vec2[1]/self.length2 * self.lengtheq]
-            self.point4 = self.point3
-            self.point3 = [self.point3[0] - self.line_vec3[0],
-                           self.point3[1] - self.line_vec3[1]]
-            self.line_vec2 = [self.point3[0] - self.point2[0],
-                              self.point3[1] - self.point2[1]]
-
-            #determine scale
-            self.length_scale = self.lengtheq / self.raw_length
-            self.height_scale = self.height / self.raw_height
-            if(self.length_scale < self.height_scale):
-                self.final_scale = self.length_scale
-            else:
-                self.final_scale = self.length_scale
-
-            #Determine spacing
-            self.spacing = (self.lengtheq*3 - self.raw_length * self.final_scale) / (len(self.label) - 1)
-
-            #Determine Angles
-            self.length2 = (self.line_vec2[0]**2+self.line_vec2[1]**2)**0.5
-            self.point1_angle = math.degrees(math.asin(self.line_vec1[1]/self.lengtheq))
-            self.point2_angle = math.degrees(math.asin(self.line_vec2[1]/self.length2))
-            self.point3_angle = math.degrees(math.asin(self.line_vec3[1]/self.lengtheq))
-
-            #Determine perpindicular
-            self.perp1 = [-1 * self.line_vec1[1] / self.lengtheq * self.raw_height * self.final_scale/2,
-                          self.line_vec1[0] / self.lengtheq * self.raw_height * self.final_scale/2]
-            self.perp2 = [-1 * self.line_vec2[1] / self.length2 * self.raw_height * self.final_scale/2,
-                          self.line_vec2[0] / self.length2 * self.raw_height * self.final_scale/2]
-            self.perp3 = [-1 * self.line_vec3[1] / self.lengtheq * self.raw_height * self.final_scale/2,
-                          self.line_vec3[0] / self.lengtheq * self.raw_height * self.final_scale/2]
-
-            if(self.point1_angle < - 90 and self.perp1[1] < 0):
-                self.perp1 = [self.perp1[0] * -1, self.perp1[1] * -1]
-            elif(self.perp1[1] > 0):
-                self.perp1 = [self.perp1[0] * -1, self.perp1[1] * -1]
-
-            if (self.point2_angle < - 90 and self.perp2[1] < 0):
-                self.perp2 = [self.perp2[0] * -1, self.perp2[1] * -1]
-            elif (self.perp2[1] > 0):
-                self.perp2 = [self.perp2[0] * -1, self.perp2[1] * -1]
-
-            if (self.point3_angle < - 90 and self.perp3[1] < 0):
-                self.perp3 = [self.perp3[0] * -1, self.perp3[1] * -1]
-            elif (self.perp3[1] > 0):
-                self.perp3 = [self.perp3[0] * -1, self.perp3[1] * -1]
+            self.angle = math.degrees(math.asin(self.line_vec[1]))
 
 
-            #make_label
+            self.length_scale = self.length / self.raw_length
+            self.final_scale = self.length_scale
+            self.perp = [self.line_vec[1] * self.raw_height * self.final_scale / 2, -1 * self.line_vec[0] * self.raw_height * self.final_scale / 2]
+
+            # make_label
             self.length_progress = 0
-            self.angle_progress = self.point1_angle
-            self.stage = 0
-            for i in range(0,len(self.label)):
-                if(self.stage == 0):
-
-                    self.label[i].sprite.update(x = self.point1[0] + self.line_vec1[0]/self.lengtheq * self.length_progress + self.perp1[0],
-                                                y = self.point1[1] + self.line_vec1[1]/self.lengtheq * self.length_progress + self.perp1[1],
-                                                scale_x = self.final_scale,
-                                                scale_y = self.final_scale,
-                                                rotation = self.angle_progress * -1)
-
-                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
-                    self.angle_progress = (self.point1_angle * (self.lengtheq - self.length_progress) + self.point2_angle * (self.length_progress))/self.lengtheq
-
-                    if(self.length_progress >= self.lengtheq):
-                        self.stage = 1
-                        self.length_progress -= self.lengtheq
-                        self.angle_progress = self.point2_angle
-
-                elif(self.stage == 1):
-                    self.label[i].sprite.update(
-                                                x=self.point2[0] + self.line_vec2[0] / self.length2 * self.length_progress + self.perp2[0],
-                                                y=self.point2[1] + self.line_vec2[1] / self.length2 * self.length_progress + self.perp2[1],
-                                                scale_x=self.final_scale,
-                                                scale_y=self.final_scale,
-                                                rotation=self.angle_progress * -1)
-
-                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
-                    self.angle_progress = (self.point2_angle * ((self.length2 + self.lengtheq) - self.length_progress) + self.point3_angle * (self.length_progress)) /(self.length2 + self.lengtheq)
-
-                    if (self.length_progress >= self.length2):
-                        self.stage = 2
-                        self.length_progress -= self.length2
-                        self.angle_progress = self.point3_angle
-
-                elif (self.stage == 2):
-                    self.label[i].sprite.update(
-                                                x=self.point3[0] + self.line_vec3[0] / self.lengtheq * self.length_progress + self.perp3[0],
-                                                y=self.point3[1] + self.line_vec3[1] / self.lengtheq * self.length_progress + self.perp3[1],
-                                                scale_x=self.final_scale,
-                                                scale_y=self.final_scale,
-                                                rotation=self.angle_progress * -1)
-
-                    self.length_progress += self.spacing + self.label[i].sprite.width * self.final_scale
-                    self.angle_progress = (self.point2_angle * (self.lengtheq - self.length_progress) + self.point3_angle * (self.length_progress)) / (self.lengtheq)
-
+            for i in range(0, len(self.label)):
+                self.label[i].sprite.update(x = self.point1[0] + self.line_vec[0] * self.length_progress + self.perp[0],
+                                            y = self.point1[1] + self.line_vec[1] * self.length_progress + self.perp[1],
+                                            scale_x = self.final_scale,
+                                            scale_y = self.final_scale,
+                                            rotation = -1 * self.angle)
                 self.label[i].add()
+                self.length_progress += self.label[i].sprite.width
+
 
             self.test_line.append(cvsmr.line_object(config.line_groups['2/3']))
             self.test_line[r].vertices = [self.point1[0], self.point1[1],
-                                          self.point2[0], self.point2[1],
-                                          self.point2[0], self.point2[1],
-                                          self.point3[0], self.point3[1],
-                                          self.point3[0], self.point3[1],
-                                          self.point4[0], self.point4[1]]
+                                          self.point2[0], self.point2[1]]
 
-            self.test_line[r].colors = [0,0,0,
-                                        255,255,255,
-                                        255,255,255,
-                                        255,0,0,
-                                        255,0,0,
-                                        0,255,0]
-            self.test_line[r].add()
+            self.test_line[r].solid_color_coords(255, 255, 255)
+            #self.test_line[r].add()
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
