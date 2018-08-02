@@ -44,5 +44,5 @@ for r in range(0, len(nations)):
 
         length_progress += (int(name_letters[i].size[0]))
 
-    label_image.save("nation_labels/" + nations[r] + ".png")
+    label_image.save("nation_labels/" + nations[r] + "-n.png")
     print(r, nations[r])

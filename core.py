@@ -5,8 +5,6 @@ import config
 import numpy as np
 import calculations
 import math
-import pyglet
-
 
 class scenario:
     def __init__(self):
@@ -128,8 +126,8 @@ class nation:
 
     def init_label(self):
 
-        cvsmr.image_init(self.name)
-        self.temp = cvsmr.sprite_object(self.name, [0, 0], 0)
+        cvsmr.image_init(self.name + "-n")
+        self.temp = cvsmr.sprite_object(self.name + "-n", [0, 0], 0)
         self.raw_length = self.temp.sprite.width
         self.raw_height = self.temp.sprite.height
         self.temp = None
@@ -141,7 +139,7 @@ class nation:
         for r in range(0, len(self.bodies)):
 
             # Make a new label for this body
-            self.body_labels.append([cvsmr.sprite_object(self.name, [0, 0], 5), None])
+            self.body_labels.append([cvsmr.sprite_object(self.name + "-n", [0, 0], 5), None])
 
             # Find bounds for the body
             self.maxx = 0
@@ -300,7 +298,6 @@ class nation:
     def remove_labels(self):
         for r in range(0, len(self.body_labels)):
             self.body_labels[r][0].remove()
-
 
 class province(cvsmgmt.scene_object):
     def __init__(self):
@@ -741,7 +738,6 @@ def zoom_dependant_update(zoom_changed=False):
             config.province_borders.render_objects[0][0].fast_show()
         elif(config.scene_transformation_group.scale_x == 0.1):
             config.province_borders.render_objects[0][0].fast_hide()
-
 
 def time_update():
     month_transition = False

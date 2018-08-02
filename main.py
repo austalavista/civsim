@@ -7,7 +7,7 @@ import tactical
 import time
 
 #Create window
-config.aa = pyglet.gl.Config(sample_buffers=1, samples=3)  # ANTIALIASING
+config.aa = pyglet.gl.Config(sample_buffers=1, samples=8)  # ANTIALIASING
 config.window = pyglet.window.Window(config=config.aa, resizable=False)
 fps_display = pyglet.clock.ClockDisplay()
 
