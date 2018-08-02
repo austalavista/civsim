@@ -38,6 +38,7 @@ class scenario:
             config.nations[i].add_provinces()
             config.nations[i].draw_label()
 
+        config.province_borders.remove_from_scene()
         zoom_dependant_update(True)
 
 class save:
@@ -90,7 +91,6 @@ class nation:
     def add_provinces(self):
         #populates / refreshes list of provinces and their borders
 
-        self.borders = []
         self.provinces = []
 
         #add to province list
@@ -350,7 +350,7 @@ class province(cvsmgmt.scene_object):
 
     def draw_nation_border(self):
 
-        self.temp_line = cvsmr.line_object(config.line_groups["2/3"])
+        self.temp_line = cvsmr.line_object(config.line_groups["1/3"])
         config.nation_borders.render_objects[0][self.index] = temp_line
         if (self.nation != None):
 
@@ -381,6 +381,8 @@ class province(cvsmgmt.scene_object):
                     self.temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
 
             self.temp_line.solid_color_coords(40, 40, 40)
+
+        zoom_dependant_update()
 
     def set_id(self, id):
         self.id = id
@@ -723,8 +725,20 @@ def zoom_dependant_update(zoom_changed = False):
 
     if(zoom_changed):
 
+        #Labels
         for j in range(0,config.num_nations):
-            config.nations[j].add_labels(scale_min = 0.2 / config.scene_transformation_group.scale_x, scale_max = 1.6/config.scene_transformation_group.scale_x)
+            config.nations[j].add_labels(scale_min = 0.3 / config.scene_transformation_group.scale_x, scale_max = 1.7/config.scene_transformation_group.scale_x)
+
+        #Nation border thickness
+        s = time.time()
+        if(config.scene_transformation_group.scale_x == 0.8):
+            for i in range(0, config.num_provinces):
+                if(config.provinces[i].nation != None):
+                    config.nation_borders.render_objects[0][i].regroup(config.line_groups['2/3'])
+                    config.nation_borders.render_objects[0][i].remove()
+                    config.nation_borders.render_objects[0][i].add()
+        e = time.time()
+        print(e-s)
 
 def time_update():
     month_transition = False
@@ -789,7 +803,7 @@ def draw_nation_borders():
     for i in range(0, config.num_provinces):
         me = config.provinces[i]
 
-        temp_line = cvsmr.line_object(config.line_groups["2/3"])
+        temp_line = cvsmr.line_object(config.line_groups["1/3"])
         config.nation_borders.render_objects[0][i] = temp_line
         if(me.nation != None):
 
@@ -854,3 +868,5 @@ def draw_nation_borders():
                 temp_line.vertices.append(me.border.vertices[((j - 1) * 4 + 3) % len(me.border.vertices)])
 
         temp_line.solid_color_coords(40, 40, 40)
+
+    zoom_dependant_update()

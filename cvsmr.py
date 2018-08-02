@@ -207,6 +207,10 @@ class line_object:
         self.scale_x = scale_x
         self.scale_y = scale_y
 
+    def regroup(self, group):
+        self.line_group = group
+        self.vertex_list.group = group
+
     def convert_loop(self):
         self.loop_size = (len(self.vertices_loop)*2)
         self.vertices = [None]* self.loop_size
@@ -411,6 +415,7 @@ def layout_groups_init():
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
     config.line_groups["2/3"] = line_group(2, 3)
+    config.line_groups["3/3"] = line_group(3, 3)
     config.line_groups["1/2"] = line_group(1, 2)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
