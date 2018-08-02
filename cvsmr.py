@@ -252,6 +252,11 @@ class line_object:
     def remove(self):
         self.vertex_list.delete()
 
+    def fast_hide(self):
+        config.batch.migrate(self.vertex_list, pyglet.gl.GL_LINES,config.groups[0], config.batch)
+
+    def fast_show(self):
+        config.batch.migrate(self.vertex_list, pyglet.gl.GL_LINES, self.line_group, config.batch)
 class label_object:
     def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
@@ -347,7 +352,7 @@ class line_group(pyglet.graphics.Group):
         self.thickness = thickness
 
     def set_state(self):
-        pyglet.gl.glLineWidth(self.thickness)
+            pyglet.gl.glLineWidth(self.thickness)
 
 class transformation_group(pyglet.graphics.Group):
     def __init__(self,parent = None):
@@ -417,6 +422,7 @@ def line_groups_init():
     config.line_groups["2/3"] = line_group(2, 3)
     config.line_groups["3/3"] = line_group(3, 3)
     config.line_groups["1/2"] = line_group(1, 2)
+    config.line_groups["1/4"] = line_group(1, 4)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
     config.line_groups["1/1"] = line_group(1, 1)
