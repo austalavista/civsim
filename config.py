@@ -7,13 +7,14 @@ provinces = None
 provinces_id = {}
 
 num_nations = -1
-nations = {}
+nations = []
+nations_dict = {}
 
 scenarios = []
 saves = []
 
 init = False #have the saves, provinces, scenarios etc been initialized?
-state = "main_menu"
+state = "main_menu" #play_menu, in_game_menu
 
 time_entry = None
 day = 1
@@ -48,7 +49,7 @@ resolution = 0
 #---COMMON-------------------------------------------------------------------------------------------------------------
 
 #---UI---
-selected = None
+selected = None #long term select
 click_selected = None
 
 prev_menu = None

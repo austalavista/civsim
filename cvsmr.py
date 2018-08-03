@@ -207,6 +207,10 @@ class line_object:
         self.scale_x = scale_x
         self.scale_y = scale_y
 
+    def regroup(self, group):
+        self.line_group = group
+        self.vertex_list.group = group
+
     def convert_loop(self):
         self.loop_size = (len(self.vertices_loop)*2)
         self.vertices = [None]* self.loop_size
@@ -248,6 +252,11 @@ class line_object:
     def remove(self):
         self.vertex_list.delete()
 
+    def fast_hide(self):
+        config.batch.migrate(self.vertex_list, pyglet.gl.GL_LINES,config.groups[0], config.batch)
+
+    def fast_show(self):
+        config.batch.migrate(self.vertex_list, pyglet.gl.GL_LINES, self.line_group, config.batch)
 class label_object:
     def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
@@ -343,7 +352,7 @@ class line_group(pyglet.graphics.Group):
         self.thickness = thickness
 
     def set_state(self):
-        pyglet.gl.glLineWidth(self.thickness)
+            pyglet.gl.glLineWidth(self.thickness)
 
 class transformation_group(pyglet.graphics.Group):
     def __init__(self,parent = None):
@@ -410,8 +419,10 @@ def layout_groups_init():
 
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
-    config.line_groups["2/3"] = line_group(2, 3)
+    config.line_groups["3/5"] = line_group(2, 3)
+    config.line_groups["3/3"] = line_group(3, 3)
     config.line_groups["1/2"] = line_group(1, 2)
+    config.line_groups["1/4"] = line_group(1, 4)
     config.line_groups["1/3"] = line_group(1, 3)
     config.line_groups["2/2"] = line_group(2, 2)
     config.line_groups["1/1"] = line_group(1, 1)
@@ -447,6 +458,9 @@ def sprite_texture_init():
     image_init("in_game_menu_date_speed", "b")
 
     image_init("textbg")
+
+    #for letter in ("A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","space","-","."):
+    #    image_init(letter)
 
 def image_init(name, tag = None):
     config.sprite_textures[name] = pyglet.resource.image(name + ".png")
