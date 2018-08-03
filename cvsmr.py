@@ -419,7 +419,7 @@ def layout_groups_init():
 
 def line_groups_init():
     #config.line_groups[name] = line_group(thickness,group_num)
-    config.line_groups["2/3"] = line_group(2, 3)
+    config.line_groups["3/5"] = line_group(2, 3)
     config.line_groups["3/3"] = line_group(3, 3)
     config.line_groups["1/2"] = line_group(1, 2)
     config.line_groups["1/4"] = line_group(1, 4)

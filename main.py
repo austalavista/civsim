@@ -36,6 +36,7 @@ def on_mouse_scroll(x,y,scroll_x,scroll_y):
 @config.window.event
 def on_mouse_release(x,y,buttons,modifiers):
     global mouse_release_entry
+
     if(config.click_selected != None):
         if(config.click_selected.handlers[4]):
             mouse_release_entry.args[0] = x / config.global_transformation_group.scale_x
@@ -171,6 +172,7 @@ def coordinate_box_check_1(args):
     if(object != None):
         if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
             config.selected.handler_deselect()
+            config.selected = None
 
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0] and config.selected.relevancy[0]):

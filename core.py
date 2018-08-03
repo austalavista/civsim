@@ -307,9 +307,11 @@ class province(cvsmgmt.scene_object):
         self.handlers[3] = True
         self.handlers[4] = True
         self.handlers[5] = True
+        self.handlers[8] = True
 
         self.border = None
         self.label = None
+        self.alt_color = (None,None,None)
 
         self.adjacents_border = []  # list of lists of indexes of adjacents provinces to each border vertice
         self.adjacents = []  # list of indexes of adjacent provinces
@@ -328,8 +330,10 @@ class province(cvsmgmt.scene_object):
         self.on_screened = False
 
     def set_nation(self, nation):
+
+        self.prev_nation = self.nation
         if (nation != None):
-            self.prev_nation = self.nation
+
             self.nation = config.nations_dict[nation]
 
             self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1],
@@ -343,9 +347,22 @@ class province(cvsmgmt.scene_object):
                 if (self.prev_nation != None):
                     self.prev_nation.add_provinces()
 
+            self.border.solid_color_coords(255 - self.nation.color[0],
+                                           255 - self.nation.color[1],
+                                           255 - self.nation.color[2])
+
+            self.alt_color = (int(max(self.nation.color[0]*1.6 % 255, self.nation.color[0]*0.5 % 255)),
+                              int(max(self.nation.color[1] * 1.6 % 255, self.nation.color[1] * 0.5 % 255)),
+                              int(max(self.nation.color[2] * 1.6 % 255, self.nation.color[2] * 0.5 % 255)))
+
         else:
             self.render_objects[0][0].solid_color_coords(255, 255, 255)
             self.render_objects[0][0].update_color()
+
+            self.border.solid_color_coords(0,
+                                           0,
+                                           0)
+            self.alt_color = (0,0,0)
 
     def draw_nation_border(self):
 
@@ -411,34 +428,28 @@ class province(cvsmgmt.scene_object):
 
     def handler_release(self, x, y):
         if (self.nodrag):
-
+            config.selected = self
             if (config.state == "play_menu"):
                 if (self.nation != None):
                     config.menus["play_menu"].elements[7].set_province(self.name)
                     config.menus["play_menu"].elements[7].set_nation(self.nation.name)
 
-                    '''
-                    if(self.nation.test_line != None):
-                        for i in range(0, len(self.nation.test_line)):
-                            self.nation.test_line[i].remove()
-                            self.nation.test_line[i].solid_color_coords(0, 0, 0)
-                            self.nation.test_line[i].add()
-
-
-                        #show body
-                        for i in range(0, len(self.nation.bodies)):
-                            if(self.nation.bodies[i][self.index] != None):
-                                for j in range(0, config.num_provinces):
-                                    if(self.nation.bodies[i][j] != None):
-                                        self.nation.bodies[i][j].render_objects[0][0].solid_color_coords(0,0,0)
-                                        self.nation.bodies[i][j].render_objects[0][0].remove()
-                                        self.nation.bodies[i][j].render_objects[0][0].add()
-                        '''
+            if(config.state == "play_menu" or config.state == "in_game_menu"):
+                self.border.add()
+                self.render_objects[0][0].solid_color_coords(self.alt_color[0], self.alt_color[1],
+                                                             self.alt_color[2])
+                self.render_objects[0][0].update_color()
 
     def handler_scroll(self, x, y, scroll_x, scroll_y):
         self.zoom(x, y, scroll_y)
 
         zoom_dependant_update(True)
+
+    def handler_deselect(self):
+        self.border.remove()
+        self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1],
+                                                     self.nation.color[2])
+        self.render_objects[0][0].update_color()
 
 class ocean(cvsmgmt.scene_object):
     def __init__(self):
@@ -558,7 +569,7 @@ def init_provinces(group):
     for i in range(0, int(len(map) / 2)):  # int(len(map)/2)
         file = map[i * 2 + 1].split("\t")
 
-        temp_poly = cvsmr.line_object(config.line_groups["1/" + str(group + 1)])
+        temp_poly = cvsmr.line_object(config.line_groups["3/" + str(group + 3)])
         temp_poly.vertices_loop = [0] * (len(file) - 1) * 2
 
         for j in range(0, len(file)):
@@ -568,7 +579,7 @@ def init_provinces(group):
                 temp_poly.vertices_loop[j * 2 + 1] = ((11000 - float(temp[1])) / 10) * mysize
 
         temp_poly.convert_loop()
-        temp_poly.solid_color_coords(80,80,80)
+        temp_poly.solid_color_coords(70,70,70)
         config.provinces[i].border = temp_poly
         config.provinces[i].name = map[i * 2].split("\t")[1]
 
@@ -576,7 +587,7 @@ def init_provinces(group):
         for i in range(0,len(temp_poly.vertices)):
             config.province_borders.render_objects[0][0].vertices.append(temp_poly.vertices[i])
 
-    config.province_borders.render_objects[0][0].solid_color_coords(80,80,80)
+    config.province_borders.render_objects[0][0].solid_color_coords(70,70,70)
 
     # setting adjacents
     fileone = open("resources/map/mapa.txt", "r")
@@ -619,9 +630,9 @@ def init_provinces(group):
         cvsmr.image_init(me.name)
         temp_sprite = cvsmr.sprite_object(me.name, [((float(temp[1].split(",")[0])) / 10.0 + 820.0) * mysize,
                                                     ((11000 - (float(temp[1].split(",")[1]))) / 10.0) * mysize],
-                                          group + 1)
+                                          group + 4)
 
-        temp_sprite.sprite.update(scale_x=0.4, scale_y=0.4)
+        #temp_sprite.sprite.update(scale_x=0.8, scale_y=0.8)
         temp_sprite.sprite.update(rotation=math.degrees(float(temp[2])))
         me.label = temp_sprite
 

@@ -148,18 +148,18 @@ for r in range(0,len(provinces)):
         height = raw_height * final_scale
 
         #actually create the image now #scaling everything up by 2 for better resolution
-        label_image = Image.new('RGBA', (int(raw_length*final_scale)*2, int(raw_height * final_scale) * 2 + 8), None)
+        label_image = Image.new('RGBA', (int(raw_length*final_scale), int(raw_height * final_scale) + 8), None)
 
         length_progress = 0
         for i in range(0, len(name_letters)):
             size = name_letters[i].size
 
             #print(size, final_scale)
-            temp = name_letters[i].resize((int(size[0]*final_scale*2 + 0.5),
-                                          int(size[1]*final_scale*2 + 0.5)), resample = Image.ANTIALIAS)
+            temp = name_letters[i].resize((int(size[0]*final_scale + 0.5),
+                                          int(size[1]*final_scale + 0.5)), resample = Image.ANTIALIAS)
             label_image.paste(im = temp, box = (int(length_progress),4))
 
-            length_progress += (int(name_letters[i].size[0] * final_scale)) * 2
+            length_progress += (int(name_letters[i].size[0] * final_scale))
 
         label_image.save("labels/" + provinces[r] + ".png")
 
@@ -173,8 +173,8 @@ for r in range(0,len(provinces)):
         perpindicular[0] *= -1
 
     label_map.write(str(r) + " " + provinces[r] + "\t" +
-                    str(point1[0] + length_vector[0] * 0.15 + perpindicular[0]) + "," +
-                    str(point1[1] + length_vector[1] * 0.15 + perpindicular[1]) + "\t" +
+                    str(point1[0] + perpindicular[0]) + "," +
+                    str(point1[1] + perpindicular[1]) + "\t" +
                     str(math.asin(length_vector[1]/mag)) + "\n")
 
     print(r,"\t", provinces[r])
