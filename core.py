@@ -311,7 +311,7 @@ class province(cvsmgmt.scene_object):
 
         self.border = None
         self.label = None
-        self.alt_color = (None,None,None)
+        self.alt_color = (100,100,100)
 
         self.adjacents_border = []  # list of lists of indexes of adjacents provinces to each border vertice
         self.adjacents = []  # list of indexes of adjacent provinces
@@ -447,9 +447,13 @@ class province(cvsmgmt.scene_object):
 
     def handler_deselect(self):
         self.border.remove()
-        self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1],
-                                                     self.nation.color[2])
-        self.render_objects[0][0].update_color()
+        if(self.nation != None):
+            self.render_objects[0][0].solid_color_coords(self.nation.color[0], self.nation.color[1],
+                                                         self.nation.color[2])
+            self.render_objects[0][0].update_color()
+        else:
+            self.render_objects[0][0].solid_color_coords(255,255,255)
+            self.render_objects[0][0].update_color()
 
 class ocean(cvsmgmt.scene_object):
     def __init__(self):
