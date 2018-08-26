@@ -120,6 +120,10 @@ class scene_object:
         elif (abs(config.scene_transformation_group.y - 1080 / config.scene_transformation_group.scale_y) > self.max_limit_y):
             config.scene_transformation_group.y = 1080 / config.scene_transformation_group.scale_y - self.max_limit_y
 
+    def select_self(self):
+        if(config.selected != None):
+            config.selected.handler_deselect()
+        config.selected = self
 class checkbox:
     def __init__(self, group = 0):
         self.group = group

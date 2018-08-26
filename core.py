@@ -428,7 +428,9 @@ class province(cvsmgmt.scene_object):
 
     def handler_release(self, x, y):
         if (self.nodrag):
-            config.selected = self
+            self.select_self()
+
+
             if (config.state == "play_menu"):
                 if (self.nation != None):
                     config.menus["play_menu"].elements[7].set_province(self.name)

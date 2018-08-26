@@ -45,7 +45,12 @@ def on_mouse_release(x,y,buttons,modifiers):
             mouse_release_entry.function = config.click_selected.handler_release
 
             mouse_release_entry.add()
+
         config.click_selected = None
+    else:
+        if(config.selected != None and config.selected.handlers[8]):
+            config.selected.handler_deselect()
+        config.selected = None
 
 @config.window.event
 def on_mouse_drag(x,y,dx,dy,buttons,modifiers):
@@ -170,9 +175,9 @@ def coordinate_box_check_1(args):
 
     #call handlers
     if(object != None):
-        if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
-            config.selected.handler_deselect()
-            config.selected = None
+        #if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
+        #    config.selected.handler_deselect()
+        #    config.selected = None
 
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0] and config.selected.relevancy[0]):
@@ -194,9 +199,9 @@ def coordinate_box_check_1(args):
             elif(args[2] == 3 and object.handlers[3]):
                 object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
-        if (args[2] == 0 and config.selected != None and config.selected.handlers[8]):
-            config.selected.handler_deselect()
-        config.selected = None
+        #if (args[2] == 0 and config.selected != None and config.selected.handlers[8]):
+        #    config.selected.handler_deselect()
+        config.click_selected = None
 
 coordinate_box_check_entry = cvsmgmt.update_entry(coordinate_box_check_1,["x", "y", "event_type", "scroll_x", "scroll_y"] )
 mouse_drag_entry = cvsmgmt.drag_handler_entry(args = ["x","y","dx","dy"])
