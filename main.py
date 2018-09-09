@@ -175,9 +175,6 @@ def coordinate_box_check_1(args):
 
     #call handlers
     if(object != None):
-        #if(args[2] == 0 and config.selected != None and config.selected.scene_index != object.scene_index and config.selected.handlers[8]):
-        #    config.selected.handler_deselect()
-        #    config.selected = None
 
         if (config.selected != None):
             if (args[2] == 0 and object.handlers[0] and config.selected.relevancy[0]):
@@ -199,8 +196,7 @@ def coordinate_box_check_1(args):
             elif(args[2] == 3 and object.handlers[3]):
                 object.handler_scroll(x = args[0],y = args[1], scroll_x = args[3],scroll_y = args[4])
     else:
-        #if (args[2] == 0 and config.selected != None and config.selected.handlers[8]):
-        #    config.selected.handler_deselect()
+
         config.click_selected = None
 
 coordinate_box_check_entry = cvsmgmt.update_entry(coordinate_box_check_1,["x", "y", "event_type", "scroll_x", "scroll_y"] )

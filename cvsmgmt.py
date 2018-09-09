@@ -124,6 +124,7 @@ class scene_object:
         if(config.selected != None):
             config.selected.handler_deselect()
         config.selected = self
+
 class checkbox:
     def __init__(self, group = 0):
         self.group = group
