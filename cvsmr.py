@@ -257,6 +257,7 @@ class line_object:
 
     def fast_show(self):
         config.batch.migrate(self.vertex_list, pyglet.gl.GL_LINES, self.line_group, config.batch)
+
 class label_object:
     def __init__(self, text, anchor, group_num, anchor_offset = [0,0]):
         self.label = pyglet.text.Label(text,
@@ -433,6 +434,8 @@ def texture_groups_init():
 
 def sprite_texture_init():
     image_init("ocean")
+    image_init("terrain_map")
+
     image_init("scroll_slider")
     image_init("scroll_button_up", "b")
     image_init("scroll_button_down", "b")

@@ -36,6 +36,7 @@ universal_data = None
 province_borders = None
 nation_borders = None
 ocean = None
+terrain_map = None
 
 screen_bound_left = None
 screen_bound_right = None

@@ -484,6 +484,14 @@ class ocean(cvsmgmt.scene_object):
 
         zoom_dependant_update(True)
 
+class terrain_map(cvsmgmt.scene_object):
+    def __init__(self):
+        cvsmgmt.scene_object.__init__(self, 5)
+
+        self.render_objects = [[cvsmr.sprite_object("terrain_map", [0, 0], 5)]]
+        self.render_objects[0][0].scale(3.33, 3.33)
+        self.render_objects[0][0].coords(8200,0)
+
 class time_entry(cvsmgmt.update_entry):
     def __init__(self, args=None):
         cvsmgmt.update_entry.__init__(self, args=args)

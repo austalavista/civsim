@@ -79,7 +79,16 @@ def initialize():
     apply_settings()
 
     # resources
-    pyglet.resource.path = ['resources', 'resources/UI/main_menu','resources/UI/in_game_menu', 'resources/UI/settings_menu','resources/UI/play_menu', 'resources/UI', 'resources/map', 'resources/map/labels', 'resources/map/nation_labels']
+    pyglet.resource.path = ['resources',
+                            'resources/UI/main_menu',
+                            'resources/UI/in_game_menu',
+                            'resources/UI/settings_menu',
+                            'resources/UI/play_menu',
+                            'resources/UI',
+                            'resources/map',
+                            'resources/map/labels',
+                            'resources/map/nation_labels',
+                            'resources/map/terrain']
 
     config.gs_entries[0].function = pyglet.resource.reindex
     config.gs_entries[0].add(0)
@@ -119,6 +128,7 @@ def open_play_menu():
         config.init = True
 
         config.ocean = core.ocean()
+        config.terrain_map = core.terrain_map()
         core.draw_nation_borders()
 
     config.menus["play_menu"] = cvsmm.play_menu()
@@ -129,9 +139,8 @@ def open_play_menu():
 
     config.province_borders.add_to_scene()
 
-
-
     config.ocean.add_to_scene()
+    config.terrain_map.add_to_scene()
     config.scene_transformation_group.scale(0.1,0.1)
     config.scene_transformation_group.coords(0,0)
 
