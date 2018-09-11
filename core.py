@@ -488,7 +488,7 @@ class terrain_map(cvsmgmt.scene_object):
     def __init__(self):
         cvsmgmt.scene_object.__init__(self, 5)
 
-        self.render_objects = [[cvsmr.sprite_object("terrain_map", [0, 0], 4)]]
+        self.render_objects = [[cvsmr.sprite_object("terrain_map", [0, 0], 2)]]
         self.render_objects[0][0].scale(3.33, 3.33)
         self.render_objects[0][0].coords(8200,0)
 

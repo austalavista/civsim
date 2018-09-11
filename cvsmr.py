@@ -459,6 +459,7 @@ def sprite_texture_init():
 
     image_init("in_game_menu_date_pause", "b")
     image_init("in_game_menu_date_speed", "b")
+    image_init("in_game_menu_terrain", "b")
 
     image_init("textbg")
 

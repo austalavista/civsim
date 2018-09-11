@@ -645,8 +645,25 @@ class in_game_date_speed(base_button):
 
         print(self.setting)
 
+class in_game_terrain(base_button):
+    def __init__(self):
+        base_button.__init__(self,[200,200], "in_game_menu_terrain", "in_game_menu_terrain_c")
+        self.state = False
+
+    def handler_leftclick(self, x,y):
+        config.click_selected = self
+        self.toggle_sprite()
+
+    def handler_release(self,x,y):
+        self.state = not self.state
+
+        if(self.state):
+            config.terrain_map.remove_from_scene()
+        else:
+            config.terrain_map.add_to_scene()
+
 class in_game_menu(base_window):
     def __init__(self):
         base_window.__init__(self=self, anchor=[0, 0], sprite_name=None)
 
-        self.elements = [in_game_date(),in_game_date_pause(),in_game_date_speed()]
+        self.elements = [in_game_date(),in_game_date_pause(),in_game_date_speed(), in_game_terrain()]
