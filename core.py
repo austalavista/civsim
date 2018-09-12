@@ -5,6 +5,7 @@ import config
 import numpy as np
 import calculations
 import math
+from PIL import Image
 
 class scenario:
     def __init__(self):
@@ -491,6 +492,15 @@ class terrain_map(cvsmgmt.scene_object):
         self.render_objects = [[cvsmr.sprite_object("terrain_map", [0, 0], 2)]]
         self.render_objects[0][0].scale(3.33, 3.33)
         self.render_objects[0][0].coords(8200,0)
+
+        self.hills_image = Image.open("resources/map/terrain/hills.png")
+        self.hills_map = self.hills_image.load()
+
+        self.mountains_image = Image.open("resources/map/terrain/mountains.png")
+        self.mountains_map = self.mountains_image.load()
+
+        self.forest_image = Image.open("resources/map/terrain/mountains.png")
+        self.forest_map = self.forest_image.load()
 
 class time_entry(cvsmgmt.update_entry):
     def __init__(self, args=None):
